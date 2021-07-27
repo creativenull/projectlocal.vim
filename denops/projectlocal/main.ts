@@ -2,7 +2,7 @@ import { Denops, execute } from "./deps/denops_std.ts";
 import { ensureString, isNumber } from "./deps/unknownutil.ts";
 import { globals as g } from "./deps/denops_std.ts";
 import { Config, makeConfig } from "./config.ts";
-import { ProjectLocal } from "./init.ts";
+import { ProjectLocal } from "./projectlocal.ts";
 
 export async function main(denops: Denops): Promise<void> {
   denops.dispatcher = {

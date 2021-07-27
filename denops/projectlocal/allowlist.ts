@@ -5,57 +5,56 @@ export interface AllowedProject {
   projectDirectoryPath: string;
   configFileHash: string;
   autoload: boolean;
+  ignore: boolean;
 }
 
 export interface PartialAllowedProject {
   projectDirectoryPath?: string;
   configFileHash?: string;
   autoload?: boolean;
+  ignore?: boolean;
 }
 
-export function addProjectConfigFile(
-  config: Config,
-  projectpath: string,
-): void {
+export async function addProjectConfigFile(config: Config, ignore?: boolean): Promise<void> {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  const json = JSON.parse(fileContents) as AllowedProject[];
+  let json: AllowedProject[];
+  if (fileContents === "") {
+    json = []
+  } else {
+    json = JSON.parse(fileContents) as AllowedProject[];
+  }
 
   json.push({
-    projectDirectoryPath: projectpath,
+    projectDirectoryPath: await config.getProjectRoot(),
     configFileHash: hashFileContents(fileContents),
     autoload: true,
+    ignore: ignore ?? false,
   });
 
   Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(json));
 }
 
-export function removeProjectConfigFile(
-  config: Config,
-  projectpath: string,
-): void {
+export function removeProjectConfigFile(config: Config): void {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
+  if (fileContents === "") {
+    return;
+  }
+
   const json = JSON.parse(fileContents) as AllowedProject[];
-
-  const newJsonContents = json.filter((item) =>
-    item.projectDirectoryPath !== projectpath
-  );
-
-  Deno.writeTextFileSync(
-    config.getAllowlistPath(),
-    JSON.stringify(newJsonContents),
-  );
+  const newJsonContents = json.filter(async (item) => item.projectDirectoryPath !== await config.getProjectRoot());
+  Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(newJsonContents));
 }
 
-export function updateProjectConfigFile(
-  config: Config,
-  projectpath: string,
-  newSettings: PartialAllowedProject,
-): void {
+export function updateProjectConfigFile(config: Config, newSettings: PartialAllowedProject): void {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
+  if (fileContents === "") {
+    return;
+  }
+
   const json = JSON.parse(fileContents) as AllowedProject[];
 
-  const newJsonContents = json.map((item) => {
-    if (item.projectDirectoryPath === projectpath) {
+  const newJsonContents = json.map(async (item) => {
+    if (item.projectDirectoryPath === await config.getProjectRoot()) {
       return {
         ...item,
         ...newSettings,
@@ -65,24 +64,28 @@ export function updateProjectConfigFile(
     return item;
   });
 
-  Deno.writeTextFileSync(
-    config.getAllowlistPath(),
-    JSON.stringify(newJsonContents),
-  );
+  Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(newJsonContents));
 }
 
-export function getProjectConfig(config: Config, projectpath: string): AllowedProject {
+export function getProjectConfig(config: Config, projectpath: string): AllowedProject | null {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
+  if (fileContents === "") {
+    return null;
+  }
+
   const json = JSON.parse(fileContents) as AllowedProject[];
   const [project] = json.filter(item => item.projectDirectoryPath === projectpath)
   return project
 }
 
-export function isAllowed(config: Config, projectpath: string): boolean {
+export function isAllowed(config: Config): boolean {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  const json = JSON.parse(fileContents) as AllowedProject[];
+  if (fileContents === "") {
+    return false;
+  }
 
-  const res = json.filter((item) => item.projectDirectoryPath === projectpath);
+  const json = JSON.parse(fileContents) as AllowedProject[];
+  const res = json.filter(async (item) => item.projectDirectoryPath === await config.getProjectRoot() && !item.ignore);
   if (res.length === 1) {
     return true;
   }
@@ -90,10 +93,10 @@ export function isAllowed(config: Config, projectpath: string): boolean {
   return false;
 }
 
-export function autoloadDisable(config: Config, projectpath: string) {
-  updateProjectConfigFile(config, projectpath, { autoload: false });
+export function autoloadDisable(config: Config) {
+  updateProjectConfigFile(config, { autoload: false });
 }
 
-export function autoloadEnable(config: Config, projectpath: string) {
-  updateProjectConfigFile(config, projectpath, { autoload: true });
+export function autoloadEnable(config: Config) {
+  updateProjectConfigFile(config, { autoload: true });
 }

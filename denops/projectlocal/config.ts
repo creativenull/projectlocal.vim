@@ -20,6 +20,16 @@ export interface PartialUserConfig {
   };
 }
 
+const defaultConfig: UserConfig = {
+  allowlistName: "allowlist",
+  cacheDirectory: "",
+  showMessage: true,
+  projectConfig: {
+    filepath: ".vim/init.vim",
+    filetype: "vim",
+  },
+}
+
 export class Config {
   constructor(private denops: Denops, private config: UserConfig) {}
 
@@ -27,7 +37,7 @@ export class Config {
     let cachepath: unknown;
     if (await fn.has(denops, "nvim")) {
       cachepath = await nvim.stdpath(denops, "cache");
-      return `${cachepath}/nvim/projectlocal`;
+      return `${cachepath}/projectlocal`;
     } else {
       // TODO: Find out how to remove type conversion from string to unknown
       if (Deno.build.os === "linux") {
@@ -78,14 +88,8 @@ export async function makeConfig(
   config: PartialUserConfig,
 ): Promise<Config> {
   const userConfig: UserConfig = {
-    allowlistName: config.allowlistName ?? "allowlist",
-    cacheDirectory: config.cacheDirectory ??
-      await Config.getDefaultCacheDirectory(denops),
-    showMessage: config.showMessage ?? true,
-    projectConfig: {
-      filepath: config.projectConfig?.filepath ?? ".vim/init.vim",
-      filetype: config.projectConfig?.filetype ?? "vim",
-    },
+    ...defaultConfig,
+    cacheDirectory: config.cacheDirectory ?? await Config.getDefaultCacheDirectory(denops),
   };
 
   return new Config(denops, userConfig);
