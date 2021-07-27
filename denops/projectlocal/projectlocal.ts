@@ -1,4 +1,4 @@
-import { Denops, fn, execute } from "./deps/denops_std.ts";
+import { Denops, fn } from "./deps/denops_std.ts";
 import { existsSync, ensureFile } from "./deps/std.ts";
 import { Config } from "./config.ts";
 import * as allowlist from "./allowlist.ts";
@@ -38,51 +38,36 @@ export class ProjectLocal {
           if (projectConfig?.configFileHash !== currentHash) {
             // Prompt user to accept the changes
             // and source the file
-
-
-
-
-
-
-
-
-
           } else {
             // Source the project config file
-
-
-
-
-
-
-
-
-
-
           }
         }
       } else {
         // Prompt user if they want to add the file to allowlist
         // and source the file
-        const projectFilepath = await this.config.getProjectRoot()
+        const projectFilepath = await this.config.getProjectRoot();
         await fn.inputsave(this.denops);
-        const answer = await fn.input(this.denops, `[projectlocal-vim] New project config file found at: ${projectFilepath}, add to allowlist? (y/n/C) `);
+        const answer = await fn.input(
+          this.denops,
+          `[projectlocal-vim] New project config file found at: ${projectFilepath}, add to allowlist? (y/n/C) `,
+        );
         await fn.inputrestore(this.denops);
 
-        if (answer === 'y') {
+        if (answer === "y") {
           // Add to the allowlist and source the file
           await allowlist.addProjectConfigFile(this.config);
           await fn.execute(this.denops, 'echom "[projectlocal-vim] ADDED!"');
-        } else if (answer === 'n') {
+        } else if (answer === "n") {
           // Add to the allowlist but with ignore set to true
           await allowlist.addProjectConfigFile(this.config, true);
-          await fn.execute(this.denops, 'echom "[projectlocal-vim] IGNORED! Use :ProjectLocalEnable to explicitly source the local config file"');
+          await fn.execute(
+            this.denops,
+            'echom "[projectlocal-vim] IGNORED! Use :ProjectLocalEnable to explicitly source the local config file"',
+          );
         }
       }
     }
   }
 
-  async source(localConfigFilepath: string) {
-
-  }
+  async source(localConfigFilepath: string) {}
 }

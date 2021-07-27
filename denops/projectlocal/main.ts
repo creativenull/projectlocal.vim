@@ -37,20 +37,11 @@ export async function main(denops: Denops): Promise<void> {
   const allowlistFile = config.getAllowlistPath();
 
   if (projectConfigFile) {
-    await execute(
-      denops,
-      `command! ProjectLocalConfig edit ${projectConfigFile}`,
-    );
+    await execute(denops, `command! ProjectLocalConfig edit ${projectConfigFile}`);
   }
 
-  await execute(
-    denops,
-    `command! ProjectLocalAllowlist edit ${allowlistFile}`,
-  );
-  await execute(
-    denops,
-    `command! ProjectLocalEnable echom "Manually load the config file"`,
-  );
+  await execute(denops, `command! ProjectLocalAllowlist edit ${allowlistFile}`);
+  await execute(denops, `command! ProjectLocalEnable echom "Manually load the config file"`);
 
   // Plugin has been loaded
   await g.set(denops, "loaded_projectlocal", 1);

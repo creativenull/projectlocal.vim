@@ -28,7 +28,7 @@ const defaultConfig: UserConfig = {
     filepath: ".vim/init.vim",
     filetype: "vim",
   },
-}
+};
 
 export class Config {
   constructor(private denops: Denops, private config: UserConfig) {}
@@ -83,13 +83,10 @@ export class Config {
 }
 
 // Factory function to create a new Config class instance
-export async function makeConfig(
-  denops: Denops,
-  config: PartialUserConfig,
-): Promise<Config> {
+export async function makeConfig(denops: Denops, config: PartialUserConfig): Promise<Config> {
   const userConfig: UserConfig = {
     ...defaultConfig,
-    cacheDirectory: config.cacheDirectory ?? await Config.getDefaultCacheDirectory(denops),
+    cacheDirectory: config.cacheDirectory ?? (await Config.getDefaultCacheDirectory(denops)),
   };
 
   return new Config(denops, userConfig);

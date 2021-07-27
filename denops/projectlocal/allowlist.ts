@@ -19,7 +19,7 @@ export async function addProjectConfigFile(config: Config, ignore?: boolean): Pr
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   let json: AllowedProject[];
   if (fileContents === "") {
-    json = []
+    json = [];
   } else {
     json = JSON.parse(fileContents) as AllowedProject[];
   }
@@ -41,7 +41,7 @@ export function removeProjectConfigFile(config: Config): void {
   }
 
   const json = JSON.parse(fileContents) as AllowedProject[];
-  const newJsonContents = json.filter(async (item) => item.projectDirectoryPath !== await config.getProjectRoot());
+  const newJsonContents = json.filter(async (item) => item.projectDirectoryPath !== (await config.getProjectRoot()));
   Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(newJsonContents));
 }
 
@@ -54,7 +54,7 @@ export function updateProjectConfigFile(config: Config, newSettings: PartialAllo
   const json = JSON.parse(fileContents) as AllowedProject[];
 
   const newJsonContents = json.map(async (item) => {
-    if (item.projectDirectoryPath === await config.getProjectRoot()) {
+    if (item.projectDirectoryPath === (await config.getProjectRoot())) {
       return {
         ...item,
         ...newSettings,
@@ -74,8 +74,8 @@ export function getProjectConfig(config: Config, projectpath: string): AllowedPr
   }
 
   const json = JSON.parse(fileContents) as AllowedProject[];
-  const [project] = json.filter(item => item.projectDirectoryPath === projectpath)
-  return project
+  const [project] = json.filter((item) => item.projectDirectoryPath === projectpath);
+  return project;
 }
 
 export function isAllowed(config: Config): boolean {
@@ -85,7 +85,9 @@ export function isAllowed(config: Config): boolean {
   }
 
   const json = JSON.parse(fileContents) as AllowedProject[];
-  const res = json.filter(async (item) => item.projectDirectoryPath === await config.getProjectRoot() && !item.ignore);
+  const res = json.filter(
+    async (item) => item.projectDirectoryPath === (await config.getProjectRoot()) && !item.ignore,
+  );
   if (res.length === 1) {
     return true;
   }
