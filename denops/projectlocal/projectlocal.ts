@@ -1,4 +1,4 @@
-import { Denops, fn } from "./deps/denops_std.ts";
+import { Denops, fn, echo } from "./deps/denops_std.ts";
 import { existsSync, ensureFile } from "./deps/std.ts";
 import { Config } from "./config.ts";
 import * as allowlist from "./allowlist.ts";
@@ -46,23 +46,26 @@ export class ProjectLocal {
         // Prompt user if they want to add the file to allowlist
         // and source the file
         const projectFilepath = await this.config.getProjectRoot();
+        const projectList = projectFilepath.split("/");
+        const projectName = projectList[projectList.length - 1];
+
         await fn.inputsave(this.denops);
         const answer = await fn.input(
           this.denops,
-          `[projectlocal-vim] New project config file found at: ${projectFilepath}, add to allowlist? (y/n/C) `,
+          `[projectlocal-vim] New project config file found at: "${projectName}", add to allowlist? (y/n/C) `,
         );
         await fn.inputrestore(this.denops);
 
         if (answer === "y") {
           // Add to the allowlist and source the file
           await allowlist.addProjectConfigFile(this.config);
-          await fn.execute(this.denops, 'echom "[projectlocal-vim] ADDED!"');
+          await echo(this.denops, "[projectlocal-vim] ADDED!");
         } else if (answer === "n") {
           // Add to the allowlist but with ignore set to true
           await allowlist.addProjectConfigFile(this.config, true);
-          await fn.execute(
+          await echo(
             this.denops,
-            'echom "[projectlocal-vim] IGNORED! Use :ProjectLocalEnable to explicitly source the local config file"',
+            "[projectlocal-vim] IGNORED! Use :ProjectLocalEnable to explicitly source the local config file",
           );
         }
       }
