@@ -1,0 +1,20 @@
+[
+  {
+    "projectDirectoryPath": "/path/to/projectdir",
+    "configFileHash": "89yu80yh9dy890gbfaewasdf89yb",
+    "autoload": true,
+    "ignore": false
+  },
+  {
+    "projectDirectoryPath": "/path/to/projectdir2",
+    "configFileHash": "89yu80yh9dy890gbfaewasdf89yb",
+    "autoload": true,
+    "ignore": false
+  },
+  {
+    "projectDirectoryPath": "/path/to/projectdir2",
+    "configFileHash": "89yu80yh9dy890gbfaewasdf89yb",
+    "autoload": true,
+    "ignore": false
+  }
+]
