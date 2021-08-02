@@ -1,48 +1,98 @@
-import { Denops, execute } from "./deps/denops_std.ts";
-import { ensureString, isNumber } from "./deps/unknownutil.ts";
-import { globals as g } from "./deps/denops_std.ts";
-import { Config, makeConfig } from "./config.ts";
+import { Denops } from "./deps/denops_std.ts";
+import { isNumber, isObject } from "./deps/unknownutil.ts";
+import { g } from "./deps/denops_std.ts";
+import { PartialUserConfig, Config, makeConfig } from "./config.ts";
 import { ProjectLocal } from "./projectlocal.ts";
+import * as allowlist from "./allowlist.ts";
 
 export async function main(denops: Denops): Promise<void> {
   denops.dispatcher = {
-    async echo(text: unknown): Promise<unknown> {
-      ensureString(text);
-      return await Promise.resolve(text);
+    async autosource(): Promise<void> {
+      const userConfig = await g.get(denops, "projectlocal", null);
+      let config: Config;
+
+      if (isObject<PartialUserConfig>(userConfig)) {
+        config = await makeConfig(denops, userConfig);
+      } else {
+        config = await makeConfig(denops, {});
+      }
+
+      const projectLocal = new ProjectLocal(denops, config);
+      projectLocal.start();
+    },
+
+    async load(): Promise<void> {
+      const userConfig = await g.get(denops, "projectlocal", null);
+      let config: Config;
+
+      if (isObject<PartialUserConfig>(userConfig)) {
+        config = await makeConfig(denops, userConfig);
+      } else {
+        config = await makeConfig(denops, {});
+      }
+
+      const projectLocal = new ProjectLocal(denops, config);
+      projectLocal.manualSource();
+    },
+
+    async enable(): Promise<void> {
+      const userConfig = await g.get(denops, "projectlocal", null);
+      let config: Config;
+
+      if (isObject<PartialUserConfig>(userConfig)) {
+        config = await makeConfig(denops, userConfig);
+      } else {
+        config = await makeConfig(denops, {});
+      }
+
+      allowlist.autoloadEnable(config);
+      denops.cmd(`echo "[projectlocal-vim] Autoload enabled!"`)
+    },
+
+    async disable(): Promise<void> {
+      const userConfig = await g.get(denops, "projectlocal", null);
+      let config: Config;
+
+      if (isObject<PartialUserConfig>(userConfig)) {
+        config = await makeConfig(denops, userConfig);
+      } else {
+        config = await makeConfig(denops, {});
+      }
+
+      allowlist.autoloadDisable(config);
+      denops.cmd(`echo "[projectlocal-vim] Autoload disabled!"`)
+    },
+
+    async openLocalConfig(): Promise<void> {
+      // Setup Config
+      const userConfig = await g.get(denops, "projectlocal", null);
+      let config: Config;
+
+      if (isObject<PartialUserConfig>(userConfig)) {
+        config = await makeConfig(denops, userConfig);
+      } else {
+        config = await makeConfig(denops, {});
+      }
+
+      const projectFilepath = await config.getProjectConfigFilepath();
+      if (projectFilepath) {
+        denops.cmd(`edit ${projectFilepath}`)
+      } else {
+        denops.cmd(`echo "[projectlocal-vim] No project config file detected!"`)
+      }
     },
   };
 
   // Assert if plugin is loaded, using this file instead of `plugin/projectlocal.vim`
   const loaded = await g.get(denops, "loaded_projectlocal");
   if (isNumber(loaded) && loaded === 1) {
-    Promise.resolve();
+    return;
   }
 
-  // Setup Config
-  const userConfig = await g.get(denops, "projectlocal", null);
-  let config: Config;
+  await denops.cmd(`command! ProjectLocalConfig call denops#notify('${denops.name}', 'openLocalConfig', [])`)
+  await denops.cmd(`command! ProjectLocalLoad call denops#notify('${denops.name}', 'load', [])`);
+  await denops.cmd(`command! ProjectLocalAutoloadEnable call denops#notify('${denops.name}', 'enable', [])`);
+  await denops.cmd(`command! ProjectLocalAutoloadDisable call denops#notify('${denops.name}', 'disable', [])`);
 
-  if (userConfig) {
-    config = await makeConfig(denops, userConfig);
-  } else {
-    config = await makeConfig(denops, {});
-  }
-
-  // Initialize checks on start
-  const projectLocal = new ProjectLocal(denops, config);
-  projectLocal.start();
-
-  // Register commands after initialize
-  const projectConfigFile = await config.getProjectConfigFilepath();
-  const allowlistFile = config.getAllowlistPath();
-
-  if (projectConfigFile) {
-    await execute(denops, `command! ProjectLocalConfig edit ${projectConfigFile}`);
-  }
-
-  await execute(denops, `command! ProjectLocalAllowlist edit ${allowlistFile}`);
-  await execute(denops, `command! ProjectLocalEnable echom "Manually load the config file"`);
-
-  // Plugin has been loaded
   await g.set(denops, "loaded_projectlocal", 1);
 }

@@ -15,6 +15,13 @@ export interface PartialAllowedProject {
   ignore?: boolean;
 }
 
+/**
+ * Add a project dirpath to the allowlist
+ *
+ * @param {Config} config
+ * @param {boolean} ignore Ignore the project dirpath on the next vim startup
+ * @returns {Promise<void>}
+ */
 export async function addProjectConfigFile(config: Config, ignore?: boolean): Promise<void> {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   let json: AllowedProject[];
@@ -26,7 +33,7 @@ export async function addProjectConfigFile(config: Config, ignore?: boolean): Pr
 
   json.push({
     projectDirectoryPath: await config.getProjectRoot(),
-    configFileHash: hashFileContents(fileContents),
+    configFileHash: hashFileContents(Deno.readTextFileSync(await config.getProjectConfigFilepath())),
     autoload: true,
     ignore: ignore ?? false,
   });
@@ -34,6 +41,12 @@ export async function addProjectConfigFile(config: Config, ignore?: boolean): Pr
   Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(json));
 }
 
+/**
+ * Remove a project dirpath from the allowlist
+ *
+ * @param {Config} config
+ * @returns {void}
+ */
 export function removeProjectConfigFile(config: Config): void {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   if (fileContents === "") {
@@ -45,15 +58,29 @@ export function removeProjectConfigFile(config: Config): void {
   Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(newJsonContents));
 }
 
-export function updateProjectConfigFile(config: Config, newSettings: PartialAllowedProject): void {
+/**
+ * Update a project dirpath settings from the allowlist
+ *
+ * @param {Config} config
+ * @param {PartialAllowedProject} newSettings
+ * @returns {void}
+ */
+export async function updateProjectConfigFile(config: Config, newSettings: PartialAllowedProject): Promise<void> {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   if (fileContents === "") {
     return;
   }
 
   const json = JSON.parse(fileContents) as AllowedProject[];
+  const projectRoot = await config.getProjectRoot();
+  const ind = json.findIndex((item) => item.projectDirectoryPath === projectRoot);
 
-  const newJsonContents = json.map(async (item) => {
+  json[ind] = {
+    ...json[ind],
+    ...newSettings,
+  };
+
+  /* const newJsonContents = json.map(async (item) => {
     if (item.projectDirectoryPath === (await config.getProjectRoot())) {
       return {
         ...item,
@@ -62,11 +89,18 @@ export function updateProjectConfigFile(config: Config, newSettings: PartialAllo
     }
 
     return item;
-  });
+  }); */
 
-  Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(newJsonContents));
+  Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(json));
 }
 
+/**
+ * Get the project dirpath settings from the allowlist
+ *
+ * @param {Config} config
+ * @param {string} projectpath
+ * @returns {void}
+ */
 export function getProjectConfig(config: Config, projectpath: string): AllowedProject | null {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   if (fileContents === "") {
@@ -78,6 +112,12 @@ export function getProjectConfig(config: Config, projectpath: string): AllowedPr
   return project;
 }
 
+/**
+ * Check if a project dirpath is allowed
+ *
+ * @param {Config} config
+ * @returns {boolean}
+ */
 export function isAllowed(config: Config): boolean {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   if (fileContents === "") {
@@ -95,10 +135,22 @@ export function isAllowed(config: Config): boolean {
   return false;
 }
 
-export function autoloadDisable(config: Config) {
+/**
+ * Disable autoload on a local project config
+ *
+ * @param {Config} config
+ * @returns {void}
+ */
+export function autoloadDisable(config: Config): void {
   updateProjectConfigFile(config, { autoload: false });
 }
 
-export function autoloadEnable(config: Config) {
+/**
+ * Enable autoload on a local project config
+ *
+ * @param {Config} config
+ * @returns {void}
+ */
+export function autoloadEnable(config: Config): void {
   updateProjectConfigFile(config, { autoload: true });
 }
