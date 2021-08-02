@@ -77,8 +77,8 @@ Default configurations are as follows:
 
 ```vim
 let g:projectlocal = {
-    \ 'showMessage': v:true " Show messages on the command line on what the plugin is doing
-    \ 'projectConfig': '.vim/init.vim' " Project config file located relative to the project directory
+    \ 'showMessage': v:true, " Show messages on the command line on what the plugin is doing
+    \ 'projectConfig': '.vim/init.vim', " Project config file located relative to the project directory
     \ }
 ```
 
@@ -86,8 +86,8 @@ or in Lua:
 
 ```lua
 vim.g.projectlocal = {
-    showMessage = true -- Show messages on the command line on what the plugin is doing
-    projectConfig = '.vim/init.vim' -- Project config file located relative to the project directory
+    showMessage = true, -- Show messages on the command line on what the plugin is doing
+    projectConfig = '.vim/init.vim', -- Project config file located relative to the project directory
 }
 ```
 
