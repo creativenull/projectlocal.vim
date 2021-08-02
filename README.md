@@ -71,9 +71,13 @@ To get started, just install the plugin and add a `init.vim` to you project dire
 `$PROJECT/.vim/init.vim` (where `$PROJECT` is your project directory). This will automatically be picked up by
 projectlocal-vim and will prompt you to be allowed to be sourced for the first time.
 
+If you don't want to automatically source the file after opening vim and want to opt to manually source it, then first
+allow local config file to be loaded first and then run `:ProjectLocalAutoloadDisable` to disable it only for that
+project directory.
+
 ### Configuration
 
-Default configurations are as follows:
+Default configurations are as follows and must be defined BEFORE your plugins are loaded via your plugin manager:
 
 ```vim
 let g:projectlocal = {
@@ -82,7 +86,7 @@ let g:projectlocal = {
     \ }
 ```
 
-or in Lua:
+Or in a `init.lua`:
 
 ```lua
 vim.g.projectlocal = {
@@ -90,6 +94,18 @@ vim.g.projectlocal = {
     projectConfig = '.vim/init.vim', -- Project config file located relative to the project directory
 }
 ```
+
+## Commands
+
+Below are the available commands for use:
+
++ `:ProjectLocalConfig` - Open the project local config file, if it exists.
++ `:ProjectLocalAutoloadEnable` - Enable auto sourcing, if it was disabled. This means on the next time you open vim and
+    the local project config has changed then it will ask the user to allow sourcing the file. If there were no changes
+    on the local project config file then source it automatically.
++ `:ProjectLocalAutoloadDisable` - Disable auto sourcing, if it was enabled. This means the next time you open vim then
+    it will not automatically source the local project config file, but can manually load the file via |:ProjectLocalLoad|.
++ `:ProjectLocalLoad` - Manually source the local project config file if autoload is disabled.
 
 [denops]: https://github.com/vim-denops/denops.vim
 [pcmdvim]: https://github.com/creativenull/projectcmd.vim
