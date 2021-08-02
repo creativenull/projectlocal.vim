@@ -1,1 +1,8 @@
-autocmd! FileType typescript let b:ale_linters = ['deno']
+lua << EOF
+local dls = require 'diagnosticls-nvim'
+dls.setup {
+  typescript = {
+    formatter = require 'diagnosticls-nvim.formatters.prettier',
+  },
+}
+EOF
