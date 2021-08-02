@@ -23,20 +23,20 @@ async function getDefaultCacheDirectory(denops: Denops): Promise<string> {
   } else {
     if (Deno.build.os === "darwin") {
       cachepath = "$HOME/Library/Caches/vim/projectlocal";
-      return await expand(denops, cachepath) as string;
+      return (await expand(denops, cachepath)) as string;
     } else if (Deno.build.os === "windows") {
       cachepath = "$HOME/AppData/Temp/vim/projectlocal";
-      return await expand(denops, cachepath) as string;
+      return (await expand(denops, cachepath)) as string;
     } else {
       cachepath = "$HOME/.cache/vim/projectlocal";
-      return await expand(denops, cachepath) as string;
+      return (await expand(denops, cachepath)) as string;
     }
   }
 }
 
 export class Config {
-  private allowlistName = 'allowlist';
-  private cacheDirectory = '';
+  private allowlistName = "allowlist";
+  private cacheDirectory = "";
 
   constructor(private denops: Denops, private config: UserConfig) {}
 
@@ -78,11 +78,11 @@ export class Config {
 export async function makeConfig(denops: Denops, config: PartialUserConfig): Promise<Config> {
   const userConfig: UserConfig = {
     ...defaultConfig,
-    ...config as UserConfig,
+    ...(config as UserConfig),
   };
 
   const pluginConfig = new Config(denops, userConfig);
-  pluginConfig.setCacheDirectory(await getDefaultCacheDirectory(denops) as string);
+  pluginConfig.setCacheDirectory((await getDefaultCacheDirectory(denops)) as string);
 
   return pluginConfig;
 }

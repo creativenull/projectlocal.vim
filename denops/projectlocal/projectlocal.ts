@@ -149,6 +149,12 @@ export class ProjectLocal {
     await execute(this.denops, `source ${await this.config.getProjectConfigFilepath()}`);
   }
 
+  /**
+   * Show message on the command line (default: on)
+   *
+   * @param {string} msg
+   * @returns {Promise<void>}
+   */
   private async showMessage(msg: string): Promise<void> {
     if (this.config.canSendMessage()) {
       await echo(this.denops, msg);

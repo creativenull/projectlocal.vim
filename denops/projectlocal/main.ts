@@ -46,7 +46,7 @@ export async function main(denops: Denops): Promise<void> {
       }
 
       allowlist.autoloadEnable(config);
-      denops.cmd(`echo "[projectlocal-vim] Autoload enabled!"`)
+      denops.cmd(`echo "[projectlocal-vim] Autoload enabled!"`);
     },
 
     async disable(): Promise<void> {
@@ -60,7 +60,7 @@ export async function main(denops: Denops): Promise<void> {
       }
 
       allowlist.autoloadDisable(config);
-      denops.cmd(`echo "[projectlocal-vim] Autoload disabled!"`)
+      denops.cmd(`echo "[projectlocal-vim] Autoload disabled!"`);
     },
 
     async openLocalConfig(): Promise<void> {
@@ -76,9 +76,9 @@ export async function main(denops: Denops): Promise<void> {
 
       const projectFilepath = await config.getProjectConfigFilepath();
       if (projectFilepath) {
-        denops.cmd(`edit ${projectFilepath}`)
+        denops.cmd(`edit ${projectFilepath}`);
       } else {
-        denops.cmd(`echo "[projectlocal-vim] No project config file detected!"`)
+        denops.cmd(`echo "[projectlocal-vim] No project config file detected!"`);
       }
     },
   };
@@ -89,7 +89,7 @@ export async function main(denops: Denops): Promise<void> {
     return;
   }
 
-  await denops.cmd(`command! ProjectLocalConfig call denops#notify('${denops.name}', 'openLocalConfig', [])`)
+  await denops.cmd(`command! ProjectLocalConfig call denops#notify('${denops.name}', 'openLocalConfig', [])`);
   await denops.cmd(`command! ProjectLocalLoad call denops#notify('${denops.name}', 'load', [])`);
   await denops.cmd(`command! ProjectLocalAutoloadEnable call denops#notify('${denops.name}', 'enable', [])`);
   await denops.cmd(`command! ProjectLocalAutoloadDisable call denops#notify('${denops.name}', 'disable', [])`);
