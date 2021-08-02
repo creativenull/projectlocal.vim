@@ -19,59 +19,9 @@ export class ProjectLocal {
     if (existsSync(await this.config.getProjectConfigFilepath())) {
       // Check if project root is allowed to be sourced
       if (allowlist.isAllowed(this.config)) {
-        const projectConfig = allowlist.getProjectConfig(this.config, await this.config.getProjectRoot());
-
-        // Check if sourcing is to be automated
-        if (projectConfig?.autoload) {
-          const contents: string = Deno.readTextFileSync(await this.config.getProjectConfigFilepath());
-          const currentHash = hashFileContents(contents);
-
-          // Check if file has been updated
-          if (projectConfig?.configFileHash !== currentHash) {
-            // Prompt user to accept the changes
-            // and source the file
-            await inputsave(this.denops);
-            const answer = await input(
-              this.denops,
-              `[projectlocal-vim] Project config file changed, re-source file? (y/N) `,
-            );
-            await inputrestore(this.denops);
-
-            if (answer === "y") {
-              allowlist.updateProjectConfigFile(this.config, { configFileHash: currentHash });
-              await this.sourceFile();
-              await this.showMessage("[projectlocal-vim] Project config loaded!");
-              // await echo(this.denops, "[projectlocal-vim] Project config loaded!");
-            }
-          } else {
-            await this.sourceFile();
-            await this.showMessage("[projectlocal-vim] Project config loaded!");
-            // await echo(this.denops, "[projectlocal-vim] Project config loaded!");
-          }
-        }
+        this.sourceOnAllowed();
       } else {
-        // Prompt user if they want to add the file to allowlist
-        // and source the file
-        const projectName = (await this.config.getProjectRoot()).split("/").slice(-1);
-
-        await inputsave(this.denops);
-        const answer = await input(
-          this.denops,
-          `[projectlocal-vim] New project config file found at: "${projectName}", add to allowlist? (y/n/C) `,
-        );
-        await inputrestore(this.denops);
-
-        if (answer === "y") {
-          // Add to the allowlist and source the file
-          await allowlist.addProjectConfigFile(this.config);
-          await this.sourceFile();
-          await this.showMessage("[projectlocal-vim] Added and sourced!");
-          // await echo(this.denops, "[projectlocal-vim] Added and sourced!");
-        } else if (answer === "n") {
-          // Add to the allowlist but with ignore set to true
-          await allowlist.addProjectConfigFile(this.config, true);
-          await this.showMessage("[projectlocal-vim] Ignored! Use :ProjectLocalLoad to explicitly source the project config file")
-        }
+        this.sourceOnFirstTime();
       }
     }
   }
@@ -84,9 +34,89 @@ export class ProjectLocal {
    */
   async manualSource(): Promise<void> {
     const projectConfig = allowlist.getProjectConfig(this.config, await this.config.getProjectRoot());
-    if (!projectConfig?.autoload) {
+    if (!projectConfig?.autoload && !projectConfig?.ignore) {
       await this.sourceFile();
-      await this.showMessage("[projectlocal-vim] Manually sourced project config!");
+      await this.showMessage("[projectlocal-vim] Manually sourced project config");
+    } else if (projectConfig?.ignore) {
+      await this.showMessage("[projectlocal-vim] Cannot source file, it's ignored");
+    }
+  }
+
+  /**
+   * Prompt user for first time, to add the local config to the allowlist
+   *
+   * @returns {Promise<void>}
+   */
+  private async sourceOnFirstTime(): Promise<void> {
+    // Prompt user if they want to add the file to allowlist
+    // and source the file
+    const projectName = (await this.config.getProjectRoot()).split("/").slice(-1);
+
+    await inputsave(this.denops);
+    const answer = await input(
+      this.denops,
+      `[projectlocal-vim] New project config file found at: "${projectName}", do you trust to run this? (y/n/C) `,
+    );
+    await inputrestore(this.denops);
+
+    if (answer === "y") {
+      // Add to the allowlist and source the file
+      await allowlist.addProjectConfigFile(this.config);
+      await this.sourceFile();
+      await this.showMessage("[projectlocal-vim] Added to the allow list and sourced!");
+    } else if (answer === "n") {
+      // Add to the allowlist but with ignore set to true
+      await allowlist.addProjectConfigFile(this.config, true);
+      await this.showMessage(
+        "[projectlocal-vim] Ignored! Use :ProjectLocalLoad to explicitly source the project config file",
+      );
+    } else {
+      await this.showMessage("[projectlocal-vim] Cancelled! We will prompt again the next time you open vim");
+    }
+  }
+
+  /**
+   * Prompt user to allow to source file if local config contents
+   * have changed
+   *
+   * @param {string} hash
+   * @returns {Promise<void>}
+   */
+  private async sourceOnHashChange(hash: string): Promise<void> {
+    // Prompt user to accept the changes
+    // and source the file
+    await inputsave(this.denops);
+    const answer = await input(this.denops, `[projectlocal-vim] Project config file changed, re-source file? (y/N) `);
+    await inputrestore(this.denops);
+
+    if (answer === "y") {
+      allowlist.updateProjectConfigFile(this.config, { configFileHash: hash });
+      await this.sourceFile();
+      await this.showMessage("[projectlocal-vim] Project config loaded!");
+    } else {
+      await this.showMessage("[projectlocal-vim] Cancelled! We will prompt again the next time you open vim");
+    }
+  }
+
+  /**
+   * Prompt user to allow to source file if local config contents
+   * have changed
+   *
+   * @returns {Promise<void>}
+   */
+  private async sourceOnAllowed(): Promise<void> {
+    const projectConfig = allowlist.getProjectConfig(this.config, await this.config.getProjectRoot());
+    const contents: string = Deno.readTextFileSync(await this.config.getProjectConfigFilepath());
+    const currentHash = hashFileContents(contents);
+
+    // Check if file has been updated
+    if (projectConfig?.configFileHash !== currentHash) {
+      // Prompt user to accept the changes
+      // and source the file
+      this.sourceOnHashChange(currentHash);
+    } else {
+      await this.sourceFile();
+      await this.showMessage("[projectlocal-vim] Project config loaded!");
     }
   }
 
@@ -111,7 +141,7 @@ export class ProjectLocal {
     const isNvim05 = await has(this.denops, "nvim-0.5");
     if (!isNvim05 && this.config.isProjectConfigLua()) {
       // We want to log this to the message history
-      const msg = `echomsg "[projectlocal-vim] Lua file only works with neovim v0.5 and up, use .vim file instead"`
+      const msg = `echomsg "[projectlocal-vim] Lua file only works with neovim v0.5 and up, use .vim file instead"`;
       await this.denops.cmd(msg);
       return;
     }
