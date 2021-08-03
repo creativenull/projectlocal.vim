@@ -11,6 +11,8 @@ support both vim and neovim.
 
 __Status: Alpha (Still testing the waters with denops but use at your own discretion 😃)__
 
+## Examples
+
 ## Requirements
 
 + [deno](https://deno.land)
@@ -63,7 +65,6 @@ Essentially, the goal of this plugin is to help you safely source your project-s
 
 [Revised from projectcmd.nvim]
 
-## Examples
 
 ## Getting Started
 
@@ -104,7 +105,7 @@ Below are the available commands for use:
     the local project config has changed then it will ask the user to allow sourcing the file. If there were no changes
     on the local project config file then source it automatically.
 + `:ProjectLocalAutoloadDisable` - Disable auto sourcing, if it was enabled. This means the next time you open vim then
-    it will not automatically source the local project config file, but can manually load the file via |:ProjectLocalLoad|.
+    it will not automatically source the local project config file, but can manually load the file via `:ProjectLocalLoad`.
 + `:ProjectLocalLoad` - Manually source the local project config file if autoload is disabled.
 
 [denops]: https://github.com/vim-denops/denops.vim
