@@ -149,7 +149,7 @@ export class ProjectLocal {
     try {
       await execute(this.denops, `source ${await this.config.getProjectConfigFilepath()}`);
     } catch (_e) {
-      await this.denops.call(`echomsg "[projectlocal-vim] Unable to source the file, check local file for any errors"`);
+      await this.denops.cmd(`echomsg "[projectlocal-vim] Unable to source the file, check local file for any errors"`);
     }
   }
 
