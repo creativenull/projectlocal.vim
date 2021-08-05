@@ -1,35 +1,39 @@
-import { Denops, nvimFn, has, expand, getcwd } from "./deps/denops_std.ts";
+import { Denops, nvimFn, fn } from "./deps/denops_std.ts";
+import { logger } from "./logger.ts"
 
 export interface UserConfig {
   showMessage: boolean;
   projectConfig: string;
+  debug: boolean;
 }
 
 export interface PartialUserConfig {
   showMessage?: boolean;
   projectConfig?: string;
+  debug?: boolean;
 }
 
 const defaultConfig: UserConfig = {
   showMessage: true,
   projectConfig: ".vim/init.vim",
+  debug: false,
 };
 
 async function getDefaultCacheDirectory(denops: Denops): Promise<string> {
   let cachepath: unknown;
-  if (await has(denops, "nvim")) {
+  if (await fn.has(denops, "nvim")) {
     cachepath = await nvimFn.stdpath(denops, "cache");
     return `${cachepath}/projectlocal`;
   } else {
     if (Deno.build.os === "darwin") {
       cachepath = "$HOME/Library/Caches/vim/projectlocal";
-      return (await expand(denops, cachepath)) as string;
+      return (await fn.expand(denops, cachepath)) as string;
     } else if (Deno.build.os === "windows") {
       cachepath = "$HOME/AppData/Temp/vim/projectlocal";
-      return (await expand(denops, cachepath)) as string;
+      return (await fn.expand(denops, cachepath)) as string;
     } else {
       cachepath = "$HOME/.cache/vim/projectlocal";
-      return (await expand(denops, cachepath)) as string;
+      return (await fn.expand(denops, cachepath)) as string;
     }
   }
 }
@@ -53,7 +57,7 @@ export class Config {
   }
 
   async getProjectRoot(): Promise<string> {
-    return (await getcwd(this.denops, 0, 0)) as string;
+    return (await fn.getcwd(this.denops, undefined)) as string;
   }
 
   async getProjectConfigFilepath(): Promise<string> {
@@ -72,6 +76,10 @@ export class Config {
   canSendMessage(): boolean {
     return this.config.showMessage;
   }
+
+  isDebugMode(): boolean {
+    return this.config.debug;
+  }
 }
 
 // Factory function to create a new Config class instance
@@ -81,8 +89,11 @@ export async function makeConfig(denops: Denops, config: PartialUserConfig): Pro
     ...(config as UserConfig),
   };
 
+
   const pluginConfig = new Config(denops, userConfig);
   pluginConfig.setCacheDirectory((await getDefaultCacheDirectory(denops)) as string);
+
+  logger(pluginConfig).debug({ userConfig })
 
   return pluginConfig;
 }
