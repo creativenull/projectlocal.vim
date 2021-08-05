@@ -124,21 +124,16 @@ export function getProjectConfig(config: Config, projectpath: string): Allowlist
  * @param {Config} config
  * @returns {boolean}
  */
-export function isAllowed(config: Config): boolean {
+export async function isAllowed(config: Config): Promise<boolean> {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  if (fileContents === "") {
+  if (fileContents === "" || fileContents === "[{}]") {
     return false;
   }
 
   const json = JSON.parse(fileContents) as AllowlistItem[];
-  const res = json.filter(
-    async (item) => item.projectDirectoryPath === (await config.getProjectRoot()) && !item.ignore,
-  );
-  if (res.length === 1) {
-    return true;
-  }
-
-  return false;
+  const projectRoot = await config.getProjectRoot();
+  const result = json.findIndex((item) => item.projectDirectoryPath === projectRoot)
+  return result !== -1;
 }
 
 /**
