@@ -1,5 +1,4 @@
 import { Denops, nvimFn, fn } from "./deps/denops_std.ts";
-import { logger } from "./logger.ts"
 
 export interface UserConfig {
   showMessage: boolean;
@@ -92,8 +91,6 @@ export async function makeConfig(denops: Denops, config: PartialUserConfig): Pro
 
   const pluginConfig = new Config(denops, userConfig);
   pluginConfig.setCacheDirectory((await getDefaultCacheDirectory(denops)) as string);
-
-  logger(pluginConfig).debug({ userConfig })
 
   return pluginConfig;
 }
