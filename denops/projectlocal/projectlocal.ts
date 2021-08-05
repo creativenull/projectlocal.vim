@@ -1,5 +1,5 @@
-import { Denops, inputsave, inputrestore, input, echo, execute, has } from "./deps/denops_std.ts";
-import { existsSync, ensureFile } from "./deps/std.ts";
+import { Denops, fn, helpers } from "./deps/denops_std.ts";
+import { fs } from "./deps/std.ts";
 import { Config } from "./config.ts";
 import * as allowlist from "./allowlist.ts";
 import { hashFileContents } from "./hasher.ts";
@@ -16,9 +16,9 @@ export class ProjectLocal {
     await this.bootstrap();
 
     // Check if project config exists in current project root
-    if (existsSync(await this.config.getProjectConfigFilepath())) {
+    if (fs.existsSync(await this.config.getProjectConfigFilepath())) {
       // Check if project root is allowed to be sourced
-      if (allowlist.isAllowed(this.config)) {
+      if (await allowlist.isAllowed(this.config)) {
         this.sourceOnAllowed();
       } else {
         this.sourceOnFirstTime();
@@ -52,12 +52,12 @@ export class ProjectLocal {
     // and source the file
     const projectName = (await this.config.getProjectRoot()).split("/").slice(-1);
 
-    await inputsave(this.denops);
-    const answer = await input(
+    await fn.inputsave(this.denops);
+    const answer = await fn.input(
       this.denops,
       `[projectlocal-vim] New project config file found at: "${projectName}", do you trust to run this? (y/n/C) `,
     );
-    await inputrestore(this.denops);
+    await fn.inputrestore(this.denops);
 
     if (answer === "y") {
       // Add to the allowlist and source the file
@@ -85,9 +85,12 @@ export class ProjectLocal {
   private async sourceOnHashChange(hash: string): Promise<void> {
     // Prompt user to accept the changes
     // and source the file
-    await inputsave(this.denops);
-    const answer = await input(this.denops, `[projectlocal-vim] Project config file changed, re-source file? (y/N) `);
-    await inputrestore(this.denops);
+    await fn.inputsave(this.denops);
+    const answer = await fn.input(
+      this.denops,
+      `[projectlocal-vim] Project config file changed, re-source file? (y/N) `,
+    );
+    await fn.inputrestore(this.denops);
 
     if (answer === "y") {
       allowlist.updateProjectConfigFile(this.config, { configFileHash: hash });
@@ -126,8 +129,8 @@ export class ProjectLocal {
    * @returns {Promise<void>}
    */
   private async bootstrap(): Promise<void> {
-    if (!existsSync(this.config.getAllowlistPath())) {
-      await ensureFile(this.config.getAllowlistPath());
+    if (!fs.existsSync(this.config.getAllowlistPath())) {
+      await fs.ensureFile(this.config.getAllowlistPath());
     }
   }
 
@@ -138,7 +141,7 @@ export class ProjectLocal {
    * @returns {Promise<void>}
    */
   private async sourceFile(): Promise<void> {
-    const isNvim05 = await has(this.denops, "nvim-0.5");
+    const isNvim05 = await fn.has(this.denops, "nvim-0.5");
     if (!isNvim05 && this.config.isProjectConfigLua()) {
       // We want to log this to the message history
       const msg = `echomsg "[projectlocal-vim] Lua file only works with neovim v0.5 and up, use .vim file instead"`;
@@ -147,7 +150,7 @@ export class ProjectLocal {
     }
 
     try {
-      await execute(this.denops, `source ${await this.config.getProjectConfigFilepath()}`);
+      await fn.execute(this.denops, `source ${await this.config.getProjectConfigFilepath()}`);
     } catch (_e) {
       await this.denops.cmd(`echomsg "[projectlocal-vim] Unable to source the file, check local file for any errors"`);
     }
@@ -161,7 +164,7 @@ export class ProjectLocal {
    */
   private async showMessage(msg: string): Promise<void> {
     if (this.config.canSendMessage()) {
-      await echo(this.denops, msg);
+      await helpers.echo(this.denops, msg);
     }
   }
 }

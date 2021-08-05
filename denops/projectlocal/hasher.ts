@@ -1,6 +1,6 @@
-import { createHash } from "./deps/std.ts";
+import { hash } from "./deps/std.ts";
 
 export function hashFileContents(contents: string): string {
-  const hasher = createHash("sha256");
+  const hasher = hash.createHash("sha256");
   return hasher.update(contents).toString();
 }

@@ -1,6 +1,6 @@
 import { Denops } from "./deps/denops_std.ts";
 import { isNumber, isObject } from "./deps/unknownutil.ts";
-import { g } from "./deps/denops_std.ts";
+import { vars } from "./deps/denops_std.ts";
 import { PartialUserConfig, Config, makeConfig } from "./config.ts";
 import { ProjectLocal } from "./projectlocal.ts";
 import * as allowlist from "./allowlist.ts";
@@ -8,7 +8,7 @@ import * as allowlist from "./allowlist.ts";
 export async function main(denops: Denops): Promise<void> {
   denops.dispatcher = {
     async autosource(): Promise<void> {
-      const userConfig = await g.get(denops, "projectlocal", null);
+      const userConfig = await vars.g.get(denops, "projectlocal", null);
       let config: Config;
 
       if (isObject<PartialUserConfig>(userConfig)) {
@@ -22,7 +22,7 @@ export async function main(denops: Denops): Promise<void> {
     },
 
     async load(): Promise<void> {
-      const userConfig = await g.get(denops, "projectlocal", null);
+      const userConfig = await vars.g.get(denops, "projectlocal", null);
       let config: Config;
 
       if (isObject<PartialUserConfig>(userConfig)) {
@@ -36,7 +36,7 @@ export async function main(denops: Denops): Promise<void> {
     },
 
     async enable(): Promise<void> {
-      const userConfig = await g.get(denops, "projectlocal", null);
+      const userConfig = await vars.g.get(denops, "projectlocal", null);
       let config: Config;
 
       if (isObject<PartialUserConfig>(userConfig)) {
@@ -50,7 +50,7 @@ export async function main(denops: Denops): Promise<void> {
     },
 
     async disable(): Promise<void> {
-      const userConfig = await g.get(denops, "projectlocal", null);
+      const userConfig = await vars.g.get(denops, "projectlocal", null);
       let config: Config;
 
       if (isObject<PartialUserConfig>(userConfig)) {
@@ -65,7 +65,7 @@ export async function main(denops: Denops): Promise<void> {
 
     async openLocalConfig(): Promise<void> {
       // Setup Config
-      const userConfig = await g.get(denops, "projectlocal", null);
+      const userConfig = await vars.g.get(denops, "projectlocal", null);
       let config: Config;
 
       if (isObject<PartialUserConfig>(userConfig)) {
@@ -84,7 +84,7 @@ export async function main(denops: Denops): Promise<void> {
   };
 
   // Assert if plugin is loaded, using this file instead of `plugin/projectlocal.vim`
-  const loaded = await g.get(denops, "loaded_projectlocal");
+  const loaded = await vars.g.get(denops, "loaded_projectlocal");
   if (isNumber(loaded) && loaded === 1) {
     return;
   }
@@ -94,5 +94,5 @@ export async function main(denops: Denops): Promise<void> {
   await denops.cmd(`command! ProjectLocalAutoloadEnable call denops#notify('${denops.name}', 'enable', [])`);
   await denops.cmd(`command! ProjectLocalAutoloadDisable call denops#notify('${denops.name}', 'disable', [])`);
 
-  await g.set(denops, "loaded_projectlocal", 1);
+  await vars.g.set(denops, "loaded_projectlocal", 1);
 }
