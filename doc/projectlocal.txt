@@ -8,33 +8,42 @@ unify both plugins to support both vim and neovim.
 
 OVERVIEW                                            *projectlocal-overview*
 
-If you've set |exrc| before, you would know that using it might execute
-malicious code, see |exrc|.  Therefore, you would also be advised to also
-set |secure| to disable some vim config options, see |secure|.
+If you've used |exrc| for setting project-level local configurations
+before, then you would know that using it might pose a risk where malicious
+code can be executed if downloading unknown projects from git repos with an
+`.exrc` file in that directory. Therefore, you would also be informed to also
+enable |secure| to disable some vim options to prevent the execution of such
+code.
 
-However, there might some options you may want to conditionally set in a
-project-level basis but the limitations of `secure` restrict you from those
-options. Some of these options include:
+However, there might some options you may want to conditionally set on a
+project-level basis but the limitations of |secure| restrict you from setting
+those options. Some of these options include:
 
-+ autocmd
++ autocmds
 + shell commands
 + write commands
 
-projectlocal-vim tries to tackle this by not using |secure| or
-|exrc| but opening your project config file written in vimL or Lua and
-sourcing it only if you allow the file to be executed or not.
+projectlocal-vim tries to tackle this by not using |secure| or |exrc| but by
+sourcing your project-level local configurations in a safe manner.
 
-What this means is that when you open a project directory with the local
-config file in it, projectlocal-vim will first check if the directory is
-allowed to have the local config. If it's not allowed, then it will prompt
-the user to accept the local config as part of the files being executed to
-set configurations for your project. If it's not on the allowed list, then
-it will not execute, if a user also says no for adding it to the allow list,
-then the local config file will not be loaded.
+What this means is that when you open a project for the first time, and
+projectlocal-vim detects a project config in the project directory, it will
+then prompt you to allow the local config to be sourced along with your vim
+config. Once you've accepted it, it will remember the project directory and
+will load the local configuration the next time you open vim in that project
+directory.
 
-Essentially, the goal of this plugin is to help you safely source your
-project-specific options. Think of it like an `.vscode/settings.json` file
-but for vim/neovim and written in vimL or Lua.
+This plugin will also not execute your local config, if you've made changes
+to the local config file after permitting it.  This means, that
+projectlocal-vim will again prompt you to accept the changes and re-source
+the local config file. It's designed to make sure any changes should go
+through the user first before sourcing it.
+
+Essentially, the goal of this plugin is to help you safely source your local
+configurations in a project. Think of it like an `.vscode/settings.json` file
+but for vim/neovim and written in vimscript or Lua. This gives you and your
+team more control on how to set vim configurations on the project and not
+mess with your user configurations.
 
 [Revised from projectcmd.nvim]
 
@@ -52,6 +61,7 @@ Default configurations are as follows:
     let g:projectlocal = {
         \ 'showMessage': v:true,
         \ 'projectConfig': '.vim/init.vim',
+	\ 'debug': v:false,
         \ }
 <
 
@@ -60,7 +70,8 @@ or in Lua:
 >
     vim.g.projectlocal = {
         showMessage = true,
-        projectConfig = '.vim/init.vim'
+        projectConfig = '.vim/init.vim',
+	debug = false,
     }
 <
 

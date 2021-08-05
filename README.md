@@ -4,14 +4,16 @@
 [![Vim 8.1.2424 or above](https://img.shields.io/badge/Vim-Support%208.1.2424-yellowgreen.svg?logo=vim)](https://github.com/vim/vim/tree/v8.1.2424)
 [![Neovim 0.4.4 or above](https://img.shields.io/badge/Neovim-Support%200.4.4-yellowgreen.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.4.4)
 
-Load your vim project configurations safely, for vim and neovim. Written in typescript via [denops.vim][denops]
+Load your vim project local configurations safely, for vim and neovim. Written in typescript for [denops.vim][denops].
 
-This is a combination of [projectcmd.vim][pcmdvim] and [projectcmd.nvim][pcmdnvim] with the aim to unify both plugins to
-support both vim and neovim.
+This is a combination of my [projectcmd.vim][pcmdvim] and [projectcmd.nvim][pcmdnvim] plugins with the aim to unify both
+plugins to support both vim and neovim.
 
 __Status: Alpha (Still testing the waters with denops but use at your own discretion 😃)__
 
 ## Examples
+
+(Coming Soon)
 
 ## Requirements
 
@@ -23,7 +25,7 @@ __Status: Alpha (Still testing the waters with denops but use at your own discre
 ## Install
 
 First follow the guide to [install deno](https://deno.land) in your machine. Then follow instructions below to install
-the plugin.
+the plugin via vim-plug, packer.nvim or any plugin manager that's similar to vim-plug.
 
 ### vim-plug
 
@@ -39,32 +41,39 @@ use {'creativenull/projectlocal-vim', requires = {'vim-denops/denops.vim'}}
 ```
 
 ## Overview
+### Why
 
-If you've used `set exrc` before, you would know that using it might execute malicious code, see [`:h 'exrc'`][vim-exrc].
-Therefore, you would also be advised to also enable `set secure` to disable some vim config options,
-see [`:h 'secure'`][vim-secure].
+If you've used `set exrc` for setting project-level local configurations before, then you would know that using it might
+pose a risk where malicious code can be executed if downloading unknown projects from git repos with an `.exrc` in that
+directory, see [`:h 'exrc'`][vim-exrc]. Therefore, you would also be informed to also enable `set secure` to disable
+some vim options to prevent the execution of such code, see [`:h 'secure'`][vim-secure].
 
-However, there might some options you may want to conditionally set in a project-level basis but the limitations of
-`secure` restrict you from those options. Some of these options include:
+However, there might some options you may want to conditionally set on a project-level basis but the limitations of
+`secure` restrict you from setting those options. Some of these options include:
 
-+ autocmd
++ autocmds
 + shell commands
 + write commands
 
-**projectlocal-vim** tries to tackle this by not using `set secure` or `set exrc` but opening your project config file
-written in vimL or Lua and sourcing it only if you allow the file to be executed or not.
+**projectlocal-vim** tries to tackle this by not using `set secure` or `set exrc` but by sourcing your project-level
+local configurations in a safe manner.
 
-What this means is that when you open a project directory with the local config file in it, **projectlocal-vim** will
-first check if the directory is allowed to have the local config. If it's not allowed, then it will prompt the user to
-accept the local config as part of the files being executed to set configurations for your project. If it's not on the
-allowed list, then it will not execute, if a user also says no for adding it to the allow list, then the local config
-file will not be loaded.
+### How it works
 
-Essentially, the goal of this plugin is to help you safely source your project-specific options. Think of it like an
-`.vscode/settings.json` file but for vim/neovim and written in vimL or Lua.
+What this means is that when you open a project for the first time, and **projectlocal-vim** detects a project config
+in the project directory, it will then prompt you to allow the local config to be sourced along with your vim config.
+Once you've accepted it, it will remember the project directory and will load the local configuration the next time you
+open vim in that project directory.
+
+This plugin will also not execute your local config, if you've made changes to the local config file after permitting it.
+This means, that **projectlocal-vim** will again prompt you to accept the changes and re-source the local config file.
+It's designed to make sure any changes should go through the user first before sourcing it.
+
+Essentially, the goal of this plugin is to help you safely source your local configurations in a project.
+Think of it like an `.vscode/settings.json` file but for vim/neovim and written in vimscript or Lua. This gives you and
+your team more control on how to set vim configurations on the project and not mess with your user configurations.
 
 [Revised from projectcmd.nvim]
-
 
 ## Getting Started
 
@@ -82,8 +91,9 @@ Default configurations are as follows and must be defined BEFORE your plugins ar
 
 ```vim
 let g:projectlocal = {
-    \ 'showMessage': v:true, " Show messages on the command line on what the plugin is doing
-    \ 'projectConfig': '.vim/init.vim', " Project config file located relative to the project directory
+    \ 'showMessage': v:true, " (Default) Show messages on the command line on what the plugin is doing
+    \ 'projectConfig': '.vim/init.vim', " (Default) Project config file, located in project root path
+    \ 'debug': v:false, " (Default) Enable debug mode
     \ }
 ```
 
@@ -91,8 +101,9 @@ Or in a `init.lua`:
 
 ```lua
 vim.g.projectlocal = {
-    showMessage = true, -- Show messages on the command line on what the plugin is doing
-    projectConfig = '.vim/init.vim', -- Project config file located relative to the project directory
+    showMessage = true, -- (Default) Show messages on the command line on what the plugin is doing
+    projectConfig = '.vim/init.vim', -- (Default) Project config file, located in project root path
+    debug = false, -- (Default) Enable debug mode
 }
 ```
 
@@ -108,6 +119,8 @@ Below are the available commands for use:
     it will not automatically source the local project config file, but can manually load the file via `:ProjectLocalLoad`.
 + `:ProjectLocalLoad` - Manually source the local project config file if autoload is disabled.
 
+[vim-exrc]: https://vimhelp.org/options.txt.html#'exrc'
+[vim-secure]: https://vimhelp.org/options.txt.html#'secure'
 [denops]: https://github.com/vim-denops/denops.vim
 [pcmdvim]: https://github.com/creativenull/projectcmd.vim
 [pcmdnvim]: https://github.com/creativenull/projectcmd.nvim
