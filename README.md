@@ -11,6 +11,12 @@ plugins to support both vim and neovim.
 
 __Status: Alpha (Still testing the waters with denops but use at your own discretion 😃)__
 
+## TODO
+
++ [ ] Add example gifs/videos
++ [ ] Add more commands, abbreviations if necessary
++ [ ] Ability to integrate certain plugins, like ALE, editorconfig, etc
+
 ## Examples
 
 (Coming Soon)
@@ -118,6 +124,11 @@ Below are the available commands for use:
 + `:ProjectLocalAutoloadDisable` - Disable auto sourcing, if it was enabled. This means the next time you open vim then
     it will not automatically source the local project config file, but can manually load the file via `:ProjectLocalLoad`.
 + `:ProjectLocalLoad` - Manually source the local project config file if autoload is disabled.
+
+## Contributing
+
+At this point, you're welcome to just look at the code and see what issue you can find or be able to propose additional
+features.
 
 [vim-exrc]: https://vimhelp.org/options.txt.html#'exrc'
 [vim-secure]: https://vimhelp.org/options.txt.html#'secure'
