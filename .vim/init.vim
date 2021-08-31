@@ -4,10 +4,10 @@ if not mod then
   return
 end
 
-local dls = require 'diagnosticls-nvim'
+local dls = require 'diagnosticls-configs-nvim'
 dls.setup {
   typescript = {
-    formatter = require 'diagnosticls-nvim.formatters.prettier',
+    formatter = require 'diagnosticls-configs.formatters.prettier',
   },
 }
 EOF
