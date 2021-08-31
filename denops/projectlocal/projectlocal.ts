@@ -68,7 +68,7 @@ export class ProjectLocal {
       // Add to the allowlist but with ignore set to true
       await allowlist.addProjectConfigFile(this.config, true);
       await this.showMessage(
-        "[projectlocal-vim] Ignored! Use :ProjectLocalLoad to explicitly source the project config file",
+        "[projectlocal-vim] Ignored! Use :PLLoad to explicitly source the project config file",
       );
     } else {
       await this.showMessage("[projectlocal-vim] Cancelled! We will prompt again the next time you open vim");

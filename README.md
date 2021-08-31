@@ -14,12 +14,21 @@ __Status: Alpha (Still testing the waters with denops but use at your own discre
 ## TODO
 
 + [ ] Add example gifs/videos
-+ [ ] Add more commands, abbreviations if necessary
 + [ ] Ability to integrate certain plugins, like ALE, editorconfig, etc
++ [X] Command to create local config file
++ [X] Add more commands, abbreviations if necessary
 
 ## Examples
+### Running for the first-time
 
-(Coming Soon)
+Here is an example of setting up a first time user with projectconfig-vim. In the video below, an ALE linter is setup
+for linting the project. This will prompt projectlocal-vim to accept the new local config file and source it.
+
+### Running after a change
+
+Here is an example of setting up after a change was made in the local config file. In the video below, an ALE fixer is
+setup for formatting files in the project. This will prompt projectlocal-vim to accept the changes before re-sourcing
+it.
 
 ## Requirements
 
@@ -88,7 +97,7 @@ To get started, just install the plugin and add a `init.vim` to you project dire
 projectlocal-vim and will prompt you to be allowed to be sourced for the first time.
 
 If you don't want to automatically source the file after opening vim and want to opt to manually source it, then first
-allow local config file to be loaded first and then run `:ProjectLocalAutoloadDisable` to disable it only for that
+allow local config file to be loaded first and then run `:PLAutoloadDisable` to disable it only for that
 project directory.
 
 ### Configuration
@@ -117,13 +126,13 @@ vim.g.projectlocal = {
 
 Below are the available commands for use:
 
-+ `:ProjectLocalConfig` - Open the project local config file, if it exists.
-+ `:ProjectLocalAutoloadEnable` - Enable auto sourcing, if it was disabled. This means on the next time you open vim and
++ `:PLConfig` - Open the project local config file, if it exists, else create it and then open it.
++ `:PLAutoloadEnable` - Enable auto sourcing, if it was disabled. This means on the next time you open vim and
     the local project config has changed then it will ask the user to allow sourcing the file. If there were no changes
     on the local project config file then source it automatically.
-+ `:ProjectLocalAutoloadDisable` - Disable auto sourcing, if it was enabled. This means the next time you open vim then
-    it will not automatically source the local project config file, but can manually load the file via `:ProjectLocalLoad`.
-+ `:ProjectLocalLoad` - Manually source the local project config file if autoload is disabled.
++ `:PLAutoloadDisable` - Disable auto sourcing, if it was enabled. This means the next time you open vim then
+    it will not automatically source the local project config file, but can manually load the file via `:PLLoad`.
++ `:PLLoad` - Manually source the local project config file if autoload is disabled.
 
 ## Contributing
 
