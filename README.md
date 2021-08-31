@@ -13,8 +13,8 @@ __Status: Alpha (Still testing the waters with denops but use at your own discre
 
 ## TODO
 
-+ [ ] Add example gifs/videos
 + [ ] Ability to integrate certain plugins, like ALE, editorconfig, etc
++ [X] Add example gifs/videos
 + [X] Command to create local config file
 + [X] Add more commands, abbreviations if necessary
 
@@ -24,11 +24,15 @@ __Status: Alpha (Still testing the waters with denops but use at your own discre
 Here is an example of setting up a first time user with projectconfig-vim. In the video below, an ALE linter is setup
 for linting the project. This will prompt projectlocal-vim to accept the new local config file and source it.
 
+[![asciicast](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq.svg)](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq)
+
 ### Running after a change
 
 Here is an example of setting up after a change was made in the local config file. In the video below, an ALE fixer is
 setup for formatting files in the project. This will prompt projectlocal-vim to accept the changes before re-sourcing
 it.
+
+[![asciicast](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL.svg)](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL)
 
 ## Requirements
 
