@@ -21,7 +21,7 @@ __Status: Alpha (Still testing the waters with denops but use at your own discre
 ## Examples
 ### Running for the first-time
 
-Here is an example of setting up a first time user with projectconfig-vim. In the video below, an ALE linter is setup
+Here is an example of setting up a first time use with projectconfig-vim. In the video below, an ALE linter is set up
 for linting the project. This will prompt projectlocal-vim to accept the new local config file and source it.
 
 [![asciicast](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq.svg)](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq)
@@ -29,7 +29,7 @@ for linting the project. This will prompt projectlocal-vim to accept the new loc
 ### Running after a change
 
 Here is an example of setting up after a change was made in the local config file. In the video below, an ALE fixer is
-setup for formatting files in the project. This will prompt projectlocal-vim to accept the changes before re-sourcing
+set up for formatting files in the project. This will prompt projectlocal-vim to accept the changes before re-sourcing
 it.
 
 [![asciicast](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL.svg)](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL)
