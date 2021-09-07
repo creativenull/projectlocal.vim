@@ -1,0 +1,4 @@
+* text=auto
+
+*.ts text
+*.vim text
