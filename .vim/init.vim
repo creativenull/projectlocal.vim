@@ -1,18 +1,16 @@
-lua << EOF
-local mod, errmsg = pcall(require, 'lspconfig')
-if not mod then
-  return
+let g:ale_linters = {}
+let g:ale_linters.typescript = ['deno']
+
+let g:ale_fixers = {}
+let g:ale_fixers.typescript = ['prettier']
+
+lua <<EOF
+local success, dls = pcall(require, 'diagnosticls-configs')
+if success then
+  dls.setup({
+    typescript = {
+      formatter = require('diagnosticls-configs.formatters.prettier'),
+    },
+  })
 end
-
-local dls = require 'diagnosticls-configs-nvim'
-dls.setup {
-  typescript = {
-    formatter = require 'diagnosticls-configs.formatters.prettier',
-  },
-}
 EOF
-
-augroup pl_events
-  au!
-  au FileType typescript let b:ale_linters = ['deno'] | let b:ale_fixers = ['prettier']
-augroup END
