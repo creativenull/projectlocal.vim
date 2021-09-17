@@ -13,7 +13,7 @@ Vimscript
     let g:projectlocal = {
         \ 'showMessage': v:true,
         \ 'projectConfig': '.vim/init.vim',
-	\ 'debug': v:false,
+        \ 'debug': v:false,
         \ }
 <
 
@@ -22,13 +22,13 @@ Lua
     vim.g.projectlocal = {
         showMessage = true,
         projectConfig = '.vim/init.vim',
-	debug = false,
+        debug = false,
     }
 <
 
 To get started, create the local config in your project root. The simplest
 way is to call `:PLConfig` which will create the file as defined in
-`g:projectlocal.projectConfig` filepath. You can also manually create the
+|g:projectlocal.projectConfig| filepath. You can also manually create the
 file.
 
 Start making changes into the file that is project specific and on the next
