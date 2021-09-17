@@ -40,29 +40,29 @@ on the repo https://github.com/creativenull/projectlocal-vim
 
 COMMANDS					    *projectlocal-commands*
 
-				*:PLConfig*
+                                *:PLConfig*
 PLConfig			Open the project local config file, if it
-				exists.
+                                exists.
 
-				*:PLAutoloadEnable*
+                                *:PLAutoloadEnable*
 PLAutoloadEnable		Enable auto sourcing, if it was disabled.
-				This means on the next time you open vim
-				and the local project config has changed
-				then it will ask the user to allow sourcing
-				the file. If there were no changes on the
-				local project config file then source it
-				automatically.
+                                This means on the next time you open vim
+                                and the local project config has changed
+                                then it will ask the user to allow sourcing
+                                the file. If there were no changes on the
+                                local project config file then source it
+                                automatically.
 
-				*:PLAutoloadDisable*
+                                *:PLAutoloadDisable*
 PLAutoloadDisable		Disable auto sourcing, if it was enabled.
-				This means the next time you open vim then
-				it will not automatically source the local
-				project config file, but can manually load
-				the file via |:PLLoad|.
+                                This means the next time you open vim then
+                                it will not automatically source the local
+                                project config file, but can manually load
+                                the file via |:PLLoad|.
 
-				*:PLLoad*
+                                *:PLLoad*
 PLLoad				Manually source the local project config
-				file if autoload is disabled.
+                                file if autoload is disabled.
 
 
  vim:tw=78:ts=8:noet:ft=help:norl:
