@@ -18,22 +18,6 @@ __Status: Alpha (Testing out denops but welcome for others to test)__
 + [X] Command to create local config file
 + [X] Add more commands, abbreviations if necessary
 
-## Examples
-### Running for the first-time
-
-Here is an example of setting up a first time use with projectconfig-vim. In the video below, an ALE linter is set up
-for linting the project. This will prompt projectlocal-vim to accept the new local config file and source it.
-
-[![asciicast](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq.svg)](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq)
-
-### Running after a change
-
-Here is an example of setting up after a change was made in the local config file. In the video below, an ALE fixer is
-set up for formatting files in the project. This will prompt projectlocal-vim to accept the changes before re-sourcing
-it.
-
-[![asciicast](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL.svg)](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL)
-
 ## Requirements
 
 + [deno](https://deno.land)
@@ -58,6 +42,27 @@ Plug 'creativenull/projectlocal-vim'
 ```lua
 use {'creativenull/projectlocal-vim', requires = {'vim-denops/denops.vim'}}
 ```
+
+## Examples
+### Running for the first-time
+
+Here is an example of setting up a first time use with projectconfig-vim. In the video below, an ALE linter is set up
+for linting the project. This will prompt projectlocal-vim to accept the new local config file and source it.
+
+[![asciicast](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq.svg)](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq)
+
+### Running after a change
+
+Here is an example of setting up after a change was made in the local config file. In the video below, an ALE fixer is
+set up for formatting files in the project. This will prompt projectlocal-vim to accept the changes before re-sourcing
+it.
+
+[![asciicast](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL.svg)](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL)
+
+## Documentation
+
+The documentation can be found over at [docs/projectlocal.txt][docs] and via vim after installation and calling the
+command `:help projectlocal`.
 
 ## Overview
 ### Why
@@ -94,11 +99,6 @@ your team more control on how to set vim configurations on the project and not m
 
 [Revised from projectcmd.nvim]
 
-## Documentation
-
-The documentation can be found over at [docs/projectlocal.txt][docs] and via vim after installation and calling the
-command `:help projectlocal`.
-
 ## Contributing
 
 At this point, you're welcome to just look at the code and see what issue you can find or be able to propose additional
@@ -112,4 +112,4 @@ need deno and prettier installed globally.
 [denops]: https://github.com/vim-denops/denops.vim
 [pcmdvim]: https://github.com/creativenull/projectcmd.vim
 [pcmdnvim]: https://github.com/creativenull/projectcmd.nvim
-[docs]: docs/projectlocal.txt
+[docs]: doc/projectlocal.txt
