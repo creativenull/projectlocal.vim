@@ -3,60 +3,12 @@ INTRODUCTION                              *projectlocal-vim* *projectlocal*
 Load your vim project configurations safely, for vim and neovim. Written in
 typescript via |denops.vim|.
 
-This is a combination of projectcmd.vim and projectcmd.nvim with the aim to
-unify both plugins to support both vim and neovim.
+CONFIGURATION                                        *projectlocal-config*
 
-OVERVIEW                                            *projectlocal-overview*
+Below are the default configurations, which must be defined before the plugin
+is loaded by your plugin manager:
 
-If you've used |exrc| for setting project-level local configurations
-before, then you would know that using it might pose a risk where malicious
-code can be executed if downloading unknown projects from git repos with an
-`.exrc` file in that directory. Therefore, you would also be informed to also
-enable |secure| to disable some vim options to prevent the execution of such
-code.
-
-However, there might some options you may want to conditionally set on a
-project-level basis but the limitations of |secure| restrict you from setting
-those options. Some of these options include:
-
-+ autocmds
-+ shell commands
-+ write commands
-
-projectlocal-vim tries to tackle this by not using |secure| or |exrc| but by
-sourcing your project-level local configurations in a safe manner.
-
-What this means is that when you open a project for the first time, and
-projectlocal-vim detects a project config in the project directory, it will
-then prompt you to allow the local config to be sourced along with your vim
-config. Once you've accepted it, it will remember the project directory and
-will load the local configuration the next time you open vim in that project
-directory.
-
-This plugin will also not execute your local config, if you've made changes
-to the local config file after permitting it.  This means, that
-projectlocal-vim will again prompt you to accept the changes and re-source
-the local config file. It's designed to make sure any changes should go
-through the user first before sourcing it.
-
-Essentially, the goal of this plugin is to help you safely source your local
-configurations in a project. Think of it like an `.vscode/settings.json` file
-but for vim/neovim and written in vimscript or Lua. This gives you and your
-team more control on how to set vim configurations on the project and not
-mess with your user configurations.
-
-[Revised from projectcmd.nvim]
-
-CONFIGURATIONS                                        *projectlocal-config*
-
-To get started, just install the plugin and add a `init.vim` to you project
-directory into the location: `$PROJECT/.vim/init.vim` (where `$PROJECT` is
-your project directory). This will automatically be picked up by
-projectlocal-vim and will prompt you to be allowed to be sourced for the
-first time.
-
-Default configurations are as follows:
-
+Vimscript
 >
     let g:projectlocal = {
         \ 'showMessage': v:true,
@@ -65,8 +17,7 @@ Default configurations are as follows:
         \ }
 <
 
-or in Lua:
-
+Lua
 >
     vim.g.projectlocal = {
         showMessage = true,
@@ -75,37 +26,43 @@ or in Lua:
     }
 <
 
-These must be defined BEFORE the plugin is loaded via your plugin manager.
+To get started, create the local config in your project root. The simplest
+way is to call `:PLConfig` which will create the file as defined in
+`g:projectlocal.projectConfig` filepath. You can also manually create the
+file.
+
+Start making changes into the file that is project specific and on the next
+reload of vim/nvim, it will prompt you to accept the file to be sourced.
+
+Note: Whenever you change your local config file, projectlocal will prompt you
+to accept the changes before it will be sourced. Refer to the README.md
+on the repo https://github.com/creativenull/projectlocal-vim
 
 COMMANDS					    *projectlocal-commands*
 
-Commands associated to enable/disable auto sourcing the local project config
-or manually sourcing it.
+				*:PLConfig*
+PLConfig			Open the project local config file, if it
+				exists.
 
-                                 *:ProjectLocalConfig*
-:ProjectLocalConfig              Open the project local config file, if it
-                                 exists.
+				*:PLAutoloadEnable*
+PLAutoloadEnable		Enable auto sourcing, if it was disabled.
+				This means on the next time you open vim
+				and the local project config has changed
+				then it will ask the user to allow sourcing
+				the file. If there were no changes on the
+				local project config file then source it
+				automatically.
 
+				*:PLAutoloadDisable*
+PLAutoloadDisable		Disable auto sourcing, if it was enabled.
+				This means the next time you open vim then
+				it will not automatically source the local
+				project config file, but can manually load
+				the file via |:PLLoad|.
 
-                                 *:ProjectLocalAutoloadEnable*
-:ProjectLocalAutoloadEnable      Enable auto sourcing, if it was disabled.
-				 This means on the next time you open vim
-				 and the local project config has changed
-				 then it will ask the user to allow sourcing
-				 the file. If there were no changes on the
-				 local project config file then source it
-				 automatically.
-
-                                 *:ProjectLocalAutoloadDisable*
-:ProjectLocalAutoloadDisable     Disable auto sourcing, if it was enabled.
-				 This means the next time you open vim then
-				 it will not automatically source the local
-				 project config file, but can manually load
-				 the file via |:ProjectLocalLoad|.
-
-                                 *:ProjectLocalLoad*
-:ProjectLocalLoad                Manually source the local project config
-				 file if autoload is disabled.
+				*:PLLoad*
+PLLoad				Manually source the local project config
+				file if autoload is disabled.
 
 
  vim:tw=78:ts=8:noet:ft=help:norl:

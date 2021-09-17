@@ -9,7 +9,7 @@ Load your vim project local configurations safely, for vim and neovim. Written i
 This is a combination of my [projectcmd.vim][pcmdvim] and [projectcmd.nvim][pcmdnvim] plugins with the aim to unify both
 plugins to support both vim and neovim.
 
-__Status: Alpha (Still testing the waters with denops but use at your own discretion 😃)__
+__Status: Alpha (Testing out denops but welcome for others to test)__
 
 ## TODO
 
@@ -39,7 +39,7 @@ it.
 + [deno](https://deno.land)
 + [denops.vim][denops]
 + Vim 8.2 and up (check `:version`)
-+ Neovim 0.4.4 and up (check `:version`)
++ Neovim 0.4 and up (check `:version`)
 
 ## Install
 
@@ -94,57 +94,22 @@ your team more control on how to set vim configurations on the project and not m
 
 [Revised from projectcmd.nvim]
 
-## Getting Started
+## Documentation
 
-To get started, just install the plugin and add a `init.vim` to you project directory into the location:
-`$PROJECT/.vim/init.vim` (where `$PROJECT` is your project directory). This will automatically be picked up by
-projectlocal-vim and will prompt you to be allowed to be sourced for the first time.
-
-If you don't want to automatically source the file after opening vim and want to opt to manually source it, then first
-allow local config file to be loaded first and then run `:PLAutoloadDisable` to disable it only for that
-project directory.
-
-### Configuration
-
-Default configurations are as follows and must be defined BEFORE your plugins are loaded via your plugin manager:
-
-```vim
-let g:projectlocal = {
-    \ 'showMessage': v:true, " (Default) Show messages on the command line on what the plugin is doing
-    \ 'projectConfig': '.vim/init.vim', " (Default) Project config file, located in project root path
-    \ 'debug': v:false, " (Default) Enable debug mode
-    \ }
-```
-
-Or in a `init.lua`:
-
-```lua
-vim.g.projectlocal = {
-    showMessage = true, -- (Default) Show messages on the command line on what the plugin is doing
-    projectConfig = '.vim/init.vim', -- (Default) Project config file, located in project root path
-    debug = false, -- (Default) Enable debug mode
-}
-```
-
-## Commands
-
-Below are the available commands for use:
-
-+ `:PLConfig` - Open the project local config file, if it exists, else create it and then open it.
-+ `:PLAutoloadEnable` - Enable auto sourcing, if it was disabled. This means on the next time you open vim and
-    the local project config has changed then it will ask the user to allow sourcing the file. If there were no changes
-    on the local project config file then source it automatically.
-+ `:PLAutoloadDisable` - Disable auto sourcing, if it was enabled. This means the next time you open vim then
-    it will not automatically source the local project config file, but can manually load the file via `:PLLoad`.
-+ `:PLLoad` - Manually source the local project config file if autoload is disabled.
+The documentation can be found over at [docs/projectlocal.txt][docs] and via vim after installation and calling the
+command `:help projectlocal`.
 
 ## Contributing
 
 At this point, you're welcome to just look at the code and see what issue you can find or be able to propose additional
-features.
+features 🙂.
+
+Linting and LSP provided by Deno, formatting is done by prettier until there is support for `deno fmt` config. You will
+need deno and prettier installed globally.
 
 [vim-exrc]: https://vimhelp.org/options.txt.html#'exrc'
 [vim-secure]: https://vimhelp.org/options.txt.html#'secure'
 [denops]: https://github.com/vim-denops/denops.vim
 [pcmdvim]: https://github.com/creativenull/projectcmd.vim
 [pcmdnvim]: https://github.com/creativenull/projectcmd.nvim
+[docs]: docs/projectlocal.txt
