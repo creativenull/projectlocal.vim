@@ -1,16 +1,6 @@
-let g:ale_linters = {}
-let g:ale_linters.typescript = ['deno']
-
-let g:ale_fixers = {}
-let g:ale_fixers.typescript = ['prettier']
-
-lua <<EOF
-local success, dls = pcall(require, 'diagnosticls-configs')
-if success then
-  dls.setup({
-    typescript = {
-      formatter = require('diagnosticls-configs.formatters.prettier'),
-    },
-  })
-end
-EOF
+" Powered by projectlocal-vim
+" https://github.com/creativenull/projectlocal-vim
+augroup projectlocal_events
+  autocmd!
+  autocmd FileType typescript let b:ale_linters = ['deno'] | let b:ale_fixers = ['prettier']
+augroup END
