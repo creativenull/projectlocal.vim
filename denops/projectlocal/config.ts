@@ -88,7 +88,6 @@ export async function makeConfig(denops: Denops, config: PartialUserConfig): Pro
     ...(config as UserConfig),
   };
 
-
   const pluginConfig = new Config(denops, userConfig);
   pluginConfig.setCacheDirectory((await getDefaultCacheDirectory(denops)) as string);
 

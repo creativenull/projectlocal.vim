@@ -132,7 +132,7 @@ export async function isAllowed(config: Config): Promise<boolean> {
 
   const json = JSON.parse(fileContents) as AllowlistItem[];
   const projectRoot = await config.getProjectRoot();
-  const result = json.findIndex((item) => item.projectDirectoryPath === projectRoot)
+  const result = json.findIndex((item) => item.projectDirectoryPath === projectRoot);
   return result !== -1;
 }
 

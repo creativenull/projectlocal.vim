@@ -55,7 +55,7 @@ export class ProjectLocal {
       this.denops,
       `[projectlocal-vim] New project config file found at: "${projectName}", do you trust to run this?`,
       "&Yes\n&No (Do not prompt again)\n&Open Config\n&Cancel",
-      4
+      4,
     );
 
     if (answer === 1) {
@@ -69,7 +69,7 @@ export class ProjectLocal {
       await this.showMessage("[projectlocal-vim] Ignored! Use :PLLoad to explicitly source the project config file");
     } else if (answer === 3) {
       const fs = new ProjectLocalFileSystem(this.denops, this.config);
-      fs.openLocalConfig()
+      fs.openLocalConfig();
     } else {
       await this.showMessage("[projectlocal-vim] Cancelled! We will prompt again the next time you open vim");
     }
@@ -87,8 +87,8 @@ export class ProjectLocal {
       this.denops,
       `[projectlocal-vim] Project config file changed, re-source file?`,
       "&Yes\n&No",
-      2
-    )
+      2,
+    );
 
     if (answer === 1) {
       allowlist.updateProjectConfigFile(this.config, { configFileHash: hash });

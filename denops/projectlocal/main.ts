@@ -75,7 +75,7 @@ export function main(denops: Denops) {
       }
 
       const fs = new ProjectLocalFileSystem(denops, config);
-      fs.openLocalConfig()
+      fs.openLocalConfig();
     },
   };
 }
