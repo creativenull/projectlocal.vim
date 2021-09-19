@@ -1,6 +1,6 @@
 # projectlocal-vim
 
-[![Deno 1.11.0 or above](https://img.shields.io/badge/Deno-Support%201.11.0-yellowgreen.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.11.0)
+[![Deno 1.13.0 or above](https://img.shields.io/badge/Deno-Support%201.13.0-yellowgreen.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.13.0)
 [![Vim 8.1.2424 or above](https://img.shields.io/badge/Vim-Support%208.1.2424-yellowgreen.svg?logo=vim)](https://github.com/vim/vim/tree/v8.1.2424)
 [![Neovim 0.4.4 or above](https://img.shields.io/badge/Neovim-Support%200.4.4-yellowgreen.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.4.4)
 
@@ -20,7 +20,7 @@ __Status: Alpha (Testing out denops but welcome for others to test)__
 
 ## Requirements
 
-+ [deno](https://deno.land)
++ [deno v1.13 and up](https://deno.land)
 + [denops.vim][denops]
 + Vim 8.2 and up (check `:version`)
 + Neovim 0.4 and up (check `:version`)
