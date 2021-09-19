@@ -1,4 +1,4 @@
-import { Denops } from "./deps/denops_std.ts";
+import { Denops, helpers } from "./deps/denops_std.ts";
 import { fs } from "./deps/std.ts";
 import { Config } from "./config.ts";
 import { projectLocalVimTemplate, projectLocalLuaTemplate } from "./templates.ts";
@@ -9,8 +9,13 @@ export class ProjectLocalFileSystem {
   async openLocalConfig(): Promise<void> {
     const filepath = await this.config.getProjectConfigFilepath();
 
+    await helpers.execute(this.denops, `echom "${Deno.cwd()}"`);
+
     if (!fs.existsSync(filepath)) {
-      await this.denops.cmd(`echo "[projectlocal-vim] Not detected, creating new local config file!"`);
+      await helpers.echo(this.denops, "[projectlocal-vim] Not detected, creating new local config file!");
+
+      // Create file if it does not exists
+      await fs.ensureFile(filepath);
 
       if (this.config.isProjectConfigLua()) {
         await Deno.writeTextFile(filepath, projectLocalLuaTemplate);
@@ -19,6 +24,6 @@ export class ProjectLocalFileSystem {
       }
     }
 
-    await this.denops.cmd(`edit ${filepath}`);
+    await helpers.execute(this.denops, `edit ${filepath}`);
   }
 }
