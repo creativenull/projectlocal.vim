@@ -1,0 +1,8 @@
+:PLAutoloadDisable	projectlocal.txt	/*:PLAutoloadDisable*
+:PLAutoloadEnable	projectlocal.txt	/*:PLAutoloadEnable*
+:PLConfig	projectlocal.txt	/*:PLConfig*
+:PLLoad	projectlocal.txt	/*:PLLoad*
+projectlocal	projectlocal.txt	/*projectlocal*
+projectlocal-commands	projectlocal.txt	/*projectlocal-commands*
+projectlocal-config	projectlocal.txt	/*projectlocal-config*
+projectlocal-vim	projectlocal.txt	/*projectlocal-vim*

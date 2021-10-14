@@ -1,4 +1,4 @@
-import { Denops, nvimFn, fn } from "./deps/denops_std.ts";
+import { Denops, fn, nvimFn } from "./deps/denops_std.ts";
 
 export interface UserConfig {
   showMessage: boolean;
@@ -82,14 +82,19 @@ export class Config {
 }
 
 // Factory function to create a new Config class instance
-export async function makeConfig(denops: Denops, config: PartialUserConfig): Promise<Config> {
+export async function makeConfig(
+  denops: Denops,
+  config: PartialUserConfig,
+): Promise<Config> {
   const userConfig: UserConfig = {
     ...defaultConfig,
     ...(config as UserConfig),
   };
 
   const pluginConfig = new Config(denops, userConfig);
-  pluginConfig.setCacheDirectory((await getDefaultCacheDirectory(denops)) as string);
+  pluginConfig.setCacheDirectory(
+    (await getDefaultCacheDirectory(denops)) as string,
+  );
 
   return pluginConfig;
 }

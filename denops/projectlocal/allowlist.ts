@@ -39,7 +39,10 @@ export interface PartialAllowlistItem {
  * @param {boolean} ignore Ignore the project dirpath on the next vim startup
  * @returns {Promise<void>}
  */
-export async function addProjectConfigFile(config: Config, ignore?: boolean): Promise<void> {
+export async function addProjectConfigFile(
+  config: Config,
+  ignore?: boolean,
+): Promise<void> {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   let json: AllowlistItem[];
   if (fileContents === "") {
@@ -50,7 +53,9 @@ export async function addProjectConfigFile(config: Config, ignore?: boolean): Pr
 
   json.push({
     projectDirectoryPath: await config.getProjectRoot(),
-    configFileHash: hashFileContents(Deno.readTextFileSync(await config.getProjectConfigFilepath())),
+    configFileHash: hashFileContents(
+      Deno.readTextFileSync(await config.getProjectConfigFilepath()),
+    ),
     autoload: true,
     ignore: ignore ?? false,
   });
@@ -71,8 +76,13 @@ export function removeProjectConfigFile(config: Config): void {
   }
 
   const json = JSON.parse(fileContents) as AllowlistItem[];
-  const newJsonContents = json.filter(async (item) => item.projectDirectoryPath !== (await config.getProjectRoot()));
-  Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(newJsonContents));
+  const newJsonContents = json.filter(async (item) =>
+    item.projectDirectoryPath !== (await config.getProjectRoot())
+  );
+  Deno.writeTextFileSync(
+    config.getAllowlistPath(),
+    JSON.stringify(newJsonContents),
+  );
 }
 
 /**
@@ -82,7 +92,10 @@ export function removeProjectConfigFile(config: Config): void {
  * @param {PartialAllowlistItem} newSettings
  * @returns {void}
  */
-export async function updateProjectConfigFile(config: Config, newSettings: PartialAllowlistItem): Promise<void> {
+export async function updateProjectConfigFile(
+  config: Config,
+  newSettings: PartialAllowlistItem,
+): Promise<void> {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   if (fileContents === "") {
     return;
@@ -90,7 +103,9 @@ export async function updateProjectConfigFile(config: Config, newSettings: Parti
 
   const json = JSON.parse(fileContents) as AllowlistItem[];
   const projectRoot = await config.getProjectRoot();
-  const ind = json.findIndex((item) => item.projectDirectoryPath === projectRoot);
+  const ind = json.findIndex((item) =>
+    item.projectDirectoryPath === projectRoot
+  );
 
   json[ind] = {
     ...json[ind],
@@ -107,14 +122,19 @@ export async function updateProjectConfigFile(config: Config, newSettings: Parti
  * @param {string} projectpath
  * @returns {void}
  */
-export function getProjectConfig(config: Config, projectpath: string): AllowlistItem | null {
+export function getProjectConfig(
+  config: Config,
+  projectpath: string,
+): AllowlistItem | null {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
   if (fileContents === "") {
     return null;
   }
 
   const json = JSON.parse(fileContents) as AllowlistItem[];
-  const [project] = json.filter((item) => item.projectDirectoryPath === projectpath);
+  const [project] = json.filter((item) =>
+    item.projectDirectoryPath === projectpath
+  );
   return project;
 }
 
@@ -132,7 +152,9 @@ export async function isAllowed(config: Config): Promise<boolean> {
 
   const json = JSON.parse(fileContents) as AllowlistItem[];
   const projectRoot = await config.getProjectRoot();
-  const result = json.findIndex((item) => item.projectDirectoryPath === projectRoot);
+  const result = json.findIndex((item) =>
+    item.projectDirectoryPath === projectRoot
+  );
   return result !== -1;
 }
 

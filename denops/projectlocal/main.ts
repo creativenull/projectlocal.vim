@@ -1,8 +1,8 @@
-import { Denops, vars, helpers } from "./deps/denops_std.ts";
+import { Denops, helpers, vars } from "./deps/denops_std.ts";
 import { isObject } from "./deps/unknownutil.ts";
-import { PartialUserConfig, Config, makeConfig } from "./config.ts";
+import { Config, makeConfig, PartialUserConfig } from "./config.ts";
 import { ProjectLocal } from "./projectlocal.ts";
-import { ProjectLocalFileSystem } from "./fs.ts";
+import { PLFileSystem } from "./fs.ts";
 import * as allowlist from "./allowlist.ts";
 
 export function main(denops: Denops) {
@@ -64,7 +64,6 @@ export function main(denops: Denops) {
     },
 
     async openLocalConfig(): Promise<void> {
-      // Setup Config
       const userConfig = await vars.g.get(denops, "projectlocal", null);
       let config: Config;
 
@@ -74,7 +73,7 @@ export function main(denops: Denops) {
         config = await makeConfig(denops, {});
       }
 
-      const fs = new ProjectLocalFileSystem(denops, config);
+      const fs = new PLFileSystem(denops, config);
       fs.openLocalConfig();
     },
   };
