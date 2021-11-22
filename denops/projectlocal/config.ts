@@ -28,7 +28,7 @@ async function getDefaultCacheDirectory(denops: Denops): Promise<string> {
       cachepath = "$HOME/Library/Caches/vim/projectlocal";
       return (await fn.expand(denops, cachepath)) as string;
     } else if (Deno.build.os === "windows") {
-      cachepath = "$HOME/AppData/Temp/vim/projectlocal";
+      cachepath = "$HOME\\AppData\\Temp\\vim\\projectlocal";
       return (await fn.expand(denops, cachepath)) as string;
     } else {
       cachepath = "$HOME/.cache/vim/projectlocal";

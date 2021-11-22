@@ -127,24 +127,32 @@ export class ProjectLocal {
    * @returns {Promise<void>}
    */
   private async sourceOnAllowed(): Promise<void> {
-    const projectConfig = allowlist.getProjectConfig(
-      this.config,
-      await this.config.getProjectRoot(),
-    );
+    try {
+      const projectConfig = allowlist.getProjectConfig(
+        this.config,
+        await this.config.getProjectRoot(),
+      );
 
-    const contents: string = Deno.readTextFileSync(
-      await this.config.getProjectConfigFilepath(),
-    );
-    const currentHash = await hashFileContents(contents);
+      const contents: string = Deno.readTextFileSync(
+        await this.config.getProjectConfigFilepath(),
+      );
+      const currentHash = await hashFileContents(contents);
 
-    // Check if file has been updated
-    if (projectConfig?.configFileHash !== currentHash) {
-      this.sourceOnHashChange(currentHash);
-    } else {
-      if (!projectConfig?.ignore && projectConfig?.autoload) {
-        // Only source if it's not ignored
-        await this.sourceFile();
-        await this.showMessage("[projectlocal-vim] Project config loaded!");
+      // Check if file has been updated
+      if (projectConfig?.configFileHash !== currentHash) {
+        this.sourceOnHashChange(currentHash);
+      } else {
+        if (!projectConfig?.ignore && projectConfig?.autoload) {
+          // Only source if it's not ignored
+          await this.sourceFile();
+          await this.showMessage("[projectlocal-vim] Project config loaded!");
+        }
+      }
+    } catch (e) {
+      if (typeof e === "string") {
+        await helpers.execute(this.denops, e);
+      } else {
+        throw e;
       }
     }
   }
@@ -171,8 +179,7 @@ export class ProjectLocal {
     if (!isNvim05 && this.config.isProjectConfigLua()) {
       const msg =
         `echomsg "[projectlocal-vim] Lua file only works with neovim v0.5 and up, use .vim file instead"`;
-      await helpers.execute(this.denops, msg);
-      return;
+      throw msg;
     }
 
     try {
@@ -183,7 +190,7 @@ export class ProjectLocal {
     } catch (_) {
       const msg =
         `echomsg "[projectlocal-vim] Unable to source the file, check local file for any errors"`;
-      await helpers.execute(this.denops, msg);
+      throw msg;
     }
   }
 
