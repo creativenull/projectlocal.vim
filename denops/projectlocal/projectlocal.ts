@@ -135,7 +135,7 @@ export class ProjectLocal {
     const contents: string = Deno.readTextFileSync(
       await this.config.getProjectConfigFilepath(),
     );
-    const currentHash = hashFileContents(contents);
+    const currentHash = await hashFileContents(contents);
 
     // Check if file has been updated
     if (projectConfig?.configFileHash !== currentHash) {

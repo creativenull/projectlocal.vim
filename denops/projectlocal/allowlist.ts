@@ -53,7 +53,7 @@ export async function addProjectConfigFile(
 
   json.push({
     projectDirectoryPath: await config.getProjectRoot(),
-    configFileHash: hashFileContents(
+    configFileHash: await hashFileContents(
       Deno.readTextFileSync(await config.getProjectConfigFilepath()),
     ),
     autoload: true,
