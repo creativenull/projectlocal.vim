@@ -56,7 +56,7 @@ export class Config {
   }
 
   async getProjectRoot(): Promise<string> {
-    if (Deno.build.os === 'windows') {
+    if (Deno.build.os === "windows") {
       const cwd = await fn.getcwd(this.denops, undefined) as string;
       return await fn.escape(this.denops, cwd, " \\") as string;
     } else {
@@ -66,11 +66,7 @@ export class Config {
 
   async getProjectConfigFilepath(): Promise<string> {
     const projectRoot = await this.getProjectRoot();
-    if (Deno.build.os === 'windows') {
-      return `${projectRoot}\\${this.config.projectConfig}`;
-    } else {
-      return `${projectRoot}/${this.config.projectConfig}`;
-    }
+    return `${projectRoot}/${this.config.projectConfig}`;
   }
 
   isProjectConfigLua(): boolean {
