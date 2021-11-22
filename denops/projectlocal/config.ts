@@ -56,12 +56,21 @@ export class Config {
   }
 
   async getProjectRoot(): Promise<string> {
-    return (await fn.getcwd(this.denops, undefined)) as string;
+    if (Deno.build.os === 'windows') {
+      const cwd = await fn.getcwd(this.denops, undefined) as string;
+      return await fn.escape(this.denops, cwd, " \\") as string;
+    } else {
+      return (await fn.getcwd(this.denops, undefined)) as string;
+    }
   }
 
   async getProjectConfigFilepath(): Promise<string> {
     const projectRoot = await this.getProjectRoot();
-    return `${projectRoot}/${this.config.projectConfig}`;
+    if (Deno.build.os === 'windows') {
+      return `${projectRoot}\\${this.config.projectConfig}`;
+    } else {
+      return `${projectRoot}/${this.config.projectConfig}`;
+    }
   }
 
   isProjectConfigLua(): boolean {

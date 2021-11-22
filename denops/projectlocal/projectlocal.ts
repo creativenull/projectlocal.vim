@@ -60,9 +60,8 @@ export class ProjectLocal {
    * @returns {Promise<void>}
    */
   private async sourceOnFirstTime(): Promise<void> {
-    const projectName = (await this.config.getProjectRoot()).split("/").slice(
-      -1,
-    );
+    const projectName = (await this.config.getProjectRoot())
+      .split("/").slice(-1);
 
     const answer = await fn.confirm(
       this.denops,
