@@ -38,7 +38,7 @@ export class PLFileSystem {
     try {
       await Deno.stat(filepath);
       return true;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
