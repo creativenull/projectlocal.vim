@@ -13,7 +13,10 @@ __Status: Alpha (Testing out denops but welcome for others to test)__
 
 ## TODO
 
-+ [ ] Ability to integrate certain plugins, like ALE, editorconfig, etc
++ Use of JSON file for some sane configs, for things like:
+    + LSP Client specific to the project - nvim-lsp, ale, ycm, etc
+    + Vim global variables - for plugins that require these var setup for project
+    + Autocmd/Events - for some autocmd code (Caution on this, maybe find some way for a more explicit permission)
 + [X] Add example gifs/videos
 + [X] Command to create local config file
 + [X] Add more commands, abbreviations if necessary
