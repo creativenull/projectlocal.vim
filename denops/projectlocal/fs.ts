@@ -2,6 +2,7 @@ import { Denops, helpers } from "./deps/denops_std.ts";
 import { fs } from "./deps/std.ts";
 import { Config } from "./config.ts";
 import {
+  projectLocalJsonTemplate,
   projectLocalLuaTemplate,
   projectLocalVimTemplate,
 } from "./templates.ts";
@@ -26,8 +27,10 @@ export class PLFileSystem {
 
       if (this.config.isProjectConfigLua()) {
         await Deno.writeTextFile(filepath, projectLocalLuaTemplate);
-      } else {
+      } else if (this.config.isProjectConfigVim()) {
         await Deno.writeTextFile(filepath, projectLocalVimTemplate);
+      } else if (this.config.isProjectConfigJson()) {
+        await Deno.writeTextFile(filepath, projectLocalJsonTemplate);
       }
     }
 
@@ -40,6 +43,15 @@ export class PLFileSystem {
       return true;
     } catch (_) {
       return false;
+    }
+  }
+
+  static async parseJson(filepath: string): Promise<any> {
+    try {
+      const fileContents = await Deno.readTextFile(filepath);
+      return JSON.parse(fileContents);
+    } catch (e) {
+      throw e;
     }
   }
 }

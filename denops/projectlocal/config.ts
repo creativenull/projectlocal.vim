@@ -77,6 +77,10 @@ export class Config {
     return this.config.projectConfig.endsWith(".vim");
   }
 
+  isProjectConfigJson(): boolean {
+    return this.config.projectConfig.endsWith(".json");
+  }
+
   canSendMessage(): boolean {
     return this.config.showMessage;
   }

@@ -182,11 +182,21 @@ export class ProjectLocal {
     }
 
     try {
-      await fn.execute(
-        this.denops,
-        `source ${await this.config.getProjectConfigFilepath()}`,
-      );
-    } catch (_) {
+      if (
+        this.config.isProjectConfigLua() || this.config.isProjectConfigVim()
+      ) {
+        await fn.execute(
+          this.denops,
+          `source ${await this.config.getProjectConfigFilepath()}`,
+        );
+      } else {
+        const jsonFilepath = await this.config.getProjectConfigFilepath();
+        await helpers.execute(
+          this.denops,
+          `lua require('projectlocal').run("${jsonFilepath}")`,
+        );
+      }
+    } catch (e) {
       const msg =
         `echomsg "[projectlocal-vim] Unable to source the file, check local file for any errors"`;
       throw msg;
