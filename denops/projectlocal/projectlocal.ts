@@ -177,7 +177,7 @@ export class ProjectLocal {
     const isNvim05 = await fn.has(this.denops, "nvim-0.5");
     if (!isNvim05 && this.config.isProjectConfigLua()) {
       const msg =
-        `echomsg "[projectlocal-vim] Lua file only works with neovim v0.5 and up, use .vim file instead"`;
+        `echom "[projectlocal-vim] nvim >= 0.5 is required for lua files"`;
       throw msg;
     }
 
@@ -185,20 +185,53 @@ export class ProjectLocal {
       if (
         this.config.isProjectConfigLua() || this.config.isProjectConfigVim()
       ) {
+        // For .lua and .vim files
         await fn.execute(
           this.denops,
           `source ${await this.config.getProjectConfigFilepath()}`,
         );
       } else {
-        const jsonFilepath = await this.config.getProjectConfigFilepath();
-        await helpers.execute(
-          this.denops,
-          `lua require('projectlocal').run("${jsonFilepath}")`,
+        // For .json files
+        const initJson = await PLFileSystem.parseJsonFile(
+          await this.config.getProjectConfigFilepath(),
         );
+
+        // LSP Client
+        if (isNvim05 && initJson.projectlocal.lsp) {
+          const servers = JSON.stringify(initJson.projectlocal.lsp);
+          await helpers.execute(
+            this.denops,
+            `lua require('projectlocal.lsp').register_lspservers([=[${servers}]=])`,
+          );
+        } else {
+          this.showMessage(
+            "[projectlocal-vim] projectlocal.lsp: nvim 0.5 and up is required",
+          );
+        }
+
+        // Vim Variables
+        if (initJson.projectlocal.globalVars) {
+          const gvars = initJson.projectlocal.globalVars;
+
+          for (const gvar in gvars) {
+            // Ignore object prototype props
+            if (gvars.hasOwnProperty(gvar)) {
+              let jsonValue = gvars[gvar];
+              if (typeof jsonValue === "object") {
+                jsonValue = JSON.stringify(gvars[gvar]);
+              }
+
+              await helpers.execute(
+                this.denops,
+                `:let g:${gvar} = ${jsonValue}`,
+              );
+            }
+          }
+        }
       }
     } catch (e) {
       const msg =
-        `echomsg "[projectlocal-vim] Unable to source the file, check local file for any errors"`;
+        `echomsg "[projectlocal-vim] Internal error, check your projectConfig file"`;
       throw msg;
     }
   }
