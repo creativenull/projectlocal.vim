@@ -9,11 +9,9 @@ import {
 
 interface JsonLsp {
   name: string;
-  lspconfig: {
-    root_dir: string[];
-    init_options: any;
-    settings: any;
-  };
+  root_dir?: string[];
+  init_options?: any;
+  settings?: any;
 }
 
 interface PLInitJson {
