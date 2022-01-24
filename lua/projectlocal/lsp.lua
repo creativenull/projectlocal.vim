@@ -64,6 +64,11 @@ function M.register_lspservers(servers)
   end
 
   for _, server in pairs(decoded_servers) do
+    if server.name == nil then
+      err('invalid setup provided, `name` is required')
+      return
+    end
+
     local name = server.name
     local ok, config = pcall(validate_server_config, server.lspconfig)
     if not ok then
