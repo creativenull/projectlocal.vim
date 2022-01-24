@@ -19,7 +19,6 @@ interface JsonLsp {
 interface PLInitJson {
   projectlocal: {
     lsp?: JsonLsp[];
-    options?: { [key: string]: any };
     globalVars?: { [key: string]: any };
   };
 }
