@@ -1,9 +1,9 @@
-INTRODUCTION                              *projectlocal-vim* *projectlocal*
+INTRODUCTION                                 *projectlocal-vim* *projectlocal*
 
 Load your vim project configurations safely, for vim and neovim. Written in
 typescript via |denops.vim|.
 
-CONFIGURATION                                        *projectlocal-config*
+CONFIGURATION                                            *projectlocal-config*
 
 Below are the default configurations, which must be defined before the plugin
 is loaded by your plugin manager:
@@ -38,7 +38,77 @@ Note: Whenever you change your local config file, projectlocal will prompt you
 to accept the changes before it will be sourced. Refer to the README.md
 on the repo https://github.com/creativenull/projectlocal-vim
 
-COMMANDS					    *projectlocal-commands*
+JSON CONFIGURATION                                  *projectlocal-json-config*
+
+If you want a more simplified way of setting up local configuration for your
+project, you can in turn use a .json file instead. But there is limited
+support on what you can do with it, since it's aim is to simplify setup when
+needed especially when configuring lsp clients (like the builtin nvim-lsp).
+
+First, change the projectlocal config to a .json file:
+
+>
+    let g:projectlocal = { 'projectConfig': '.vim/init.json' }
+<
+
+Then create a `init.json` file in your project folder with |:PLConfig|. There
+is only support for two keys within the "projectlocal" key in the json file:
+
+>
+    {
+        "projectlocal": {
+            "lsp": [],
+            "globalVars": {}
+        }
+    }
+<
+
+"lsp" is for setting up builtin nvim-lsp. Note, this will only work for nvim
+0.5 and up and not for vim8. It takes an array of lsp servers that are
+supported with nvim-lspconfig. Here is an example to setup `tsserver` with a
+root_dir set to the tsconfig.json file:
+
+>
+    {
+        "projectlocal": {
+            "lsp": [
+                {
+                    "name": "tsserver",
+                    "root_dir": ["tsconfig.json"]
+                }
+            ]
+        }
+    }
+<
+
+"globalVars" is for setting up `g:` variables, where the first level of the
+structure is converted to a `g:` variable, this is useful for setting up
+plugins that need a global variable config, like ALE. Here is an
+example setting up ALE linters and fixers for a javascript project:
+
+>
+    {
+        "projectlocal": {
+            "globalVars": {
+                "ale_linters": {
+                    "javascript": ["eslint"]
+                },
+                "ale_fixers": {
+                    "javascript": ["prettier"]
+                }
+            }
+        }
+    }
+<
+
+This will convert to the vimscript equivalent:
+
+>
+    let g:ale_linters = { 'javascript': ['eslint'] }
+    let g:ale_fixers = { 'javascript': ['prettier'] }
+<
+
+COMMANDS					                           *projectlocal-commands*
 
                                 *:PLConfig*
 PLConfig                        Open the project local config file, if it
