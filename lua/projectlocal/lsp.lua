@@ -70,7 +70,7 @@ function M.register_lspservers(servers)
     end
 
     local name = server.name
-    local ok, config = pcall(validate_server_config, server.lspconfig)
+    local ok, config = pcall(validate_server_config, server)
     if not ok then
       err('Invalid LSP config passed to server')
       break
