@@ -2,9 +2,24 @@ import { Denops, helpers } from "./deps/denops_std.ts";
 import { fs } from "./deps/std.ts";
 import { Config } from "./config.ts";
 import {
+  projectLocalJsonTemplate,
   projectLocalLuaTemplate,
   projectLocalVimTemplate,
 } from "./templates.ts";
+
+interface JsonLsp {
+  name: string;
+  root_dir?: string[];
+  init_options?: any;
+  settings?: any;
+}
+
+interface PLInitJson {
+  projectlocal: {
+    lsp?: JsonLsp[];
+    globalVars?: { [key: string]: any };
+  };
+}
 
 export class PLFileSystem {
   constructor(private denops: Denops, private config: Config) {}
@@ -26,8 +41,10 @@ export class PLFileSystem {
 
       if (this.config.isProjectConfigLua()) {
         await Deno.writeTextFile(filepath, projectLocalLuaTemplate);
-      } else {
+      } else if (this.config.isProjectConfigVim()) {
         await Deno.writeTextFile(filepath, projectLocalVimTemplate);
+      } else if (this.config.isProjectConfigJson()) {
+        await Deno.writeTextFile(filepath, projectLocalJsonTemplate);
       }
     }
 
@@ -40,6 +57,15 @@ export class PLFileSystem {
       return true;
     } catch (_) {
       return false;
+    }
+  }
+
+  static async parseJsonFile(filepath: string): Promise<PLInitJson> {
+    try {
+      const fileContents = await Deno.readTextFile(filepath);
+      return JSON.parse(fileContents);
+    } catch (e) {
+      throw e;
     }
   }
 }

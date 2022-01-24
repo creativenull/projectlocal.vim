@@ -43,7 +43,10 @@ Plug 'creativenull/projectlocal-vim'
 ### packer.nvim
 
 ```lua
-use {'creativenull/projectlocal-vim', requires = {'vim-denops/denops.vim'}}
+use {
+    'creativenull/projectlocal-vim',
+    requires = { 'vim-denops/denops.vim' }
+}
 ```
 
 ## Examples
