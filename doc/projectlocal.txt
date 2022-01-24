@@ -81,6 +81,23 @@ root_dir set to the tsconfig.json file:
     }
 <
 
+If you want to include an `on_attach` function to register your keymaps and
+other functionality to when any LSP server starts, you can use the provided
+lua code to add to your init.lua/init.vim to globally attach your custom
+`on_attach` and your `capabilities` (for init.vim files you can wrap this in
+|:lua-heredoc|):
+
+>
+    local function on_attach()
+        print('attached')
+    end
+
+    require('projectlocal.lsp').setup({
+        -- your custom on_attach
+        on_attach = on_attach 
+    })
+<
+
 "globalVars" is for setting up `g:` variables, where the first level of the
 structure is converted to a `g:` variable, this is useful for setting up
 plugins that need a global variable config, like ALE. Here is an
