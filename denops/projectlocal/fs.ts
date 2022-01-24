@@ -7,6 +7,23 @@ import {
   projectLocalVimTemplate,
 } from "./templates.ts";
 
+interface JsonLsp {
+  name: string;
+  lspconfig: {
+    root_dir: string[];
+    init_options: any;
+    settings: any;
+  };
+}
+
+interface PLInitJson {
+  projectlocal: {
+    lsp?: JsonLsp[];
+    options?: { [key: string]: any };
+    globalVars?: { [key: string]: any };
+  };
+}
+
 export class PLFileSystem {
   constructor(private denops: Denops, private config: Config) {}
 
@@ -46,7 +63,7 @@ export class PLFileSystem {
     }
   }
 
-  static async parseJson(filepath: string): Promise<any> {
+  static async parseJsonFile(filepath: string): Promise<PLInitJson> {
     try {
       const fileContents = await Deno.readTextFile(filepath);
       return JSON.parse(fileContents);
