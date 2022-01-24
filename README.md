@@ -9,15 +9,14 @@ Load your vim project local configurations safely, for vim and neovim. Written i
 This is a combination of my [projectcmd.vim][pcmdvim] and [projectcmd.nvim][pcmdnvim] plugins with the aim to unify both
 plugins to support both vim and neovim.
 
-__Status: Alpha (Testing out denops but welcome for others to test)__
+__Status: Beta (Enjoying the denops experience, welcome for testing)__
 
 ## TODO
 
-+ Use of JSON file for some sane configs, for things like:
-    + LSP Client specific to the project - nvim-lsp, ale, ycm, etc
-    + Vim global variables - for plugins that require these var setup for project
-    + Autocmd/Events - for some autocmd code (Caution on this, maybe find some way for a more explicit permission)
-+ [X] Add example gifs/videos
++ [ ] Add example gifs/videos (Needs updated gifs)
++ [X] Use of JSON file for some sane configs, for things like:
+    + [X] LSP Client specific to the project - nvim-lsp, ale, ycm, etc
+    + [X] Vim global variables - for plugins that require these var setup for project
 + [X] Command to create local config file
 + [X] Add more commands, abbreviations if necessary
 
@@ -67,19 +66,19 @@ it.
 
 ## Documentation
 
-The documentation can be found over at [docs/projectlocal.txt][docs] and via vim after installation and calling the
-command `:help projectlocal`.
+The documentation can be found over at [docs/projectlocal.txt][docs] and via vim after installation with
+`:help projectlocal`.
 
 ## Overview
 ### Why
 
 If you've used `set exrc` for setting project-level local configurations before, then you would know that using it might
-pose a risk where malicious code can be executed if downloading unknown projects from git repos with an `.exrc` in that
-directory, see [`:h 'exrc'`][vim-exrc]. Therefore, you would also be informed to also enable `set secure` to disable
-some vim options to prevent the execution of such code, see [`:h 'secure'`][vim-secure].
+pose a risk where malicious code can be executed if cloning git repos with a root `.exrc` file in the repo, see
+[`:h 'exrc'`][vim-exrc]. Therefore, you would also be informed to also enable `set secure` to disable some vim options
+to prevent the execution of such code (to an extent), see [`:h 'secure'`][vim-secure].
 
 However, there might some options you may want to conditionally set on a project-level basis but the limitations of
-`secure` restrict you from setting those options. Some of these options include:
+`set secure` restrict you from setting these options. Some of these options could include:
 
 + autocmds
 + shell commands
@@ -90,28 +89,30 @@ local configurations in a safe manner.
 
 ### How it works
 
-What this means is that when you open a project for the first time, and **projectlocal-vim** detects a project config
-in the project directory, it will then prompt you to allow the local config to be sourced along with your vim config.
-Once you've accepted it, it will remember the project directory and will load the local configuration the next time you
-open vim in that project directory.
+If for the first time you open a project directory in vim, **projectlocal-vim** will check for a local config file. If
+it finds one, then it will prompt you to allow executing the code within that file.
 
-This plugin will also not execute your local config, if you've made changes to the local config file after permitting it.
+On the next time it will remember the local config file, and if no changes were made to it - then it will continue
+sourcing it without asking since the last permission allowed it to source. The only time it will ask you afterwards
+is when the local config file was changed.
+
 This means, that **projectlocal-vim** will again prompt you to accept the changes and re-source the local config file.
-It's designed to make sure any changes should go through the user first before sourcing it.
+It's designed to make sure that any change should go through the user first before sourcing it.
 
 Essentially, the goal of this plugin is to help you safely source your local configurations in a project.
-Think of it like an `.vscode/settings.json` file but for vim/neovim and written in vimscript or Lua. This gives you and
-your team more control on how to set vim configurations on the project and not mess with your user configurations.
+
+Think of it like a `.vscode/settings.json` file but for vim/neovim and written in vimscript or lua (and now in json,
+see `:help projectlocal-json-config`). This gives you and your team more control on how to set vim configurations
+on the project and not mess with your own user configurations.
 
 [Revised from projectcmd.nvim]
 
 ## Contributing
 
 At this point, you're welcome to just look at the code and see what issue you can find or be able to propose additional
-features 🙂.
+features requests 🙂
 
-Linting and LSP provided by Deno, formatting is done by prettier until there is support for `deno fmt` config. You will
-need deno and prettier installed globally.
+All tooling (linting, formatting, etc) is provided by deno.
 
 [vim-exrc]: https://vimhelp.org/options.txt.html#'exrc'
 [vim-secure]: https://vimhelp.org/options.txt.html#'secure'
