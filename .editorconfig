@@ -9,3 +9,6 @@ insert_final_newline = true
 [*.{ts,json,lua}]
 indent_size = 2
 max_line_length = 80
+
+[doc/projectlocal.txt]
+max_line_length = 78
