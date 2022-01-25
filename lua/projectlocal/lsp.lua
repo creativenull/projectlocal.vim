@@ -56,9 +56,9 @@ end
 function M.register_lspservers(servers)
   local decoded_servers = vim.fn.json_decode(servers)
   -- print(vim.inspect(decoded_servers))
-  local ok, nvimlsp = pcall(require, 'lspconfig')
+  local lspok, nvimlsp = pcall(require, 'lspconfig')
 
-  if not ok then
+  if not lspok then
     err('`nvim-lspconfig` plugin not installed')
     return
   end
@@ -70,8 +70,8 @@ function M.register_lspservers(servers)
     end
 
     local name = server.name
-    local ok, config = pcall(validate_server_config, server)
-    if not ok then
+    local validok, config = pcall(validate_server_config, server)
+    if not validok then
       err('Invalid LSP config passed to server')
       break
     end
