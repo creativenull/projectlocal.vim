@@ -80,7 +80,9 @@ function M.register_lspservers(servers)
     end
 
     -- Transform from table to root pattern function
-    config.root_dir = nvimlsp.util.root_pattern(unpack(config.root_dir))
+    if config.root_dir ~= nil then
+      config.root_dir = nvimlsp.util.root_pattern(unpack(config.root_dir))
+    end
 
     -- Register the LSP
     nvimlsp[name].setup(vim.tbl_extend('force', config, global_lsp_opts))
