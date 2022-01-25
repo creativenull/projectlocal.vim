@@ -79,7 +79,7 @@ function M.register_lspservers(servers)
       break
     end
 
-    -- Convert from table to function
+    -- Transform from table to root pattern function
     config.root_dir = nvimlsp.util.root_pattern(unpack(config.root_dir))
 
     -- Register the LSP
