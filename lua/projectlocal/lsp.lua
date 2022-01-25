@@ -1,5 +1,8 @@
 local M = {}
-local global_lsp_opts = {}
+local global_lsp_opts = {
+  on_attach = nil,
+  capabilities = nil,
+}
 
 ---Print error message to command line
 ---@param msg string
@@ -81,6 +84,17 @@ function M.register_lspservers(servers)
 
     -- Register the LSP
     nvimlsp[name].setup(vim.tbl_extend('force', config, global_lsp_opts))
+  end
+end
+
+---Get the server config, to be used in a vim/lua project local config file
+---@param extended_opts table
+---@return table
+function M.get_server_config(extended_opts)
+  if extended_opts == nil or extended_opts == {} then
+    return global_lsp_opts
+  else
+    return vim.tbl_extend('force', global_lsp_opts, extended_opts)
   end
 end
 
