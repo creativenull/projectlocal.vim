@@ -11,15 +11,6 @@ plugins to support both vim and neovim.
 
 __Status: Beta (Enjoying the denops experience, welcome for testing)__
 
-## TODO
-
-+ [ ] Add example gifs/videos (Needs updated gifs)
-+ [X] Use of JSON file for some sane configs, for things like:
-    + [X] LSP Client specific to the project - nvim-lsp, ale, ycm, etc
-    + [X] Vim global variables - for plugins that require these var setup for project
-+ [X] Command to create local config file
-+ [X] Add more commands, abbreviations if necessary
-
 ## Requirements
 
 + [deno v1.13 and up](https://deno.land)
