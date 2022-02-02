@@ -1,7 +1,7 @@
 INTRODUCTION                                 *projectlocal-vim* *projectlocal*
 
 Load your vim project configurations safely, for vim and neovim. Written in
-typescript via |denops.vim|.
+typescript as a |denops.vim| plugin.
 
 CONFIGURATION                                            *projectlocal-config*
 
@@ -21,7 +21,7 @@ Lua
 >
     vim.g.projectlocal = {
         showMessage = true,
-        projectConfig = '.vim/init.vim',
+        projectConfig = '.vim/init.lua',
         debug = false,
     }
 <
@@ -48,7 +48,7 @@ needed especially when configuring lsp clients (like the builtin nvim-lsp).
 First, change the projectlocal config to a .json file:
 
 >
-    let g:projectlocal = { 'projectConfig': '.vim/init.json' }
+    let g:projectlocal = { 'projectConfig': '.nvimrc.json' }
 <
 
 Then create a `init.json` file in your project folder with |:PLConfig|. There
@@ -57,7 +57,7 @@ is only support for two keys within the "projectlocal" key in the json file:
 >
     {
         "projectlocal": {
-            "lsp": [],
+            "nvim-lsp": {},
             "globalVars": {}
         }
     }
@@ -71,12 +71,12 @@ root_dir set to the tsconfig.json file:
 >
     {
         "projectlocal": {
-            "lsp": [
-                {
-                    "name": "tsserver",
-                    "root_dir": ["tsconfig.json"]
-                }
-            ]
+            "nvim-lsp": {
+                "tsserver": {
+                    "root_dir": ["jsconfig.json"]
+                },
+                "pyright": true
+            }
         }
     }
 <
@@ -125,7 +125,7 @@ This will convert to the vimscript equivalent:
     let g:ale_fixers = { 'javascript': ['prettier'] }
 <
 
-COMMANDS					                           *projectlocal-commands*
+COMMANDS	                                       *projectlocal-commands*
 
                                 *:PLConfig*
 PLConfig                        Open the project local config file, if it
