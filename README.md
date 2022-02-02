@@ -60,6 +60,8 @@ it.
 The documentation can be found over at [docs/projectlocal.txt][docs] and via vim after installation with
 `:help projectlocal`.
 
+For a JSON file config check `:help projectlocal-json-config`.
+
 ## Overview
 ### Why
 

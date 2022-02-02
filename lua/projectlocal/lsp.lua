@@ -58,34 +58,32 @@ end
 ---@return nil
 function M.register_lspservers(servers)
   local decoded_servers = vim.fn.json_decode(servers)
-  -- print(vim.inspect(decoded_servers))
-  local lspok, nvimlsp = pcall(require, 'lspconfig')
 
+  local lspok, nvimlsp = pcall(require, 'lspconfig')
   if not lspok then
     err('`nvim-lspconfig` plugin not installed')
     return
   end
 
-  for _, server in pairs(decoded_servers) do
-    if server.name == nil then
-      err('invalid setup provided, `name` is required')
-      return
-    end
+  for name, server in pairs(decoded_servers) do
+    if type(server) == 'boolean' then
+      -- Setup with default LSP configs
+      nvimlsp[name].setup(global_lsp_opts)
+    elseif type(server) == 'table' then
+      local validok, config = pcall(validate_server_config, server)
+      if not validok then
+        err('Invalid LSP config passed to server')
+        break
+      end
 
-    local name = server.name
-    local validok, config = pcall(validate_server_config, server)
-    if not validok then
-      err('Invalid LSP config passed to server')
-      break
-    end
+      -- Transform from table to root pattern function
+      if config.root_dir ~= nil then
+        config.root_dir = nvimlsp.util.root_pattern(unpack(config.root_dir))
+      end
 
-    -- Transform from table to root pattern function
-    if config.root_dir ~= nil then
-      config.root_dir = nvimlsp.util.root_pattern(unpack(config.root_dir))
+      -- Register the LSP
+      nvimlsp[name].setup(vim.tbl_extend('force', config, global_lsp_opts))
     end
-
-    -- Register the LSP
-    nvimlsp[name].setup(vim.tbl_extend('force', config, global_lsp_opts))
   end
 end
 

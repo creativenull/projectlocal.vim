@@ -7,16 +7,20 @@ import {
   projectLocalVimTemplate,
 } from "./templates.ts";
 
-interface JsonLsp {
-  name: string;
+interface NvimLspConfig {
   root_dir?: string[];
+  filetypes?: string[];
   init_options?: any;
   settings?: any;
 }
 
-interface PLInitJson {
+interface ProjectLocalNvimLspJson {
+  [key: string]: boolean | NvimLspConfig;
+}
+
+interface ProjectLocalInitJson {
   projectlocal: {
-    lsp?: JsonLsp[];
+    "nvim-lsp": ProjectLocalNvimLspJson;
     globalVars?: { [key: string]: any };
   };
 }
@@ -60,7 +64,7 @@ export class PLFileSystem {
     }
   }
 
-  static async parseJsonFile(filepath: string): Promise<PLInitJson> {
+  static async parseJsonFile(filepath: string): Promise<ProjectLocalInitJson> {
     try {
       const fileContents = await Deno.readTextFile(filepath);
       return JSON.parse(fileContents);
