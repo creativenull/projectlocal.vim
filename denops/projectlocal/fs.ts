@@ -1,6 +1,11 @@
 import { Denops, helpers } from "./deps/denops_std.ts";
 import { fs } from "./deps/std.ts";
-import { Config } from "./config.ts";
+import {
+  Config,
+  possibleJsonConfigFiles,
+  possibleLuaConfigFiles,
+  possibleVimConfigFiles,
+} from "./config.ts";
 import {
   projectLocalJsonTemplate,
   projectLocalLuaTemplate,
@@ -10,8 +15,8 @@ import {
 interface NvimLspConfig {
   root_dir?: string[];
   filetypes?: string[];
-  init_options?: any;
-  settings?: any;
+  init_options?: unknown;
+  settings?: unknown;
 }
 
 interface ProjectLocalNvimLspJson {
@@ -21,39 +26,12 @@ interface ProjectLocalNvimLspJson {
 interface ProjectLocalInitJson {
   projectlocal: {
     "nvim-lsp": ProjectLocalNvimLspJson;
-    globalVars?: { [key: string]: any };
+    globalVars?: { [key: string]: unknown };
   };
 }
 
-export class PLFileSystem {
-  constructor(private denops: Denops, private config: Config) {}
-
-  async openLocalConfig(): Promise<void> {
-    const filepath = await this.config.getProjectConfigFilepath();
-
-    await helpers.execute(this.denops, `echom "${Deno.cwd()}"`);
-
-    if (!(await PLFileSystem.fileExists(filepath))) {
-      await helpers.echo(
-        this.denops,
-        "[projectlocal-vim] Not detected, creating new local config file!",
-      );
-
-      // Create file if it does not exists
-      // so that we don't error out on writeTextFile
-      await fs.ensureFile(filepath);
-
-      if (this.config.isProjectConfigLua()) {
-        await Deno.writeTextFile(filepath, projectLocalLuaTemplate);
-      } else if (this.config.isProjectConfigVim()) {
-        await Deno.writeTextFile(filepath, projectLocalVimTemplate);
-      } else if (this.config.isProjectConfigJson()) {
-        await Deno.writeTextFile(filepath, projectLocalJsonTemplate);
-      }
-    }
-
-    await helpers.execute(this.denops, `edit ${filepath}`);
-  }
+export class ProjectLocalFileSystem {
+  constructor(private denops: Denops) {}
 
   static async fileExists(filepath: string): Promise<boolean> {
     try {
@@ -70,6 +48,48 @@ export class PLFileSystem {
       return JSON.parse(fileContents);
     } catch (e) {
       throw e;
+    }
+  }
+
+  async openLocalConfig(config: Config, configType?: string): Promise<void> {
+    let configFile = await config.getProjectConfigFilepath();
+
+    if (!configFile) {
+      const projectRoot = await config.getProjectRoot();
+      if (configType === 'lua') {
+        configFile = `${projectRoot}/${possibleLuaConfigFiles[0]}`;
+      } else if (configType === 'json') {
+        configFile = `${projectRoot}/${possibleJsonConfigFiles[0]}`;
+      } else {
+        configFile = `${projectRoot}/${possibleVimConfigFiles[0]}`;
+      }
+
+      await this.createConfigFile(configFile);
+    } else if (
+      !(await ProjectLocalFileSystem.fileExists(configFile as string))
+    ) {
+      await this.createConfigFile(configFile);
+    }
+
+    await helpers.execute(this.denops, `edit ${configFile}`);
+  }
+
+  private async createConfigFile(configFile: string): Promise<void> {
+    await helpers.echo(
+      this.denops,
+      "[projectlocal-vim] Not detected, creating new local config file!",
+    );
+
+    // Create file if it does not exists
+    // so that we don't error out on writeTextFile
+    await fs.ensureFile(configFile);
+
+    if (Config.isLua(configFile)) {
+      await Deno.writeTextFile(configFile, projectLocalLuaTemplate);
+    } else if (Config.isVim(configFile)) {
+      await Deno.writeTextFile(configFile, projectLocalVimTemplate);
+    } else if (Config.isJson(configFile)) {
+      await Deno.writeTextFile(configFile, projectLocalJsonTemplate);
     }
   }
 }
