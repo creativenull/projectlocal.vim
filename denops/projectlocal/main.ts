@@ -1,8 +1,8 @@
 import { Denops, helpers, vars } from "./deps/denops_std.ts";
-import { isObject } from "./deps/unknownutil.ts";
+import { isObject, isString } from "./deps/unknownutil.ts";
 import { Config, makeConfig, PartialUserConfig } from "./config.ts";
 import { ProjectLocal } from "./projectlocal.ts";
-import { PLFileSystem } from "./fs.ts";
+import { ProjectLocalFileSystem } from "./fs.ts";
 import * as allowlist from "./allowlist.ts";
 
 export function main(denops: Denops) {
@@ -63,7 +63,8 @@ export function main(denops: Denops) {
       helpers.echo(denops, "[projectlocal-vim] Autoload disabled!");
     },
 
-    async openLocalConfig(): Promise<void> {
+    async openLocalConfig(configType: unknown): Promise<void> {
+      const fs = new ProjectLocalFileSystem(denops);
       const userConfig = await vars.g.get(denops, "projectlocal", null);
       let config: Config;
 
@@ -73,8 +74,15 @@ export function main(denops: Denops) {
         config = await makeConfig(denops, {});
       }
 
-      const fs = new PLFileSystem(denops, config);
-      fs.openLocalConfig();
+      const isType = (t: string) => {
+        return t === "json" || t === "lua" || t === "vim"
+      }
+
+      if (isString(configType) && isType(configType)) {
+        fs.openLocalConfig(config, configType);
+      } else {
+        fs.openLocalConfig(config);
+      }
     },
   };
 }
