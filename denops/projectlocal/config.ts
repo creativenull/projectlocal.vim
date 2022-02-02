@@ -1,22 +1,27 @@
 import { Denops, fn, nvimFn } from "./deps/denops_std.ts";
+import { ProjectLocalFileSystem } from "./fs.ts";
 
 export interface UserConfig {
   showMessage: boolean;
-  projectConfig: string;
+  file: string;
   debug: boolean;
 }
 
 export interface PartialUserConfig {
   showMessage?: boolean;
-  projectConfig?: string;
+  file?: string;
   debug?: boolean;
 }
 
 const defaultConfig: UserConfig = {
   showMessage: true,
-  projectConfig: ".vim/init.vim",
+  file: "",
   debug: false,
 };
+
+export const possibleVimConfigFiles = [".vimrc", ".nvimrc"]
+export const possibleLuaConfigFiles = [".vimrc.lua", ".nvimrc.lua"]
+export const possibleJsonConfigFiles = [".vimrc.json", ".nvimrc.json"]
 
 async function getDefaultCacheDirectory(denops: Denops): Promise<string> {
   let cachepath: unknown;
@@ -43,6 +48,20 @@ export class Config {
 
   constructor(private denops: Denops, private config: UserConfig) {}
 
+  static isLua(configFile: string): boolean {
+    return configFile.endsWith(".lua");
+  }
+
+  static isVim(configFile: string): boolean {
+    return configFile.endsWith(".vimrc") ||
+      configFile.endsWith(".nvimrc") ||
+      configFile.endsWith(".vim");
+  }
+
+  static isJson(configFile: string): boolean {
+    return configFile.endsWith(".json");
+  }
+
   setCacheDirectory(value: string): void {
     this.cacheDirectory = value;
   }
@@ -64,21 +83,43 @@ export class Config {
     }
   }
 
-  async getProjectConfigFilepath(): Promise<string> {
+  async getProjectConfigFilepath(): Promise<string | null> {
     const projectRoot = await this.getProjectRoot();
-    return `${projectRoot}/${this.config.projectConfig}`;
-  }
 
-  isProjectConfigLua(): boolean {
-    return this.config.projectConfig.endsWith(".lua");
-  }
+    if (this.config.file !== "") {
+      const filepath = `${projectRoot}/${this.config.file}`;
+      if (await ProjectLocalFileSystem.fileExists(filepath)) {
+        return filepath;
+      }
+    }
 
-  isProjectConfigVim(): boolean {
-    return this.config.projectConfig.endsWith(".vim");
-  }
+    // Check for list of possible config files
+    // if g:projectlocal.file not provided
+    for (const configFile of possibleVimConfigFiles) {
+      const filepath = `${projectRoot}/${configFile}`;
+      if (await ProjectLocalFileSystem.fileExists(filepath)) {
+        this.config.file = filepath;
+        return filepath;
+      }
+    }
 
-  isProjectConfigJson(): boolean {
-    return this.config.projectConfig.endsWith(".json");
+    for (const configFile of possibleLuaConfigFiles) {
+      const filepath = `${projectRoot}/${configFile}`;
+      if (await ProjectLocalFileSystem.fileExists(filepath)) {
+        this.config.file = filepath;
+        return filepath;
+      }
+    }
+
+    for (const configFile of possibleJsonConfigFiles) {
+      const filepath = `${projectRoot}/${configFile}`;
+      if (await ProjectLocalFileSystem.fileExists(filepath)) {
+        this.config.file = filepath;
+        return filepath;
+      }
+    }
+
+    return null;
   }
 
   canSendMessage(): boolean {
