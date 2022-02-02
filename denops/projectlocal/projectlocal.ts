@@ -197,15 +197,15 @@ export class ProjectLocal {
         );
 
         // LSP Client
-        if (isNvim05 && initJson.projectlocal.lsp) {
-          const servers = JSON.stringify(initJson.projectlocal.lsp);
+        if (isNvim05 && initJson.projectlocal["nvim-lsp"]) {
+          const servers = JSON.stringify(initJson.projectlocal["nvim-lsp"]);
           await helpers.execute(
             this.denops,
             `lua require('projectlocal.lsp').register_lspservers([=[${servers}]=])`,
           );
         } else {
           this.showMessage(
-            "[projectlocal-vim] projectlocal.lsp: nvim 0.5 and up is required",
+            "[projectlocal-vim] nvim-lsp: nvim 0.5 and up is required",
           );
         }
 
