@@ -41,6 +41,7 @@ export interface PartialAllowlistItem {
  */
 export async function addProjectConfigFile(
   config: Config,
+  configFile: string,
   ignore?: boolean,
 ): Promise<void> {
   const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
@@ -51,11 +52,13 @@ export async function addProjectConfigFile(
     json = JSON.parse(fileContents) as AllowlistItem[];
   }
 
+  const projectDirectoryPath = await config.getProjectRoot();
+  const contents = Deno.readTextFileSync(configFile);
+  const configFileHash = await hashFileContents(contents);
+
   json.push({
-    projectDirectoryPath: await config.getProjectRoot(),
-    configFileHash: await hashFileContents(
-      Deno.readTextFileSync(await config.getProjectConfigFilepath()),
-    ),
+    projectDirectoryPath,
+    configFileHash,
     autoload: true,
     ignore: ignore ?? false,
   });
