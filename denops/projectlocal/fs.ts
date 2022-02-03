@@ -1,4 +1,4 @@
-import { Denops, helpers } from "./deps/denops_std.ts";
+import { Denops, fn, helpers } from "./deps/denops_std.ts";
 import { fs } from "./deps/std.ts";
 import {
   Config,
@@ -54,14 +54,20 @@ export class ProjectLocalFileSystem {
   async openLocalConfig(config: Config, configType?: string): Promise<void> {
     let configFile = await config.getProjectConfigFilepath();
 
+    // File by platform: nvim or vim
+    let plat = 0;
+    if (await fn.has(this.denops, "nvim")) {
+      plat = 1;
+    }
+
     if (!configFile) {
       const projectRoot = await config.getProjectRoot();
-      if (configType === 'lua') {
-        configFile = `${projectRoot}/${possibleLuaConfigFiles[0]}`;
-      } else if (configType === 'json') {
-        configFile = `${projectRoot}/${possibleJsonConfigFiles[0]}`;
+      if (configType === "lua") {
+        configFile = `${projectRoot}/${possibleLuaConfigFiles[plat]}`;
+      } else if (configType === "json") {
+        configFile = `${projectRoot}/${possibleJsonConfigFiles[plat]}`;
       } else {
-        configFile = `${projectRoot}/${possibleVimConfigFiles[0]}`;
+        configFile = `${projectRoot}/${possibleVimConfigFiles[plat]}`;
       }
 
       await this.createConfigFile(configFile);
