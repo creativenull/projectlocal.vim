@@ -137,16 +137,17 @@ the following:
 NVIM-LSP - SETUP
 
 "nvim-lsp" is for setting up builtin nvim-lsp. Note, this will only work for
-nvim 0.5 and up and not for vim8. It takes an array of lsp servers that are
-supported with nvim-lspconfig. Here is an example to setup `tsserver` with a
-root_dir set to the tsconfig.json file:
+nvim 0.5 and up and not for vim8. It takes an object structure of LSP servers
+that are supported with nvim-lspconfig. Here is an example to setup
+`tsserver` with a root_dir set to the tsconfig.json and `pyright` with
+defaults:
 
 >
     {
         "projectlocal": {
             "nvim-lsp": {
                 "tsserver": {
-                    "root_dir": ["jsconfig.json"]
+                    "root_dir": ["tsconfig.json"]
                 },
                 "pyright": true
             }
