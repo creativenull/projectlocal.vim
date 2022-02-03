@@ -32,7 +32,7 @@ Lua
     }
 <
 
-	                                     *projectlocal-config-showMessage*
+                                             *projectlocal-config-showMessage*
 "showMessage" (default: true) is used to enable/disable messages that are
 printed on the commandline to show the progress of the plugin.
 
@@ -110,7 +110,7 @@ needed especially when configuring lsp clients (like the builtin nvim-lsp).
 Currently, there is support for global variables `g:` and the builtin nvim-lsp
 setup.
 
-GETTING STARTED WITH JSON CONFIGURATION FILE
+GETTING STARTED WITH A JSON CONFIGURATION FILE
 
 To get started, first create a json config file with `:PLConfig json`. This
 will create a project local file with a .json extension with a templated
@@ -129,12 +129,12 @@ the following:
     {
         "projectlocal": {
             "nvim-lsp": {},
-                "globalVars": {}
+            "globalVars": {}
         }
     }
 <
 
-SETUP BUILT-IN NVIM-LSP
+NVIM-LSP - SETUP
 
 "nvim-lsp" is for setting up builtin nvim-lsp. Note, this will only work for
 nvim 0.5 and up and not for vim8. It takes an array of lsp servers that are
@@ -174,7 +174,7 @@ server setup with your .json file (for init.vim files you can wrap this in
     })
 <
 
-SETUP GLOBAL VARIABLES
+GLOBAL VARIABLES - SETUP
 
 "globalVars" is for setting up `g:` variables, where the first level of the
 structure is converted to a `g:` variable, this is useful for setting up
@@ -241,6 +241,5 @@ PLAutoloadDisable               Disable auto sourcing, if it was enabled.
                                 *:PLLoad*
 PLLoad                          Manually source the local project config
                                 file if autoload is disabled.
-
 
  vim:tw=78:ts=8:noet:ft=help:norl:
