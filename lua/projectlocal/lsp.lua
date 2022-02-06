@@ -87,10 +87,12 @@ function M.register_lspservers(servers)
   end
 end
 
----Get the server config, to be used in a vim/lua project local config file
+---Get the user config provided in setup() that
+---needs to be passed for every LSP server, and
+---provide extra options if needed
 ---@param extended_opts table
 ---@return table
-function M.get_server_config(extended_opts)
+function M.get_config(extended_opts)
   if extended_opts == nil or extended_opts == {} then
     return global_lsp_opts
   else
