@@ -4,12 +4,26 @@
 [![Vim 8.1.2424 or above](https://img.shields.io/badge/Vim-Support%208.1.2424-yellowgreen.svg?logo=vim)](https://github.com/vim/vim/tree/v8.1.2424)
 [![Neovim 0.4.4 or above](https://img.shields.io/badge/Neovim-Support%200.4.4-yellowgreen.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.4.4)
 
-Load your vim project local configurations safely, for vim and neovim. Written in typescript for [denops.vim][denops].
+Load your vim project local configurations safely, for vim and neovim. Written with ♥ in TypeScript and Deno
+([denops.vim][denops]).
 
 This is a combination of my [projectcmd.vim][pcmdvim] and [projectcmd.nvim][pcmdnvim] plugins with the aim to unify both
 plugins to support both vim and neovim.
 
 __Status: Beta (Enjoying the denops experience, welcome for testing)__
+
+## Features
+
++ Create a local project config file to maintain project-level configurations.
++ Create config file in vimscript (`:PLConfig vim`), lua (`:PLConfig lua`) or json (`:PLConfig json`).
++ Load project config file on user's permission.
+
+### JSON Config Features (`:help projectlocal-json-config`)
+
++ Load global variables `g:` (`:help global-variable`).
++ Built-in support for nvim-lsp setup (for neovim only).
+  Requires [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) installed.
++ Load global events (coming soon).
 
 ## Requirements
 
@@ -57,10 +71,10 @@ it.
 
 ## Documentation
 
-The documentation can be found over at [docs/projectlocal.txt][docs] and via vim after installation with
+The documentation can be found over at [docs/projectlocal.txt][docs] and via vim/nvim after installation with
 `:help projectlocal`.
 
-For a JSON file config check `:help projectlocal-json-config`.
+For a JSON config file check `:help projectlocal-json-config`.
 
 ## Overview
 ### Why
