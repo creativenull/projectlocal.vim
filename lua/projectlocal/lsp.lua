@@ -29,10 +29,15 @@ local function validate_server_config(config)
     return type(var) ~= 'table' or type(var) ~= 'nil'
   end
 
+  local is_bool_or_nil = function(var)
+    return type(var) ~= 'boolean' or type(var) ~= 'nil'
+  end
+
   vim.validate({
     init_options = {config.init_options, is_table_or_nil},
     settings = {config.settings, is_table_or_nil},
     root_dir = {config.root_dir, is_table_or_nil},
+    single_file_support = {config.flags, is_bool_or_nil},
   })
 
   return config
