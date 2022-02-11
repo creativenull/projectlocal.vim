@@ -1,8 +1,8 @@
 # projectlocal-vim
 
-[![Deno 1.13.0 or above](https://img.shields.io/badge/Deno-Support%201.13.0-yellowgreen.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.13.0)
-[![Vim 8.1.2424 or above](https://img.shields.io/badge/Vim-Support%208.1.2424-yellowgreen.svg?logo=vim)](https://github.com/vim/vim/tree/v8.1.2424)
-[![Neovim 0.4.4 or above](https://img.shields.io/badge/Neovim-Support%200.4.4-yellowgreen.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.4.4)
+[![Deno 1.14.0 or above](https://img.shields.io/badge/Deno-Support%201.14.0-purple.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.14.0)
+[![Vim 8.2.3081 or above](https://img.shields.io/badge/Vim-Support%208.2.3081-purple.svg?logo=vim)](https://github.com/vim/vim/tree/v8.2.3081)
+[![Neovim 0.5.0 or above](https://img.shields.io/badge/Neovim-Support%200.5.0-purple.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.5.0)
 
 Load your vim project local configurations safely, for vim and neovim. Written with ♥ in TypeScript and Deno
 ([denops.vim][denops]).
