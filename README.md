@@ -12,6 +12,14 @@ plugins to support both vim and neovim.
 
 __Status: Beta (Enjoying the denops experience, welcome for testing)__
 
+## TODO
+
++ JSON file
+    + Add JSON schema
+    + Add [ALE][ale] support
+    + Add [null-ls][null-ls] support
+    + Add efmls and diagnosticls support via [efmls-configs][efmls-config] and [diagnosticls-configs][diagnosticls-configs]
+
 ## Features
 
 + Create a local project config file to maintain project-level configurations.
@@ -47,10 +55,7 @@ Plug 'creativenull/projectlocal-vim'
 ### packer.nvim
 
 ```lua
-use {
-    'creativenull/projectlocal-vim',
-    requires = { 'vim-denops/denops.vim' }
-}
+use { 'creativenull/projectlocal-vim', requires = { 'vim-denops/denops.vim' } }
 ```
 
 ## Examples
@@ -127,3 +132,7 @@ All tooling (linting, formatting, etc) is provided by deno.
 [pcmdvim]: https://github.com/creativenull/projectcmd.vim
 [pcmdnvim]: https://github.com/creativenull/projectcmd.nvim
 [docs]: doc/projectlocal.txt
+[efmls-configs]: https://github.com/creativenull/efmls-configs-nvim
+[diagnosticls-configs]: https://github.com/creativenull/diagnosticls-configs-nvim
+[ale]: https://github.com/dense-analysis/ale
+[null-ls]: https://github.com/jose-elias-alvarez/null-ls.nvim
