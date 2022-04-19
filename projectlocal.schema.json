@@ -17,15 +17,23 @@
           "type": "object"
         },
         "ale": {
-          "description": "[WIP] ALE filetype setup, dense-analysis/ale plugin is required",
+          "description": "[Not Implemented] ALE filetype setup, dense-analysis/ale plugin is required",
           "type": "object"
         },
         "efmls": {
-          "description": "[WIP] EFM Langserver filetype setup, creativenull/efmls-configs plugin is required",
+          "description": "[Not Implemented] EFM Langserver filetype setup, creativenull/efmls-configs plugin is required",
           "type": "object"
         },
         "diagnosticls": {
-          "description": "[WIP] Diagnostic Language Server filetype setup, creativenull/diagnosticls-configs plugin is required",
+          "description": "[Not Implemented] Diagnostic Language Server filetype setup, creativenull/diagnosticls-configs plugin is required",
+          "type": "object"
+        },
+        "null-ls": {
+          "description": "[Not Implemented] Null-ls filetype setup, jose-elias-alvarez/null-ls.nvim plugin is required",
+          "type": "object"
+        },
+        "nvim-lint": {
+          "description": "[Not Implemented] Nvim-lint filetype setup, mfussenegger/nvim-lint plugin is required",
           "type": "object"
         }
       }
