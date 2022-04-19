@@ -1,8 +1,8 @@
 # projectlocal-vim
 
-[![Deno 1.14.0 or above](https://img.shields.io/badge/Deno-Support%201.14.0-purple.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.14.0)
-[![Vim 8.2.3081 or above](https://img.shields.io/badge/Vim-Support%208.2.3081-purple.svg?logo=vim)](https://github.com/vim/vim/tree/v8.2.3081)
-[![Neovim 0.5.0 or above](https://img.shields.io/badge/Neovim-Support%200.5.0-purple.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.5.0)
+[![Deno 1.17.1 or above](https://img.shields.io/badge/Deno-Support%201.17.1-purple.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.17.1)
+[![Vim 8.2.3452 or above](https://img.shields.io/badge/Vim-Support%208.2.3452-purple.svg?logo=vim)](https://github.com/vim/vim/tree/v8.2.3452)
+[![Neovim 0.6.0 or above](https://img.shields.io/badge/Neovim-Support%200.6.0-purple.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.6.0)
 
 Load your vim project local configurations safely, for vim and neovim. Written with ♥ in TypeScript and Deno
 ([denops.vim][denops]).
@@ -38,15 +38,17 @@ __Status: Beta (Enjoying the denops experience, welcome for testing)__
 
 ## Requirements
 
-+ [deno v1.13 and up](https://deno.land)
-+ [denops.vim][denops]
-+ Vim 8.2 and up (check `:version`)
-+ Neovim 0.4 and up (check `:version`)
++ [deno v1.17.1 and up](https://deno.land)
++ [vim-denops/denops.vim][denops]
++ Vim 8.2.3452 and up (`:version`)
++ Neovim 0.6.0 and up (`:version`)
 
 ## Install
 
-First follow the guide to [install deno](https://deno.land) in your machine. Then follow instructions below to install
-the plugin via vim-plug, packer.nvim or any plugin manager that's similar to vim-plug.
+First follow the guide to [install deno](https://deno.land) in your machine.
+
+Then follow instructions below to install the plugin via vim-plug, packer.nvim or any plugin manager that's similar
+to vim-plug.
 
 ### vim-plug
 
