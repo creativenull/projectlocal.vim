@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Local",
+  "description": "A project local config for vim/nvim in json",
+  "type": "object",
+  "properties": {
+    "projectlocal": {
+      "description": "The base key required to define projectlocal settings",
+      "type": "object",
+      "properties": {
+        "globalVars": {
+          "description": "Vim global variables to be define, will populate g: scope",
+          "type": "object"
+        },
+        "nvim-lsp": {
+          "description": "Builtin nvim-lsp client setup",
+          "type": "object"
+        },
+        "ale": {
+          "description": "[WIP] ALE filetype setup",
+          "type": "object"
+        },
+        "efmls": {
+          "description": "[WIP] EFM Langserver filtype setup, creativenull/efmls-configs plugin is required",
+          "type": "objects"
+        },
+        "diagnosticls": {
+          "description": "[WIP] Diagnostic Language Server filtype setup, creativenull/diagnosticls-configs plugin is required",
+          "type": "objects"
+        }
+      }
+    }
+  },
+  "required": ["projectlocal"]
+}
