@@ -15,10 +15,10 @@ __Status: Beta (Enjoying the denops experience, welcome for testing)__
 ## TODO
 
 + JSON file
-    + Add JSON schema
-    + Add [ALE][ale] support
-    + Add [null-ls][null-ls] support
-    + Add efmls and diagnosticls support via [efmls-configs][efmls-config] and [diagnosticls-configs][diagnosticls-configs]
+    + [X] Add JSON schema
+    + [ ] Add [ALE][ale] support
+    + [ ] Add [null-ls][null-ls] support
+    + [ ] Add efmls and diagnosticls support via [efmls-configs][efmls-configs] and [diagnosticls-configs][diagnosticls-configs]
 
 ## Features
 
