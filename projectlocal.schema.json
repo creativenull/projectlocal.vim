@@ -13,11 +13,11 @@
           "type": "object"
         },
         "nvim-lsp": {
-          "description": "Builtin nvim-lsp client setup",
+          "description": "Builtin nvim-lsp client setup, neovim 0.5 and up is required",
           "type": "object"
         },
         "ale": {
-          "description": "[WIP] ALE filetype setup",
+          "description": "[WIP] ALE filetype setup, dense-analysis/ale plugin is required",
           "type": "object"
         },
         "efmls": {
