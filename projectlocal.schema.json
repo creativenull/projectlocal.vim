@@ -35,6 +35,14 @@
         "nvim-lint": {
           "description": "[Not Implemented] Nvim-lint filetype setup, mfussenegger/nvim-lint plugin is required",
           "type": "object"
+        },
+        "neomake": {
+          "description": "[Not Implemented] Neomake filetype setup, neomake/neomake plugin is required",
+          "type": "object"
+        },
+        "neoformat": {
+          "description": "[Not Implemented] Neoformat filetype setup, sbdchd/neoformat plugin is required",
+          "type": "object"
         }
       }
     }

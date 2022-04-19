@@ -17,9 +17,11 @@ __Status: Beta (Enjoying the denops experience, welcome for testing)__
 + JSON file
     + [X] Add JSON schema
     + [ ] Add [ALE][ale] support
-    + [ ] Add [null-ls][null-ls] support
     + [ ] Add efmls and diagnosticls support via [efmls-configs][efmls-configs] and [diagnosticls-configs][diagnosticls-configs]
+    + [ ] Add [neoformat][neoformat] support
+    + [ ] Add [neomake][neomake] support
     + [ ] Add [nvim-lint][nvim-lint] support
+    + [ ] Add [null-ls][null-ls] support
 
 ## Features
 
@@ -137,3 +139,6 @@ All tooling (linting, formatting, etc) is provided by deno.
 [diagnosticls-configs]: https://github.com/creativenull/diagnosticls-configs-nvim
 [ale]: https://github.com/dense-analysis/ale
 [null-ls]: https://github.com/jose-elias-alvarez/null-ls.nvim
+[nvim-lint]: https://github.com/mfussenegger/nvim-lint
+[neoformat]: https://github.com/sbdchd/neoformat
+[neomake]: https://github.com/neomake/neomake
