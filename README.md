@@ -19,6 +19,7 @@ __Status: Beta (Enjoying the denops experience, welcome for testing)__
     + [ ] Add [ALE][ale] support
     + [ ] Add [null-ls][null-ls] support
     + [ ] Add efmls and diagnosticls support via [efmls-configs][efmls-configs] and [diagnosticls-configs][diagnosticls-configs]
+    + [ ] Add [nvim-lint][nvim-lint] support
 
 ## Features
 
