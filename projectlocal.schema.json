@@ -21,11 +21,11 @@
           "type": "object"
         },
         "efmls": {
-          "description": "[WIP] EFM Langserver filtype setup, creativenull/efmls-configs plugin is required",
+          "description": "[WIP] EFM Langserver filetype setup, creativenull/efmls-configs plugin is required",
           "type": "object"
         },
         "diagnosticls": {
-          "description": "[WIP] Diagnostic Language Server filtype setup, creativenull/diagnosticls-configs plugin is required",
+          "description": "[WIP] Diagnostic Language Server filetype setup, creativenull/diagnosticls-configs plugin is required",
           "type": "object"
         }
       }
