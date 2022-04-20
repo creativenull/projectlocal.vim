@@ -1,4 +1,5 @@
 import { Denops, fn, helpers } from "./deps/denops_std.ts";
+import { info } from "./message.ts";
 import { fs } from "./deps/std.ts";
 import {
   Config,
@@ -83,7 +84,7 @@ export class ProjectLocalFileSystem {
   private async createConfigFile(configFile: string): Promise<void> {
     await helpers.echo(
       this.denops,
-      "[projectlocal-vim] Not detected, creating new local config file!",
+      info("Not detected, creating new local config file!"),
     );
 
     // Create file if it does not exists

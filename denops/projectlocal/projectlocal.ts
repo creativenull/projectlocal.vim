@@ -4,6 +4,7 @@ import { Config } from "./config.ts";
 import * as allowlist from "./allowlist.ts";
 import { hashFileContents } from "./hasher.ts";
 import { ProjectLocalFileSystem } from "./fs.ts";
+import { confirmFirstTime, confirmOnChange, info } from "./message.ts";
 
 export class ProjectLocal {
   private configFile: string | null = "";
@@ -44,13 +45,9 @@ export class ProjectLocal {
     );
     if (!projectConfig?.autoload && !projectConfig?.ignore) {
       await this.sourceFile();
-      await this.showMessage(
-        "[projectlocal-vim] Manually sourced project config",
-      );
+      await this.showMessage("Sourcing local config manually");
     } else if (projectConfig?.ignore) {
-      await this.showMessage(
-        "[projectlocal-vim] Cannot source file, it's ignored",
-      );
+      await this.showMessage("Cannot source ignored file (check settings)");
     }
   }
 
@@ -63,11 +60,9 @@ export class ProjectLocal {
     const projectName = (await this.config.getProjectRoot())
       .split("/").slice(-1);
 
-    const answer = await fn.confirm(
+    const answer = await confirmFirstTime(
       this.denops,
-      `[projectlocal-vim] New project config file found at: "${projectName}", do you trust to run this?`,
-      "&Yes\n&No (Do not prompt again)\n&Open Config\n&Cancel",
-      4,
+      `Local config found: "${projectName}", allow source?`,
     );
 
     if (answer === 1) {
@@ -77,9 +72,7 @@ export class ProjectLocal {
         this.configFile as string,
       );
       await this.sourceFile();
-      await this.showMessage(
-        "[projectlocal-vim] Added to the allow list and sourced!",
-      );
+      await this.showMessage("Added to the allowlist and sourced!");
     } else if (answer === 2) {
       // Add to the allowlist but with ignore set to true
       await allowlist.addProjectConfigFile(
@@ -88,15 +81,13 @@ export class ProjectLocal {
         true,
       );
       await this.showMessage(
-        "[projectlocal-vim] Ignored! Use :PLLoad to explicitly source the project config file",
+        "Ignored! Use :ProjectLocalLoad to explicitly source the local config",
       );
     } else if (answer === 3) {
       const fs = new ProjectLocalFileSystem(this.denops);
       fs.openLocalConfig(this.config);
     } else {
-      await this.showMessage(
-        "[projectlocal-vim] Cancelled! We will prompt again the next time you open vim",
-      );
+      await this.showMessage("Cancelled! Will prompt again next time");
     }
   }
 
@@ -108,21 +99,17 @@ export class ProjectLocal {
    * @returns {Promise<void>}
    */
   private async sourceOnHashChange(hash: string): Promise<void> {
-    const answer = await fn.confirm(
+    const answer = await confirmOnChange(
       this.denops,
-      `[projectlocal-vim] Project config file changed, re-source file?`,
-      "&Yes\n&No",
-      2,
+      "Local config modified, accept changes?",
     );
 
     if (answer === 1) {
       allowlist.updateProjectConfigFile(this.config, { configFileHash: hash });
       await this.sourceFile();
-      await this.showMessage("[projectlocal-vim] Project config loaded!");
+      await this.showMessage("Local config loaded!");
     } else {
-      await this.showMessage(
-        "[projectlocal-vim] Cancelled! We will prompt again the next time you open vim",
-      );
+      await this.showMessage("Cancelled! Will prompt again next time");
     }
   }
 
@@ -149,7 +136,7 @@ export class ProjectLocal {
         if (!projectConfig?.ignore && projectConfig?.autoload) {
           // Only source if it's not ignored
           await this.sourceFile();
-          await this.showMessage("[projectlocal-vim] Project config loaded!");
+          await this.showMessage("Local config loaded!");
         }
       }
     } catch (e) {
@@ -181,24 +168,18 @@ export class ProjectLocal {
    * @returns {Promise<void>}
    */
   private async sourceFile(): Promise<void> {
-    const isNvim05 = await fn.has(this.denops, "nvim-0.5");
+    const nvimFailMsg = "nvim >= 0.5 is required for lua files";
+    const isNvim05 = await fn.has(this.denops, "nvim-0.6");
+
     if (!isNvim05 && Config.isLua(this.configFile as string)) {
-      const msg =
-        `echom "[projectlocal-vim] nvim >= 0.5 is required for lua files"`;
-      throw msg;
+      throw `echom ${info(nvimFailMsg)}`;
     }
 
     try {
       if (Config.isVim(this.configFile as string)) {
-        await fn.execute(
-          this.denops,
-          `source ${this.configFile}`,
-        );
+        await fn.execute(this.denops, `source ${this.configFile}`);
       } else if (Config.isLua(this.configFile as string)) {
-        await fn.execute(
-          this.denops,
-          `luafile ${this.configFile}`,
-        );
+        await fn.execute(this.denops, `luafile ${this.configFile}`);
       } else if (Config.isJson(this.configFile as string)) {
         const initJson = await ProjectLocalFileSystem.parseJsonFile(
           this.configFile as string,
@@ -212,9 +193,7 @@ export class ProjectLocal {
             `lua require('projectlocal.lsp').register_lspservers([=[${servers}]=])`,
           );
         } else {
-          this.showMessage(
-            "[projectlocal-vim] nvim-lsp: nvim 0.5 and up is required",
-          );
+          this.showMessage(nvimFailMsg);
         }
 
         // Vim Variables
@@ -241,9 +220,11 @@ export class ProjectLocal {
         }
       }
     } catch (_) {
-      const msg =
-        `echomsg "[projectlocal-vim] Internal error, check your projectConfig file"`;
-      throw msg;
+      throw `echomsg ${
+        info(
+          "Internal error, check your local config file! Manually source the file with `:source` to check for problems",
+        )
+      }`;
     }
   }
 
@@ -255,7 +236,7 @@ export class ProjectLocal {
    */
   private async showMessage(msg: string): Promise<void> {
     if (this.config.canSendMessage()) {
-      await helpers.echo(this.denops, msg);
+      await helpers.echo(this.denops, info(msg));
     }
   }
 }

@@ -4,6 +4,7 @@ import { Config, makeConfig, PartialUserConfig } from "./config.ts";
 import { ProjectLocal } from "./projectlocal.ts";
 import { ProjectLocalFileSystem } from "./fs.ts";
 import * as allowlist from "./allowlist.ts";
+import { info } from "./message.ts";
 
 export function main(denops: Denops) {
   denops.dispatcher = {
@@ -46,7 +47,7 @@ export function main(denops: Denops) {
       }
 
       allowlist.autoloadEnable(config);
-      helpers.echo(denops, "[projectlocal-vim] Autoload enabled!");
+      helpers.echo(denops, info("Autoload enabled!"));
     },
 
     async disable(): Promise<void> {
@@ -60,7 +61,7 @@ export function main(denops: Denops) {
       }
 
       allowlist.autoloadDisable(config);
-      helpers.echo(denops, "[projectlocal-vim] Autoload disabled!");
+      helpers.echo(denops, info("Autoload disabled!"));
     },
 
     async openLocalConfig(configType: unknown): Promise<void> {
@@ -75,8 +76,8 @@ export function main(denops: Denops) {
       }
 
       const isType = (t: string) => {
-        return t === "json" || t === "lua" || t === "vim"
-      }
+        return t === "json" || t === "lua" || t === "vim";
+      };
 
       if (isString(configType) && isType(configType)) {
         fs.openLocalConfig(config, configType);
