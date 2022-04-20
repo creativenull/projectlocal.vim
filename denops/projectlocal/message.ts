@@ -1,6 +1,6 @@
 import { Denops, fn } from "./deps/denops_std.ts";
 
-export const pluginName = "projectlocal";
+export const pluginName = "[projectlocal]";
 
 /**
  * Perpare message with plugin name prepended
