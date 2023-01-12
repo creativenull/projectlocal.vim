@@ -1,8 +1,8 @@
 # projectlocal-vim
 
-[![Deno 1.17.1 or above](https://img.shields.io/badge/Deno-Support%201.17.1-purple.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.17.1)
-[![Vim 8.2.3452 or above](https://img.shields.io/badge/Vim-Support%208.2.3452-purple.svg?logo=vim)](https://github.com/vim/vim/tree/v8.2.3452)
-[![Neovim 0.6.0 or above](https://img.shields.io/badge/Neovim-Support%200.6.0-purple.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.6.0)
+[![Deno 1.28 or above](https://img.shields.io/badge/Deno-Support%201.28-purple.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.28)
+[![Vim 9.0.0472 or above](https://img.shields.io/badge/Vim-Support%209.0.0472-purple.svg?logo=vim)](https://github.com/vim/vim/tree/v9.0.0472)
+[![Neovim 0.8.0 or above](https://img.shields.io/badge/Neovim-Support%200.8.0-purple.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.8.0)
 
 Load your vim project local configurations safely, for vim and neovim. Written with ♥ in TypeScript and Deno
 ([denops.vim][denops]).
@@ -10,7 +10,7 @@ Load your vim project local configurations safely, for vim and neovim. Written w
 This is a combination of my [projectcmd.vim][pcmdvim] and [projectcmd.nvim][pcmdnvim] plugins with the aim to unify both
 plugins to support both vim and neovim.
 
-__Status: Beta (Enjoying the denops experience, welcome for testing)__
+__Status: Beta__
 
 ## TODO
 
@@ -38,10 +38,10 @@ __Status: Beta (Enjoying the denops experience, welcome for testing)__
 
 ## Requirements
 
-+ [deno v1.17.1 and up](https://deno.land)
-+ [vim-denops/denops.vim][denops]
-+ Vim 8.2.3452 and up (`:version`)
-+ Neovim 0.6.0 and up (`:version`)
++ [deno v1.28 and up](https://deno.land)
++ [denops.vim v4 and up][denops]
++ Vim 9.0.0472 and up (`:version`)
++ Neovim 0.8.0 and up (`:version`)
 
 ## Install
 
@@ -60,10 +60,23 @@ Plug 'creativenull/projectlocal-vim'
 ### packer.nvim
 
 ```lua
-use { 'creativenull/projectlocal-vim', requires = { 'vim-denops/denops.vim' } }
+use {
+    'creativenull/projectlocal-vim',
+    requires = { 'vim-denops/denops.vim' }
+}
+```
+
+### lazy.nvim
+
+```lua
+{
+    'creativenull/projectlocal-vim',
+    dependencies = { 'vim-denops/denops.vim' }
+}
 ```
 
 ## Examples
+
 ### Running for the first-time
 
 Here is an example of setting up a first time use with projectconfig-vim. In the video below, an ALE linter is set up
@@ -87,6 +100,7 @@ The documentation can be found over at [docs/projectlocal.txt][docs] and via vim
 For a JSON config file check `:help projectlocal-json-config`.
 
 ## Overview
+
 ### Why
 
 If you've used `set exrc` for setting project-level local configurations before, then you would know that using it might
