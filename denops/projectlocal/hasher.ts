@@ -1,12 +1,7 @@
-import { crypto } from "./deps/std.ts";
-
-function encodeString(contents: string): Uint8Array {
-  return (new TextEncoder()).encode(contents);
-}
+import { createHash } from "./deps/std.ts";
 
 export async function hashFileContents(contents: string): Promise<string> {
-  const encodedContents = encodeString(contents);
-  const result = await crypto.subtle.digest("SHA-256", encodedContents);
+  const result = await createHash("SHA-256", contents);
   const arrayResult = Array.from(new Uint8Array(result));
   return arrayResult.map((b) => b.toString(16).padStart(2, "0")).join("");
 }

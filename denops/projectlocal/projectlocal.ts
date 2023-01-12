@@ -205,17 +205,15 @@ export class ProjectLocal {
 
           for (const gvar in gvars) {
             // Ignore object prototype props
-            if (gvars.hasOwnProperty(gvar)) {
-              let jsonValue = gvars[gvar];
-              if (typeof jsonValue === "object") {
-                jsonValue = JSON.stringify(gvars[gvar]);
-              }
-
-              await helpers.execute(
-                this.denops,
-                `:let g:${gvar} = ${jsonValue}`,
-              );
+            let jsonValue = gvars[gvar];
+            if (typeof jsonValue === "object") {
+              jsonValue = JSON.stringify(gvars[gvar]);
             }
+
+            await helpers.execute(
+              this.denops,
+              `:let g:${gvar} = ${jsonValue}`,
+            );
           }
         }
       }
