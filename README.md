@@ -55,6 +55,9 @@ to vim-plug.
 ```vim
 Plug 'vim-denops/denops.vim'
 Plug 'creativenull/projectlocal-vim'
+
+" Or use with tag (optional)
+" Plug 'creativenull/projectlocal-vim', { 'tag': 'v0.5.0' }
 ```
 
 ### packer.nvim
@@ -62,7 +65,8 @@ Plug 'creativenull/projectlocal-vim'
 ```lua
 use {
     'creativenull/projectlocal-vim',
-    requires = { 'vim-denops/denops.vim' }
+    tag = 'v0.5.0', -- optional
+    requires = { 'vim-denops/denops.vim' },
 }
 ```
 
@@ -71,6 +75,7 @@ use {
 ```lua
 {
     'creativenull/projectlocal-vim',
+    version = 'v0.5.x', -- optional
     dependencies = { 'vim-denops/denops.vim' }
 }
 ```
