@@ -9,39 +9,47 @@
       "type": "object",
       "properties": {
         "globalVars": {
-          "description": "Vim global variables to be define, will populate g: scope",
+          "description": "For setting global vim variables, aka g: variables",
           "type": "object"
         },
         "nvim-lsp": {
-          "description": "Builtin nvim-lsp client setup, neovim 0.5 and up is required",
-          "type": "object"
+          "description": "For built-in nvim lsp client, nvim >= 0.6 is required",
+          "type": "array"
         },
         "ale": {
-          "description": "[Not Implemented] ALE filetype setup, dense-analysis/ale plugin is required",
-          "type": "object"
+          "description": "For ALE, dense-analysis/ale plugin is required",
+          "type": "object",
+          "properties": {
+            "fixers": {
+              "type": "array"
+            },
+            "linters": {
+              "type": "array"
+            }
+          }
         },
         "efmls": {
-          "description": "[Not Implemented] EFM Langserver filetype setup, creativenull/efmls-configs plugin is required",
+          "description": "[Not Implemented] For efm language server, creativenull/efmls-configs plugin is required",
           "type": "object"
         },
         "diagnosticls": {
-          "description": "[Not Implemented] Diagnostic Language Server filetype setup, creativenull/diagnosticls-configs plugin is required",
+          "description": "[Not Implemented] For diagnostic language server, creativenull/diagnosticls-configs plugin is required",
           "type": "object"
         },
         "null-ls": {
-          "description": "[Not Implemented] Null-ls filetype setup, jose-elias-alvarez/null-ls.nvim plugin is required",
+          "description": "[Not Implemented] For null-ls language server, jose-elias-alvarez/null-ls.nvim plugin is required",
           "type": "object"
         },
         "nvim-lint": {
-          "description": "[Not Implemented] Nvim-lint filetype setup, mfussenegger/nvim-lint plugin is required",
+          "description": "[Not Implemented] For nvim-lint plugin, mfussenegger/nvim-lint plugin is required",
           "type": "object"
         },
         "neomake": {
-          "description": "[Not Implemented] Neomake filetype setup, neomake/neomake plugin is required",
+          "description": "[Not Implemented] For neomake plugin, neomake/neomake plugin is required",
           "type": "object"
         },
         "neoformat": {
-          "description": "[Not Implemented] Neoformat filetype setup, sbdchd/neoformat plugin is required",
+          "description": "[Not Implemented] For neoformat plugin, sbdchd/neoformat plugin is required",
           "type": "object"
         }
       }
