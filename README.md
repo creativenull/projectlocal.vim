@@ -89,6 +89,8 @@ git clone https://github.com/creativenull/projectlocal.vim ~/.local/share/nvim/s
 
 ## How to use
 
+[Link to video]
+
 ## Motivation
 
 I created this plugin in the hopes of making my project configuration separate from my main vim config. To understand
@@ -119,30 +121,6 @@ The above will not work if you have `secure` enabled, because according to the d
 
 </details>
 
-### JSON Config Features (`:help projectlocal-json-config`)
-
-+ Load global variables `g:` (`:help global-variable`).
-+ Built-in support for nvim-lsp setup (for neovim only).
-  Requires [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) installed.
-+ Load global events (coming soon).
-
-## Examples
-
-### Running for the first-time
-
-Here is an example of setting up a first time use with projectconfig-vim. In the video below, an ALE linter is set up
-for linting the project. This will prompt projectlocal.vim to accept the new local config file and source it.
-
-[![asciicast](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq.svg)](https://asciinema.org/a/lg5fteXqg6CWiNiaOUiHIDWUq)
-
-### Running after a change
-
-Here is an example of setting up after a change was made in the local config file. In the video below, an ALE fixer is
-set up for formatting files in the project. This will prompt projectlocal.vim to accept the changes before re-sourcing
-it.
-
-[![asciicast](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL.svg)](https://asciinema.org/a/AFXP48Kb4L2IwcbZNv40RqBhL)
-
 ## Documentation
 
 The documentation can be found over at [docs/projectlocal.txt][docs] and via vim/nvim after installation with
@@ -150,51 +128,10 @@ The documentation can be found over at [docs/projectlocal.txt][docs] and via vim
 
 For a JSON config file check `:help projectlocal-json-config`.
 
-## Overview
-
-### Why
-
-If you've used `set exrc` for setting project-level local configurations before, then you would know that using it might
-pose a risk where malicious code can be executed if cloning git repos with a root `.exrc` file in the repo, see
-[`:h 'exrc'`][vim-exrc]. Therefore, you would also be informed to also enable `set secure` to disable some vim options
-to prevent the execution of such code (to an extent), see [`:h 'secure'`][vim-secure].
-
-However, there might some options you may want to conditionally set on a project-level basis but the limitations of
-`set secure` restrict you from setting these options. Some of these options could include:
-
-+ autocmds
-+ shell commands
-+ write commands
-
-**projectlocal.vim** tries to tackle this by not using `set secure` or `set exrc` but by sourcing your project-level
-local configurations in a safe manner.
-
-### How it works
-
-If for the first time you open a project directory in vim, **projectlocal.vim** will check for a local config file. If
-it finds one, then it will prompt you to allow executing the code within that file.
-
-On the next time it will remember the local config file, and if no changes were made to it - then it will continue
-sourcing it without asking since the last permission allowed it to source. The only time it will ask you afterwards
-is when the local config file was changed.
-
-This means, that **projectlocal.vim** will again prompt you to accept the changes and re-source the local config file.
-It's designed to make sure that any change should go through the user first before sourcing it.
-
-Essentially, the goal of this plugin is to help you safely source your local configurations in a project.
-
-Think of it like a `.vscode/settings.json` file but for vim/neovim and written in vimscript or lua (and now in json,
-see `:help projectlocal-json-config`). This gives you and your team more control on how to set vim configurations
-on the project and not mess with your own user configurations.
-
-[Revised from projectcmd.nvim]
-
 ## Contributing
 
-At this point, you're welcome to just look at the code and see what issue you can find or be able to propose additional
-features requests 🙂
-
-All tooling (linting, formatting, etc) is provided by deno.
+Make sure you have Deno installed. If you encounter a bug or have an issue, you can make PR with your reasoning. But I
+would recommend you create an Issue first before making a PR to expand more on the issue you're having.
 
 [vim-exrc]: https://vimhelp.org/options.txt.html#'exrc'
 [vim-secure]: https://vimhelp.org/options.txt.html#'secure'
