@@ -112,7 +112,7 @@ filetype for a file to get syntax highlighting - especially for files that do no
 we will need to set it up with:
 
 ```vim
-autocmd! BufRead,BufNewFile *.astro set filetype=astro`
+autocmd! BufRead,BufNewFile *.astro set filetype=astro
 ```
 
 The above will not work if you have `secure` enabled, because according to the documentation on `secure`:
