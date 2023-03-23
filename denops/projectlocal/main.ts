@@ -1,89 +1,256 @@
-import { Denops, helpers, vars } from "./deps/denops_std.ts";
-import { isObject, isString } from "./deps/unknownutil.ts";
-import { Config, makeConfig, PartialUserConfig } from "./config.ts";
-import { ProjectLocal } from "./projectlocal.ts";
-import { ProjectLocalFileSystem } from "./fs.ts";
-import * as allowlist from "./allowlist.ts";
-import { info } from "./message.ts";
+import { Denops, fn, helpers } from "./deps/denops_std.ts";
+import {
+  getConfig,
+  getProjectConfigFilepath,
+  getProjectRoot,
+  isJson,
+  isLua,
+  isVimscript,
+  registerBufNewFileEvents,
+  UserConfig,
+} from "./config.ts";
+import { getHashFileContents } from "./hasher.ts";
+import { AllowedItem, isAutoload, setAutoload } from "./allowlist.ts";
+import {
+  getAllowlist,
+  projectConfigStatus,
+  setAllowlist,
+} from "./allowlist.ts";
+import { confirmFirstTime, confirmOnChange, info } from "./message.ts";
+import { sourceJson } from "./loaders/json/main.ts";
 
-export function main(denops: Denops) {
+export async function main(denops: Denops) {
   denops.dispatcher = {
-    async autosource(): Promise<void> {
-      const userConfig = await vars.g.get(denops, "projectlocal", null);
-      let config: Config;
+    /**
+     * Detect if a config file is present in the project root directory
+     * and as user for permission to source it or not
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
+    async discover(): Promise<void> {
+      const config = await getConfig(denops);
+      const projectRoot = await getProjectRoot(denops);
+      const projectConfigFilepath = await getProjectConfigFilepath(denops);
 
-      if (isObject<PartialUserConfig>(userConfig)) {
-        config = await makeConfig(denops, userConfig);
-      } else {
-        config = await makeConfig(denops, {});
+      if (!projectConfigFilepath) {
+        return;
       }
 
-      const projectLocal = new ProjectLocal(denops, config);
-      projectLocal.start();
+      const hash = await getHashFileContents(
+        await Deno.readTextFile(projectConfigFilepath),
+      );
+
+      const status = await projectConfigStatus(denops, projectRoot, hash);
+      switch (status) {
+        case "new":
+          await onNew(denops, config, projectRoot, hash);
+          break;
+
+        case "changed":
+          await onChanged(denops, config, projectRoot, hash);
+          break;
+
+        case "equal":
+        default:
+          if (await isAutoload(denops, projectRoot)) {
+            await sourceFile(denops, config);
+          }
+      }
     },
 
+    /**
+     * Manually load the config file, if it exists but autoload is disabled.
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
     async load(): Promise<void> {
-      const userConfig = await vars.g.get(denops, "projectlocal", null);
-      let config: Config;
+      const config = await getConfig(denops);
+      const projectRoot = await getProjectRoot(denops);
+      const projectConfigFilepath = await getProjectConfigFilepath(denops);
 
-      if (isObject<PartialUserConfig>(userConfig)) {
-        config = await makeConfig(denops, userConfig);
-      } else {
-        config = await makeConfig(denops, {});
+      if (projectConfigFilepath && !(await isAutoload(denops, projectRoot))) {
+        await sourceFile(denops, config);
+        await helpers.execute(denops, `echomsg 'Manually loaded config file!'`);
       }
-
-      const projectLocal = new ProjectLocal(denops, config);
-      projectLocal.manualSource();
     },
 
-    async enable(): Promise<void> {
-      const userConfig = await vars.g.get(denops, "projectlocal", null);
-      let config: Config;
+    /**
+     * Enable autoload of config file in project root.
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
+    async autoloadEnable(): Promise<void> {
+      const config = await getConfig(denops);
+      const projectRoot = await getProjectRoot(denops);
+      const projectConfigFilepath = await getProjectConfigFilepath(denops);
 
-      if (isObject<PartialUserConfig>(userConfig)) {
-        config = await makeConfig(denops, userConfig);
-      } else {
-        config = await makeConfig(denops, {});
+      if (projectConfigFilepath && !(await isAutoload(denops, projectRoot))) {
+        await setAutoload(denops, projectRoot, true);
+        await sourceFile(denops, config);
+        await helpers.execute(
+          denops,
+          `echomsg 'Enabled autoloading of config file and sourced the file!'`,
+        );
       }
-
-      allowlist.autoloadEnable(config);
-      helpers.echo(denops, info("Autoload enabled!"));
     },
 
-    async disable(): Promise<void> {
-      const userConfig = await vars.g.get(denops, "projectlocal", null);
-      let config: Config;
+    /**
+     * Disable autoload of config file in project root.
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
+    async autoloadDisable(): Promise<void> {
+      const projectRoot = await getProjectRoot(denops);
+      const projectConfigFilepath = await getProjectConfigFilepath(denops);
 
-      if (isObject<PartialUserConfig>(userConfig)) {
-        config = await makeConfig(denops, userConfig);
-      } else {
-        config = await makeConfig(denops, {});
+      if (projectConfigFilepath && (await isAutoload(denops, projectRoot))) {
+        await setAutoload(denops, projectRoot, false);
+        await helpers.execute(
+          denops,
+          `echomsg 'Disabled autoloading of config file!'`,
+        );
       }
-
-      allowlist.autoloadDisable(config);
-      helpers.echo(denops, info("Autoload disabled!"));
     },
 
-    async openLocalConfig(configType: unknown): Promise<void> {
-      const fs = new ProjectLocalFileSystem(denops);
-      const userConfig = await vars.g.get(denops, "projectlocal", null);
-      let config: Config;
+    /**
+     * Open config file on the project root, if it doesn't exist
+     * then create one with a skeleton file.
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
+    async open(): Promise<void> {
+      const config = await getConfig(denops);
+      const projectRoot = await getProjectRoot(denops);
+      const projectConfigFilepath = await getProjectConfigFilepath(denops);
+      const filepath = projectConfigFilepath ??
+        `${projectRoot}/${config.rootFiles[1]}`;
 
-      if (isObject<PartialUserConfig>(userConfig)) {
-        config = await makeConfig(denops, userConfig);
-      } else {
-        config = await makeConfig(denops, {});
-      }
-
-      const isType = (t: string) => {
-        return t === "json" || t === "lua" || t === "vim";
-      };
-
-      if (isString(configType) && isType(configType)) {
-        fs.openLocalConfig(config, configType);
-      } else {
-        fs.openLocalConfig(config);
-      }
+      await helpers.execute(denops, `edit +3 ${filepath}`);
     },
   };
+
+  // Register events for template generation
+  await registerBufNewFileEvents(denops);
+}
+
+/**
+ * Handle if config file is newly added.
+ *
+ * @async
+ * @param {Denops} denops
+ * @param {UserConfig} config
+ * @param {string} projectRoot
+ * @param {string} hash
+ * @returns {Promise<void>}
+ */
+async function onNew(
+  denops: Denops,
+  config: UserConfig,
+  projectRoot: string,
+  hash: string,
+): Promise<void> {
+  const projectConfigFilepath = await getProjectConfigFilepath(denops);
+  const allowlist = await getAllowlist(denops);
+  const allowedItem: AllowedItem = {
+    projectRoot,
+    hash,
+    autoload: true,
+  };
+
+  const answer = await confirmFirstTime(denops);
+  switch (answer) {
+    case 1: // Yes
+      await setAllowlist(denops, [...allowlist, allowedItem]);
+      await sourceFile(denops, config);
+      break;
+
+    case 2: // No (Do not prompt)
+      await setAllowlist(denops, [...allowlist, {
+        ...allowedItem,
+        autoload: false,
+      }]);
+      break;
+
+    case 3: // Open config
+      await helpers.execute(denops, `edit ${projectConfigFilepath}`);
+      break;
+
+    case 4: // Cancel
+    default:
+  }
+}
+
+/**
+ * Handle if config file changes.
+ *
+ * @async
+ * @param {Denops} denops
+ * @param {UserConfig} config
+ * @param {string} projectRoot
+ * @param {string} hash
+ * @returns {Promise<void>}
+ */
+async function onChanged(
+  denops: Denops,
+  config: UserConfig,
+  projectRoot: string,
+  hash: string,
+): Promise<void> {
+  const allowlist = await getAllowlist(denops);
+  const allowedItem: AllowedItem = {
+    projectRoot,
+    hash,
+    autoload: true,
+  };
+
+  const answer = await confirmOnChange(denops);
+  switch (answer) {
+    case 1: // Yes
+      await setAllowlist(
+        denops,
+        allowlist.map((item) =>
+          item.projectRoot === projectRoot ? { ...allowedItem } : item
+        ),
+      );
+      await sourceFile(denops, config);
+      break;
+
+    case 2: // No
+    default:
+  }
+}
+
+/**
+ * Source the config file.
+ *
+ * @async
+ * @param {Denops} denops
+ * @param {UserConfig} config
+ * @returns {Promise<void>}
+ */
+async function sourceFile(denops: Denops, config: UserConfig): Promise<void> {
+  const projectRoot = await getProjectRoot(denops);
+  const filepath = await getProjectConfigFilepath(denops) as string;
+
+  if (isVimscript(filepath)) {
+    helpers.execute(denops, `source ${filepath}`);
+  } else if (isLua(filepath)) {
+    if (await fn.has(denops, "nvim-0.6")) {
+      helpers.execute(denops, `source ${filepath}`);
+    }
+  } else if (isJson(filepath)) {
+    sourceJson(denops, config, filepath);
+  }
+
+  if (config.enableMessages && await isAutoload(denops, projectRoot)) {
+    helpers.execute(
+      denops,
+      `echomsg "${info("Successfully loaded project config file!")}"`,
+    );
+  }
 }
