@@ -1,182 +1,132 @@
-import { Config } from "./config.ts";
-import { hashFileContents } from "./hasher.ts";
+import { fs } from "./deps/std.ts";
+import { Denops } from "./deps/denops_std.ts";
+import { fileExists, getDefaultCacheDirectory } from "./fs.ts";
 
-/* Allowlist sample structure:
-[
-  {
-    "projectDirectoryPath": "/path/to/projectdir",
-    "configFileHash": "89yu80yh9dy890gbfaewasdf89yb",
-    "autoload": true,
-    "ignore": false
-  },
-  {
-    "projectDirectoryPath": "/path/to/projectdir2",
-    "configFileHash": "89yu80yh9dy890gbfaewasdf89yb",
-    "autoload": true,
-    "ignore": false
-  }
-]
-*/
-
-export interface AllowlistItem {
-  projectDirectoryPath: string;
-  configFileHash: string;
+export type AllowedItem = {
+  projectRoot: string;
+  hash: string;
   autoload: boolean;
-  ignore: boolean;
-}
+};
 
-export interface PartialAllowlistItem {
-  projectDirectoryPath?: string;
-  configFileHash?: string;
-  autoload?: boolean;
-  ignore?: boolean;
+export type Allowlist = AllowedItem[];
+
+const filename = "allowlist.json";
+
+/**
+ * Get parsed allowlist content.
+ *
+ * @async
+ * @param {Denops} denops
+ * @returns {Promise<Allowlist>}
+ */
+export async function getAllowlist(denops: Denops): Promise<Allowlist> {
+  const cacheDir = await getDefaultCacheDirectory(denops);
+  const allowlistFilepath = `${cacheDir}/${filename}`;
+
+  if (!fileExists(allowlistFilepath)) {
+    await fs.ensureFile(allowlistFilepath);
+    await Deno.writeTextFile(allowlistFilepath, "[]");
+  }
+
+  const rawContent = await Deno.readTextFile(allowlistFilepath);
+  const content = JSON.parse(rawContent);
+
+  return content;
 }
 
 /**
- * Add a project dirpath to the allowlist
+ * Set allowlist items back into file.
  *
- * @param {Config} config
- * @param {boolean} ignore Ignore the project dirpath on the next vim startup
+ * @async
+ * @param {Denops} denops
+ * @param {Allowlist} content
  * @returns {Promise<void>}
  */
-export async function addProjectConfigFile(
-  config: Config,
-  configFile: string,
-  ignore?: boolean,
+export async function setAllowlist(
+  denops: Denops,
+  content: Allowlist,
 ): Promise<void> {
-  const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  let json: AllowlistItem[];
-  if (fileContents === "") {
-    json = [];
+  const cacheDir = await getDefaultCacheDirectory(denops);
+  const allowlistFilepath = `${cacheDir}/${filename}`;
+  const rawContent = JSON.stringify(content);
+
+  await Deno.writeTextFile(allowlistFilepath, rawContent);
+}
+
+/**
+ * Get the status a project config file, if it exists
+ * on the project directory, or if it newly created or
+ * if it exists and changes were found.
+ *
+ * @async
+ * @param {Denops} denops
+ * @param {string} projectRoot
+ * @param {string} hash
+ * @returns {Promise<"new" | "changed" | "equal">}
+ */
+export async function projectConfigStatus(
+  denops: Denops,
+  projectRoot: string,
+  hash: string,
+): Promise<"new" | "changed" | "equal"> {
+  const allowlist = await getAllowlist(denops);
+  const projectRootResult = allowlist.filter((item) =>
+    item.projectRoot === projectRoot
+  );
+  const hasMatchedProjectRoot = projectRootResult.length === 1;
+  const hashResult = allowlist.filter((item) =>
+    item.projectRoot === projectRoot && item.hash === hash
+  );
+  const hasMatchedHash = hashResult.length === 1;
+
+  if (hasMatchedProjectRoot && hasMatchedHash) {
+    return "equal";
+  } else if (hasMatchedProjectRoot && !hasMatchedHash) {
+    return "changed";
   } else {
-    json = JSON.parse(fileContents) as AllowlistItem[];
+    return "new";
   }
-
-  const projectDirectoryPath = await config.getProjectRoot();
-  const contents = Deno.readTextFileSync(configFile);
-  const configFileHash = await hashFileContents(contents);
-
-  json.push({
-    projectDirectoryPath,
-    configFileHash,
-    autoload: true,
-    ignore: ignore ?? false,
-  });
-
-  Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(json));
 }
 
 /**
- * Remove a project dirpath from the allowlist
+ * Check if the autoload flag is set in the allowlist.
  *
- * @param {Config} config
- * @returns {void}
+ * @async
+ * @param {Denops} denops
+ * @param {string} projectRoot
+ * @returns {Promise<boolean>}
  */
-export function removeProjectConfigFile(config: Config): void {
-  const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  if (fileContents === "") {
-    return;
-  }
+export async function isAutoload(
+  denops: Denops,
+  projectRoot: string,
+): Promise<boolean> {
+  const allowlist = await getAllowlist(denops);
+  const result = allowlist.filter((item) =>
+    item.projectRoot === projectRoot && item.autoload
+  );
 
-  const json = JSON.parse(fileContents) as AllowlistItem[];
-  const newJsonContents = json.filter(async (item) =>
-    item.projectDirectoryPath !== (await config.getProjectRoot())
-  );
-  Deno.writeTextFileSync(
-    config.getAllowlistPath(),
-    JSON.stringify(newJsonContents),
-  );
+  return result.length === 1;
 }
 
 /**
- * Update a project dirpath settings from the allowlist
+ * Set the autoload flag in the allowlist file, provided by projectRoot.
  *
- * @param {Config} config
- * @param {PartialAllowlistItem} newSettings
- * @returns {void}
+ * @async
+ * @param {Denops} denops
+ * @param {string} projectRoot
+ * @param {boolean} value
+ * @returns {Promise<void>}
  */
-export async function updateProjectConfigFile(
-  config: Config,
-  newSettings: PartialAllowlistItem,
+export async function setAutoload(
+  denops: Denops,
+  projectRoot: string,
+  value: boolean,
 ): Promise<void> {
-  const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  if (fileContents === "") {
-    return;
-  }
-
-  const json = JSON.parse(fileContents) as AllowlistItem[];
-  const projectRoot = await config.getProjectRoot();
-  const ind = json.findIndex((item) =>
-    item.projectDirectoryPath === projectRoot
+  const allowlist = await getAllowlist(denops);
+  await setAllowlist(
+    denops,
+    allowlist.map((item) =>
+      item.projectRoot === projectRoot ? { ...item, autoload: value } : item
+    ),
   );
-
-  json[ind] = {
-    ...json[ind],
-    ...newSettings,
-  };
-
-  Deno.writeTextFileSync(config.getAllowlistPath(), JSON.stringify(json));
-}
-
-/**
- * Get the project dirpath settings from the allowlist
- *
- * @param {Config} config
- * @param {string} projectpath
- * @returns {void}
- */
-export function getProjectConfig(
-  config: Config,
-  projectpath: string,
-): AllowlistItem | null {
-  const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  if (fileContents === "") {
-    return null;
-  }
-
-  const json = JSON.parse(fileContents) as AllowlistItem[];
-  const [project] = json.filter((item) =>
-    item.projectDirectoryPath === projectpath
-  );
-  return project;
-}
-
-/**
- * Check if a project dirpath is allowed
- *
- * @param {Config} config
- * @returns {boolean}
- */
-export async function isAllowed(config: Config): Promise<boolean> {
-  const fileContents = Deno.readTextFileSync(config.getAllowlistPath());
-  if (fileContents === "" || fileContents === "[{}]") {
-    return false;
-  }
-
-  const json = JSON.parse(fileContents) as AllowlistItem[];
-  const projectRoot = await config.getProjectRoot();
-  const result = json.findIndex((item) =>
-    item.projectDirectoryPath === projectRoot
-  );
-  return result !== -1;
-}
-
-/**
- * Disable autoload on a local project config
- *
- * @param {Config} config
- * @returns {void}
- */
-export function autoloadDisable(config: Config): void {
-  updateProjectConfigFile(config, { autoload: false });
-}
-
-/**
- * Enable autoload on a local project config
- *
- * @param {Config} config
- * @returns {void}
- */
-export function autoloadEnable(config: Config): void {
-  updateProjectConfigFile(config, { autoload: true });
 }
