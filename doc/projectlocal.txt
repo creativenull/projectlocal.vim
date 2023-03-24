@@ -140,11 +140,12 @@ json structure, which would look like the following:
     }
 <
 
-Currently supported properties:
+Supported built-in options and plugins:
 
 + nvim-lsp
 + globalVars
 + ale
++ efmls-config-nvim
 
 NVIM-LSP
 
