@@ -145,7 +145,8 @@ Supported built-in options and plugins:
 + nvim-lsp
 + globalVars
 + ale
-+ efmls-config-nvim
++ efmls-configs-nvim
++ diagnosticls-configs-nvim
 
 NVIM-LSP
 
@@ -247,6 +248,31 @@ Here is an example of setting up efmls for a javascript file:
     {
         "projectlocal": {
             "efmls": {
+                "javascript": {
+		    "formatter": ["prettier"],
+		    "linter": ["eslint"]
+		},
+            }
+        }
+    }
+<
+
+DIAGNOSTICLS-CONFIGS - SETUP
+
+"diagnosticls" is for setting up diagnostic language server with the help of
+diagnosticls-config-nvim plugin. The diagnostic language server and the
+diagnosticls-config-nvim plugin is required to be installed. Follow the links
+below for instructions:
+
++ Language server: https://github.com/iamcco/diagnostic-languageserver
++ Plugin: https://github.com/creativenull/diagnosticls-configs-nvim
+
+Here is an example of setting up efmls for a javascript file:
+
+>
+    {
+        "projectlocal": {
+            "diagnosticls": {
                 "javascript": {
 		    "formatter": ["prettier"],
 		    "linter": ["eslint"]
