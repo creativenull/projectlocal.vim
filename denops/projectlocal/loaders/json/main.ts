@@ -5,6 +5,10 @@ import { handle as nvimLspHandler } from "./nvim-lsp.ts";
 import type { NvimLspConfig } from "./nvim-lsp.ts";
 import { handle as aleHandler } from "./ale.ts";
 import type { AleConfig } from "./ale.ts";
+import { handle as efmlsHandler } from "./efmls.ts";
+import type { EfmlsConfig } from "./efmls.ts";
+import { handle as diagnosticlsHandler } from "./diagnosticls.ts";
+import type { DiagnosticlsConfig } from "./diagnosticls.ts";
 
 const isNvim06 = async (denops: Denops) => await fn.has(denops, "nvim-0.6");
 
@@ -40,6 +44,14 @@ export async function sourceJson(
   if (parsedContent.projectlocal.ale) {
     await aleHandler(denops, config, parsedContent.projectlocal.ale);
   }
+
+  if (parsedContent.projectlocal.efmls) {
+    await efmlsHandler(denops, config, parsedContent.projectlocal.efmls);
+  }
+
+  if (parsedContent.projectlocal.diagnosticls) {
+    await diagnosticlsHandler(denops, config, parsedContent.projectlocal.diagnosticls);
+  }
 }
 
 export type JsonConfig = {
@@ -47,6 +59,8 @@ export type JsonConfig = {
     "nvim-lsp"?: string[] | NvimLspConfig[];
     globalVars?: GlobalVarsConfig;
     ale?: AleConfig;
+    efmls?: EfmlsConfig;
+    diagnosticls?: DiagnosticlsConfig;
   };
 };
 
