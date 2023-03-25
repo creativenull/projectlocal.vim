@@ -51,7 +51,7 @@ printed on the commandline to show the progress of the plugin.
 used when you create a new project config file with |:ProjectLocalConfig|
 without any arguments. This value here is mapped to `rootFiles` keys.
 
-                                                    *projectlocal-config-file*
+                                               *projectlocal-config-rootFiles*
 "rootFiles" are the list of files that will be used by |:ProjectLocalConfig|
 to be created as a project config file. The keys are used in `defaultRootFile`
 to specify a default file if not provided in |:ProjectLocalConfig|.
@@ -75,7 +75,7 @@ Note, when running |:ProjectLocalConfig| it will use the first file defined
 in the list, so by default a `.vimrc.json` file is created by default from
 the list.
 
-                                                  *projectlocal-configs-debug*
+                                              *projectlocal-configs-debugMode*
 "debugMode" (default: false) is used to be able to output a log for debugging
 issues found in the plugin. (Currently not implemented)
 
