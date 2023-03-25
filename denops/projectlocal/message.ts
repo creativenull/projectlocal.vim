@@ -1,4 +1,4 @@
-import { Denops, fn } from "./deps/denops_std.ts";
+import { Denops, fn, helpers } from "./deps/denops_std.ts";
 
 export const pluginName = "[projectlocal]";
 
@@ -10,6 +10,33 @@ export const pluginName = "[projectlocal]";
  */
 export function info(msg: string): string {
   return `${pluginName} ${msg}`;
+}
+
+/**
+ * Echo error message to the :echoerr list.
+ *
+ * @async
+ * @param {Denops} denops
+ * @param {string} msg
+ * @returns {Promise<void>}
+ */
+export async function showError(denops: Denops, msg: string): Promise<void> {
+  await helpers.echoerr(denops, `${pluginName} Error: ${msg}`);
+}
+
+/**
+ * Echo warning message to :echomsg with :echohl
+ *
+ * @async
+ * @param {Denops} denops
+ * @param {string} msg
+ * @returns {Promise<void>}
+ */
+export async function showWarning(denops: Denops, msg: string): Promise<void> {
+  await helpers.execute(
+    denops,
+    `echohl WarningMsg | echomsg "${pluginName} Warning: ${msg}" | echohl None`,
+  );
 }
 
 /**
