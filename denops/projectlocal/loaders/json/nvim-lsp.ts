@@ -20,7 +20,7 @@ export async function handle(
   const serializeContext = JSON.stringify(nvimLspContext);
   await helpers.execute(
     denops,
-    `lua require("projectlocal.lsp").register_lspservers([=[${serializeContext}]=], [=[${serializeConfig}]=])`,
+    `lua require("projectlocal.lsp").register([=[${serializeContext}]=], [=[${serializeConfig}]=])`,
   );
 }
 

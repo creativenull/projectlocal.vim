@@ -62,7 +62,7 @@ end
 ---@param raw_server string
 ---@param raw_config string
 ---@return nil
-function M.register_lspservers(raw_servers, raw_config)
+function M.register(raw_servers, raw_config)
 	local config = vim.fn.json_decode(raw_config)
 	local servers = vim.fn.json_decode(raw_servers)
 
