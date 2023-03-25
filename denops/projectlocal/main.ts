@@ -261,7 +261,7 @@ async function sourceFile(denops: Denops, config: UserConfig): Promise<void> {
   if (config.enableMessages && await isAutoload(denops, projectRoot)) {
     helpers.execute(
       denops,
-      `echomsg "${info("Successfully loaded project config file!")}"`,
+      `echomsg "${info("Loaded project config file")}"`,
     );
   }
 }
