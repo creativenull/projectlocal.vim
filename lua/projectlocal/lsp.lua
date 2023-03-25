@@ -1,15 +1,9 @@
+local utils = require("projectlocal._utils")
 local M = {}
 local global_lsp_opts = {
 	on_attach = nil,
 	capabilities = nil,
 }
-
----Print error message to command line
----@param msg string
----@return nil
-local function err(msg)
-	vim.api.nvim_err_writeln(string.format("[projectlocal-vim] %s", msg))
-end
 
 ---Validate default lsp config
 ---@param opts table
@@ -35,9 +29,10 @@ local function validate_server_config(config)
 
 	vim.validate({
 		init_options = { config.init_options, is_table_or_nil },
-		settings = { config.settings, is_table_or_nil },
 		root_dir = { config.root_dir, is_table_or_nil },
+		settings = { config.settings, is_table_or_nil },
 		single_file_support = { config.flags, is_bool_or_nil },
+		filetypes = { config.filetypes, is_table_or_nil },
 	})
 
 	return config
@@ -51,7 +46,7 @@ function M.setup(default_opts)
 	local ok, _ = pcall(validate_default_opts, default_opts)
 
 	if not ok then
-		err("Invalid default lsp options")
+		utils.err("Invalid default lsp options")
 		return
 	end
 
@@ -68,7 +63,7 @@ function M.register(raw_servers, raw_config)
 
 	local lspok, nvimlsp = pcall(require, "lspconfig")
 	if not lspok then
-		err("`nvim-lspconfig` plugin not installed")
+		utils.err("`nvim-lspconfig` plugin not installed")
 		return
 	end
 
@@ -88,25 +83,27 @@ function M.register(raw_servers, raw_config)
 				},
 			})
 			if not ok then
-				err("failed validation: " .. tostring(reason))
+				utils.err("Failed validation: `name` and `config` keys are required")
 				break
 			end
 
 			ok, reason = pcall(validate_server_config, server.config)
 			if not ok then
-				err("failed validation: " .. tostring(reason))
+				utils.err(
+					"Failed validation: `config` properties must have valid fields or left empty: `init_options` (list), `root_dir` (list), `settings` (list), `single_file_support` (boolean), `filetypes` (list)"
+				)
 				break
 			end
 
 			config = server.config
 
-      -- Unpack array into func args for root_dir
+			-- Unpack array into func args for root_dir
 			if config.root_dir then
 				config.root_dir = nvimlsp.util.root_pattern(unpack(config.root_dir))
 			end
 
-      -- Safe to register LSPs
-			nvimlsp[server.name].setup(vim.tbl_extend("force", config, global_lsp_opts))
+			-- Safely register LSPs, let lspconfig complain if needed
+			pcall(nvimlsp[server.name].setup, vim.tbl_extend("force", config, global_lsp_opts))
 		end
 	end
 end
