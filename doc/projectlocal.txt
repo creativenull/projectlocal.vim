@@ -6,6 +6,18 @@ without the use of |exrc| and |secure|.
 
 Written with <3 in TypeScript and Deno (|denops.vim|).
 
+TABLE OF CONTENTS
+
+INTRODUCTION				|projectlocal|
+CONFIGURATION				|projectlocal-config|
+    Config - enableMessages  		|projectlocal-config-enableMessages|
+    Config - defaultRootFile 		|projectlocal-config-defaultRootFile|
+    Config - rootFiles       		|projectlocal-config-rootFiles|
+    Config - debugMode       		|projectlocal-configs-debugMode|
+GETTING STARTED              		|projectlocal-getting-started|
+JSON CONFIGURATION           		|projectlocal-json-config|
+COMMANDS                     		|projectlocal-commands|
+
 CONFIGURATION                                            *projectlocal-config*
 
 By default, you don't need to specify any configuration to setup for this
