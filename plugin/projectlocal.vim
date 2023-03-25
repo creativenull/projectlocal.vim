@@ -2,7 +2,7 @@ if exists('g:loaded_projectlocal')
   finish
 endif
 
-command! -nargs=? ProjectLocalConfig call denops#notify('projectlocal', 'open', [])
+command! -nargs=? ProjectLocalConfig call denops#notify('projectlocal', 'open', [<q-args>])
 command! -nargs=0 ProjectLocalLoad call denops#notify('projectlocal', 'load', [])
 command! -nargs=0 ProjectLocalAutoloadEnable call denops#notify('projectlocal', 'autoloadEnable', [])
 command! -nargs=0 ProjectLocalAutoloadDisable call denops#notify('projectlocal', 'autoloadDisable', [])

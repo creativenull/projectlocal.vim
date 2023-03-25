@@ -18,7 +18,12 @@ Vimscript
 >
     let g:projectlocal = {
         \ 'enableMessages': v:true,
-        \ 'rootFiles': ['.vimrc.json', '.vimrc.lua', '.vimrc'],
+        \ 'defaultRootFile': 'json',
+	\ 'rootFiles': {
+	    \ 'json': '.vimrc.json',
+	    \ 'lua': '.vimrc.lua',
+	    \ 'vim': '.vimrc',
+	\ },
         \ 'debugMode': v:false,
         \ }
 <
@@ -27,7 +32,12 @@ Lua
 >
     vim.g.projectlocal = {
         enableMessages = true,
-        rootFiles = { '.vimrc.json', '.vimrc.lua', '.vimrc' },
+        defaultRootFile = 'json',
+	rootFiles = {
+	    json = '.vimrc.json',
+	    lua = '.vimrc.lua',
+	    vim = '.vimrc',
+	},
         debugMode = false,
     }
 <
@@ -36,10 +46,30 @@ Lua
 "enableMessages" (default: true) is used to enable/disable messages that are
 printed on the commandline to show the progress of the plugin.
 
+                                         *projectlocal-config-defaultRootFile*
+"defaultRootFile" (default: "json") is the default root file that will be
+used when you create a new project config file with |:ProjectLocalConfig|
+without any arguments. This value here is mapped to `rootFiles` keys.
+
                                                     *projectlocal-config-file*
-"rootFiles" (default: ['.vimrc.json', '.vimrc.lua', '.vimrc']) specifies the
-files to look for in the project directory. If any of the files defined in
-the list is found then the user will be prompt to run the config.
+"rootFiles" are the list of files that will be used by |:ProjectLocalConfig|
+to be created as a project config file. The keys are used in `defaultRootFile`
+to specify a default file if not provided in |:ProjectLocalConfig|.
+
+Defaults
+>
+    vimscript
+    { 'json': '.vimrc.json', 'lua': '.vimrc.lua', 'vim': '.vimrc' }
+<
+
+>
+    lua
+    {
+	json = '.vimrc.json',
+	lua = '.vimrc.lua',
+	vim = '.vimrc',
+    }
+<
 
 Note, when running |:ProjectLocalConfig| it will use the first file defined
 in the list, so by default a `.vimrc.json` file is created by default from

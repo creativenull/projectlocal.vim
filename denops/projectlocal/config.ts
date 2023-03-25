@@ -3,15 +3,23 @@ import { fileExists } from "./fs.ts";
 
 export type UserConfig = {
   enableMessages: boolean;
-  rootFiles: string[];
+  defaultRootFile: string;
+  rootFiles: {
+    [ft: string]: string;
+  },
   debugMode: boolean;
 };
 
 const pluginProp = "projectlocal";
 
-const initialConfig: UserConfig = {
+const defaultConfig: UserConfig = {
   enableMessages: true,
-  rootFiles: [".vimrc.json", ".vimrc.lua", ".vimrc"],
+  defaultRootFile: "json",
+  rootFiles: {
+    json: ".vimrc.json",
+    lua: ".vimrc.lua",
+    vim: ".vimrc",
+  },
   debugMode: false,
 };
 
@@ -28,7 +36,8 @@ export const isJson = (filepath: string) => filepath.endsWith(".json");
  * @returns {Promise<UserConfig>}
  */
 export async function getConfig(denops: Denops): Promise<UserConfig> {
-  return await vars.g.get(denops, pluginProp, initialConfig);
+  const config = await vars.g.get(denops, pluginProp, defaultConfig);
+  return { ...defaultConfig, ...config };
 }
 
 /**
@@ -41,20 +50,20 @@ export async function getConfig(denops: Denops): Promise<UserConfig> {
 export async function registerBufNewFileEvents(denops: Denops): Promise<void> {
   const config = await getConfig(denops);
 
-  for (const rootFile of config.rootFiles) {
+  for (const [_, filename] of Object.entries(config.rootFiles)) {
     const pluginDir = await getPluginDir(denops);
 
     if (pluginDir !== "") {
       let skeleton = `${pluginDir}/templates/skeleton.vim`;
-      if (isLua(rootFile)) {
+      if (isLua(filename)) {
         skeleton = `${pluginDir}/templates/skeleton.lua`;
-      } else if (isJson(rootFile)) {
+      } else if (isJson(filename)) {
         skeleton = `${pluginDir}/templates/skeleton.json`;
       }
 
       await helpers.execute(
         denops,
-        `autocmd ProjectLocalEvents BufNewFile ${rootFile} 0r ${skeleton}`,
+        `autocmd ProjectLocalEvents BufNewFile ${filename} 0r ${skeleton}`,
       );
     }
   }
@@ -97,8 +106,9 @@ export async function getProjectConfigFilepath(
   const config = await getConfig(denops);
   const projectRoot = await getProjectRoot(denops);
 
-  for (const rootFile of config.rootFiles) {
-    const filepath = `${projectRoot}/${rootFile}`;
+  for (const [_, filename] of Object.entries(config.rootFiles)) {
+    const filepath = `${projectRoot}/${filename}`;
+
     if (fileExists(filepath)) {
       return filepath;
     }

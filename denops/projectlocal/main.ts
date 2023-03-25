@@ -123,12 +123,23 @@ export async function main(denops: Denops) {
      * @async
      * @returns {Promise<void>}
      */
-    async open(): Promise<void> {
+    async open(file: unknown): Promise<void> {
       const config = await getConfig(denops);
       const projectRoot = await getProjectRoot(denops);
       const projectConfigFilepath = await getProjectConfigFilepath(denops);
-      const filepath = projectConfigFilepath ??
-        `${projectRoot}/${config.rootFiles[1]}`;
+      const includesInConfig = (ft: string) =>
+        Object.keys(config.rootFiles).includes(ft);
+
+      if (projectConfigFilepath) {
+        await helpers.execute(denops, `edit ${projectConfigFilepath}`);
+      }
+
+      const defaultFile = config.rootFiles[config.defaultRootFile];
+      let filepath = `${projectRoot}/${defaultFile}`;
+
+      if (typeof file === "string" && includesInConfig(file)) {
+        filepath = `${projectRoot}/${config.rootFiles[file]}`;
+      }
 
       await helpers.execute(denops, `edit +3 ${filepath}`);
     },
