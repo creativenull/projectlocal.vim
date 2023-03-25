@@ -22,10 +22,15 @@ export async function handle(
 
   const serializeDiagnosticls = JSON.stringify(diagnosticls);
   const serializeConfig = JSON.stringify(config);
-  await helpers.execute(
-    denops,
-    `lua require("projectlocal.diagnosticls").register([=[${serializeDiagnosticls}]=], [=[${serializeConfig}]=])`,
-  );
+
+  try {
+    await helpers.execute(
+      denops,
+      `lua require("projectlocal.diagnosticls").register([=[${serializeDiagnosticls}]=], [=[${serializeConfig}]=])`,
+    );
+  } catch (_e) {
+    // Catch but do nothing
+  }
 }
 
 export type DiagnosticlsConfig = {
