@@ -22,14 +22,11 @@ export async function handle(
 
   const serializeEfmls = JSON.stringify(nullLs);
   const serializeConfig = JSON.stringify(config);
-  try {
-    await helpers.execute(
-      denops,
-      `lua require("projectlocal.null-ls").register([=[${serializeEfmls}]=], [=[${serializeConfig}]=])`,
-    );
-  } catch (e) {
-    await helpers.execute(denops, `echomsg "${JSON.stringify(e)}"`);
-  }
+
+  await helpers.execute(
+    denops,
+    `lua require("projectlocal.null-ls").register([=[${serializeEfmls}]=], [=[${serializeConfig}]=])`,
+  );
 }
 
 export type NullLsConfig = string[];
