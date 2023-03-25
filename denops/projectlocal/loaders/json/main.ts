@@ -11,6 +11,7 @@ import { handle as diagnosticlsHandler } from "./diagnosticls.ts";
 import type { DiagnosticlsConfig } from "./diagnosticls.ts";
 import { handle as nullLsHandler } from "./null-ls.ts";
 import type { NullLsConfig } from "./null-ls.ts";
+import { showWarning } from "../../message.ts";
 
 const isNvim06 = async (denops: Denops) => await fn.has(denops, "nvim-0.6");
 
@@ -30,45 +31,78 @@ export async function sourceJson(
 ): Promise<void> {
   const rawContent = await Deno.readTextFile(filepath);
   const parsedContent = JSON.parse(rawContent) as JsonConfig;
+  const { projectlocal } = parsedContent;
 
-  if ((await isNvim06(denops)) && parsedContent.projectlocal["nvim-lsp"]) {
-    await nvimLspHandler(denops, config, parsedContent.projectlocal["nvim-lsp"]);
-  }
-
-  if (parsedContent.projectlocal.globalVars) {
+  if (projectlocal.globalVars) {
     await globalVarsHandler(
       denops,
       config,
-      parsedContent.projectlocal.globalVars,
+      projectlocal.globalVars,
     );
   }
 
-  if (parsedContent.projectlocal.ale) {
-    await aleHandler(denops, config, parsedContent.projectlocal.ale);
+  if (projectlocal.ale) {
+    await aleHandler(denops, config, projectlocal.ale);
   }
 
-  if (parsedContent.projectlocal.efmls) {
-    await efmlsHandler(denops, config, parsedContent.projectlocal.efmls);
+  if (projectlocal["nvim-lsp"]) {
+    await handleProp(denops, config, nvimLspHandler, projectlocal, "nvim-lsp");
   }
 
-  if (parsedContent.projectlocal.diagnosticls) {
-    await diagnosticlsHandler(denops, config, parsedContent.projectlocal.diagnosticls);
+  if (projectlocal.efmls) {
+    await handleProp(denops, config, efmlsHandler, projectlocal, "efmls");
   }
 
-  if ((await isNvim06(denops)) && parsedContent.projectlocal["null-ls"]) {
-    await nullLsHandler(denops, config, parsedContent.projectlocal["null-ls"]);
+  if (projectlocal.diagnosticls) {
+    await handleProp(
+      denops,
+      config,
+      diagnosticlsHandler,
+      projectlocal,
+      "diagnosticls",
+    );
+  }
+
+  if (projectlocal["null-ls"]) {
+    await handleProp(denops, config, nullLsHandler, projectlocal, "null-ls");
+  }
+}
+
+type JsonHandler<T> = (
+  denops: Denops,
+  config: UserConfig,
+  propConfig: T,
+) => Promise<void>;
+
+async function handleProp<T>(
+  denops: Denops,
+  config: UserConfig,
+  handler: JsonHandler<T>,
+  projectlocal: ProjectLocalConfig,
+  prop: keyof ProjectLocalConfig,
+): Promise<void> {
+  if (await isNvim06(denops)) {
+    await handler(
+      denops,
+      config,
+      projectlocal[prop] as T,
+    );
+  } else {
+    showWarning(denops, `Ignoring "${prop}", not supported in vim.`);
   }
 }
 
 export type JsonConfig = {
-  projectlocal: {
-    "nvim-lsp"?: string[] | NvimLspConfig[];
-    globalVars?: GlobalVarsConfig;
-    ale?: AleConfig;
-    efmls?: EfmlsConfig;
-    diagnosticls?: DiagnosticlsConfig;
-    "null-ls"?: NullLsConfig;
-  };
+  projectlocal: ProjectLocalConfig;
+};
+
+export type ProjectLocalConfig = {
+  "nvim-lsp"?: string[] | NvimLspConfig[];
+  globalVars?: GlobalVarsConfig;
+  ale?: AleConfig;
+  efmls?: EfmlsConfig;
+  diagnosticls?: DiagnosticlsConfig;
+  "null-ls"?: NullLsConfig;
 };
 
 /**
