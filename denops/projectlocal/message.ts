@@ -23,7 +23,7 @@ export async function confirmFirstTime(denops: Denops): Promise<1 | 2 | 3 | 4> {
   const msg = "New config file found, include it?";
   return await fn.confirm(
     denops,
-    `${pluginName} ${msg}`,
+    `${info(msg)}`,
     "&Yes (Always)\n&No (Do not prompt again)\n&Open Config\n&Cancel",
     4,
   ) as 1 | 2 | 3 | 4;
@@ -38,7 +38,7 @@ export async function confirmFirstTime(denops: Denops): Promise<1 | 2 | 3 | 4> {
  */
 export async function confirmOnChange(denops: Denops): Promise<1 | 2> {
   const msg = "Config file changed, re-include changes?";
-  return await fn.confirm(denops, `${pluginName} ${msg}`, "&Yes\n&No", 2) as
+  return await fn.confirm(denops, `${info(msg)}`, "&Yes\n&No", 2) as
     | 1
     | 2;
 }
