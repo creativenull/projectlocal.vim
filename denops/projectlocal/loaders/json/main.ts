@@ -9,6 +9,8 @@ import { handle as efmlsHandler } from "./efmls.ts";
 import type { EfmlsConfig } from "./efmls.ts";
 import { handle as diagnosticlsHandler } from "./diagnosticls.ts";
 import type { DiagnosticlsConfig } from "./diagnosticls.ts";
+import { handle as nullLsHandler } from "./null-ls.ts";
+import type { NullLsConfig } from "./null-ls.ts";
 
 const isNvim06 = async (denops: Denops) => await fn.has(denops, "nvim-0.6");
 
@@ -52,6 +54,10 @@ export async function sourceJson(
   if (parsedContent.projectlocal.diagnosticls) {
     await diagnosticlsHandler(denops, config, parsedContent.projectlocal.diagnosticls);
   }
+
+  if ((await isNvim06(denops)) && parsedContent.projectlocal["null-ls"]) {
+    await nullLsHandler(denops, config, parsedContent.projectlocal["null-ls"]);
+  }
 }
 
 export type JsonConfig = {
@@ -61,6 +67,7 @@ export type JsonConfig = {
     ale?: AleConfig;
     efmls?: EfmlsConfig;
     diagnosticls?: DiagnosticlsConfig;
+    "null-ls"?: NullLsConfig;
   };
 };
 

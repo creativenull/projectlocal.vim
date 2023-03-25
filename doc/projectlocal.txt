@@ -189,6 +189,7 @@ Supported built-in options and plugins:
 + ale
 + efmls-configs-nvim
 + diagnosticls-configs-nvim
++ null-ls.nvim
 
 NVIM-LSP
 
@@ -322,6 +323,51 @@ Here is an example of setting up efmls for a javascript file:
             }
         }
     }
+<
+
+NULL-LS - SETUP
+
+"null-ls" is for setting up null-ls language server with the help of the
+null-ls.nvim plugin. null-ls.nvim plugin is required. Follow the links below
+for installation instructions of the plugin:
+
++ Plugin: https://github.com/jose-elias-alvarez/null-ls.nvim
+
+Next, add the projectlocal LSP setup in your personal config. This is needed
+so you can pass your custom `on_attach` function that you created for your
+LSPs into null-ls.
+
+>
+    -- init.lua
+    require('projectlocal.lsp').setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+<
+
+Finally, add the sources you need in the project config file:
+
+>
+    {
+        "projectlocal": {
+            "null-ls": ["diagnostics.eslint_d", "formatting.prettier"]
+        }
+    }
+<
+
+Note, the way that this is written, only the last two accessors is needed for
+us to load null-ls builtin sources. This will work for all builtins provided
+by null-ls, like `code_actions.*`, `hover.*`, etc. The above example will
+translate into the following:
+
+>
+    local null_ls = require('null-ls')
+    null_ls.setup({
+	sources = {
+	    null_ls.builtins.diagnostics.eslint_d,
+	    null_ls.builtins.formatting.prettier,
+	},
+    })
 <
 
 COMMANDS	                                       *projectlocal-commands*
