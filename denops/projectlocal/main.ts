@@ -134,6 +134,7 @@ export async function main(denops: Denops) {
 
       if (projectConfigFilepath) {
         await helpers.execute(denops, `edit ${projectConfigFilepath}`);
+        return;
       }
 
       const defaultFile = config.rootFiles[config.defaultRootFile];
