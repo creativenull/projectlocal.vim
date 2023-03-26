@@ -12,6 +12,10 @@ export function info(msg: string): string {
   return `[${pluginName}] ${msg}`;
 }
 
+export async function showInfo(denops: Denops, msg: string): Promise<void> {
+  await helpers.execute(denops, `echomsg "[${pluginName}] ${msg}"`);
+}
+
 /**
  * Echo error message to :echomsg with :echohl
  *

@@ -19,8 +19,8 @@ import {
 import {
   confirmFirstTime,
   confirmOnChange,
-  info,
   showError,
+  showInfo,
 } from "./message.ts";
 import { sourceJson } from "./loaders/json/main.ts";
 
@@ -77,7 +77,7 @@ export async function main(denops: Denops) {
 
       if (projectConfigFilepath && !(await isAutoload(denops, projectRoot))) {
         await sourceFile(denops, config);
-        await helpers.execute(denops, `echomsg 'Manually loaded config file!'`);
+        await showInfo(denops, "Manually loaded config file!");
       }
     },
 
@@ -95,9 +95,9 @@ export async function main(denops: Denops) {
       if (projectConfigFilepath && !(await isAutoload(denops, projectRoot))) {
         await setAutoload(denops, projectRoot, true);
         await sourceFile(denops, config);
-        await helpers.execute(
+        await showInfo(
           denops,
-          `echomsg 'Enabled autoloading of config file and sourced the file!'`,
+          "Enabled autoloading of config file and sourced the file!",
         );
       }
     },
@@ -114,10 +114,7 @@ export async function main(denops: Denops) {
 
       if (projectConfigFilepath && (await isAutoload(denops, projectRoot))) {
         await setAutoload(denops, projectRoot, false);
-        await helpers.execute(
-          denops,
-          `echomsg 'Disabled autoloading of config file!'`,
-        );
+        await showInfo(denops, "Disabled autoloading of config file!");
       }
     },
 
@@ -190,6 +187,11 @@ async function onNew(
         ...allowedItem,
         autoload: false,
       }]);
+
+      await showInfo(
+        denops,
+        "You will not be prompted, but you can manually load it with :ProjectLocalLoad",
+      );
       break;
 
     case 3: // Open config
@@ -198,6 +200,10 @@ async function onNew(
 
     case 4: // Cancel
     default:
+      await showInfo(
+        denops,
+        "Ignoring for now, but you will be prompted the next time you open vim.",
+      );
   }
 }
 
@@ -238,6 +244,10 @@ async function onChanged(
 
     case 2: // No
     default:
+      await showInfo(
+        denops,
+        "Ignoring for now, but you will be prompted the next time you open vim.",
+      );
   }
 }
 
@@ -265,13 +275,10 @@ async function sourceFile(denops: Denops, config: UserConfig): Promise<void> {
     }
 
     if (config.enableMessages && await isAutoload(denops, projectRoot)) {
-      await helpers.execute(
-        denops,
-        `echomsg "${info("Loaded project config file")}"`,
-      );
+      await showInfo(denops, "Loaded project config file");
     }
   } catch (e) {
-    if (typeof e === 'string') {
+    if (typeof e === "string") {
       await showError(denops, e);
     }
   }
