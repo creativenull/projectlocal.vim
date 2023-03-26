@@ -13,7 +13,7 @@ export function info(msg: string): string {
 }
 
 /**
- * Echo error message to the :echoerr list.
+ * Echo error message to :echomsg with :echohl
  *
  * @async
  * @param {Denops} denops
@@ -21,7 +21,10 @@ export function info(msg: string): string {
  * @returns {Promise<void>}
  */
 export async function showError(denops: Denops, msg: string): Promise<void> {
-  await helpers.echoerr(denops, `[${pluginName}] Error: ${msg}`);
+  await helpers.execute(
+    denops,
+    `echohl ErrorMsg | echomsg "[${pluginName}] Error: ${msg}" | echohl None`,
+  );
 }
 
 /**
