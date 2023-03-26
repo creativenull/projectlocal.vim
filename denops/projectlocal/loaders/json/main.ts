@@ -29,42 +29,52 @@ export async function sourceJson(
   config: UserConfig,
   filepath: string,
 ): Promise<void> {
-  const rawContent = await Deno.readTextFile(filepath);
-  const parsedContent = JSON.parse(rawContent) as JsonConfig;
-  const { projectlocal } = parsedContent;
+  try {
+    const rawContent = await Deno.readTextFile(filepath);
+    const parsedContent = JSON.parse(rawContent) as JsonConfig;
+    const { projectlocal } = parsedContent;
 
-  if (projectlocal.globalVars) {
-    await globalVarsHandler(
-      denops,
-      config,
-      projectlocal.globalVars,
-    );
-  }
+    if (projectlocal.globalVars) {
+      await globalVarsHandler(
+        denops,
+        config,
+        projectlocal.globalVars,
+      );
+    }
 
-  if (projectlocal.ale) {
-    await aleHandler(denops, config, projectlocal.ale);
-  }
+    if (projectlocal.ale) {
+      await aleHandler(denops, config, projectlocal.ale);
+    }
 
-  if (projectlocal["nvim-lsp"]) {
-    await handleProp(denops, config, nvimLspHandler, projectlocal, "nvim-lsp");
-  }
+    if (projectlocal["nvim-lsp"]) {
+      await handleProp(
+        denops,
+        config,
+        nvimLspHandler,
+        projectlocal,
+        "nvim-lsp",
+      );
+    }
 
-  if (projectlocal.efmls) {
-    await handleProp(denops, config, efmlsHandler, projectlocal, "efmls");
-  }
+    if (projectlocal.efmls) {
+      await handleProp(denops, config, efmlsHandler, projectlocal, "efmls");
+    }
 
-  if (projectlocal.diagnosticls) {
-    await handleProp(
-      denops,
-      config,
-      diagnosticlsHandler,
-      projectlocal,
-      "diagnosticls",
-    );
-  }
+    if (projectlocal.diagnosticls) {
+      await handleProp(
+        denops,
+        config,
+        diagnosticlsHandler,
+        projectlocal,
+        "diagnosticls",
+      );
+    }
 
-  if (projectlocal["null-ls"]) {
-    await handleProp(denops, config, nullLsHandler, projectlocal, "null-ls");
+    if (projectlocal["null-ls"]) {
+      await handleProp(denops, config, nullLsHandler, projectlocal, "null-ls");
+    }
+  } catch (_) {
+    throw "Failed parsing the file, please check your json file.";
   }
 }
 

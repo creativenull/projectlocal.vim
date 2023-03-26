@@ -16,7 +16,12 @@ import {
   projectConfigStatus,
   setAllowlist,
 } from "./allowlist.ts";
-import { confirmFirstTime, confirmOnChange, info } from "./message.ts";
+import {
+  confirmFirstTime,
+  confirmOnChange,
+  info,
+  showError,
+} from "./message.ts";
 import { sourceJson } from "./loaders/json/main.ts";
 
 export async function main(denops: Denops) {
@@ -248,20 +253,26 @@ async function sourceFile(denops: Denops, config: UserConfig): Promise<void> {
   const projectRoot = await getProjectRoot(denops);
   const filepath = await getProjectConfigFilepath(denops) as string;
 
-  if (isVimscript(filepath)) {
-    helpers.execute(denops, `source ${filepath}`);
-  } else if (isLua(filepath)) {
-    if (await fn.has(denops, "nvim-0.6")) {
-      helpers.execute(denops, `source ${filepath}`);
+  try {
+    if (isVimscript(filepath)) {
+      await helpers.execute(denops, `source ${filepath}`);
+    } else if (isLua(filepath)) {
+      if (await fn.has(denops, "nvim-0.6")) {
+        await helpers.execute(denops, `source ${filepath}`);
+      }
+    } else if (isJson(filepath)) {
+      await sourceJson(denops, config, filepath);
     }
-  } else if (isJson(filepath)) {
-    sourceJson(denops, config, filepath);
-  }
 
-  if (config.enableMessages && await isAutoload(denops, projectRoot)) {
-    helpers.execute(
-      denops,
-      `echomsg "${info("Loaded project config file")}"`,
-    );
+    if (config.enableMessages && await isAutoload(denops, projectRoot)) {
+      await helpers.execute(
+        denops,
+        `echomsg "${info("Loaded project config file")}"`,
+      );
+    }
+  } catch (e) {
+    if (typeof e === 'string') {
+      await showError(denops, e);
+    }
   }
 }
