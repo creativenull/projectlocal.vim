@@ -6,7 +6,7 @@ export type UserConfig = {
   defaultRootFile: string;
   rootFiles: {
     [ft: string]: string;
-  },
+  };
   debugMode: boolean;
 };
 
