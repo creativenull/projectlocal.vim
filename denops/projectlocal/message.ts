@@ -1,6 +1,6 @@
 import { Denops, fn, helpers } from "./deps/denops_std.ts";
 
-export const pluginName = "[projectlocal]";
+export const pluginName = "projectlocal.vim";
 
 /**
  * Message template to use for :echo messages.
@@ -9,7 +9,7 @@ export const pluginName = "[projectlocal]";
  * @returns {string}
  */
 export function info(msg: string): string {
-  return `${pluginName} ${msg}`;
+  return `[${pluginName}] ${msg}`;
 }
 
 /**
@@ -21,7 +21,7 @@ export function info(msg: string): string {
  * @returns {Promise<void>}
  */
 export async function showError(denops: Denops, msg: string): Promise<void> {
-  await helpers.echoerr(denops, `${pluginName} Error: ${msg}`);
+  await helpers.echoerr(denops, `[${pluginName}] Error: ${msg}`);
 }
 
 /**
@@ -35,7 +35,7 @@ export async function showError(denops: Denops, msg: string): Promise<void> {
 export async function showWarning(denops: Denops, msg: string): Promise<void> {
   await helpers.execute(
     denops,
-    `echohl WarningMsg | echomsg "${pluginName} Warning: ${msg}" | echohl None`,
+    `echohl WarningMsg | echomsg "[${pluginName}] Warning: ${msg}" | echohl None`,
   );
 }
 
