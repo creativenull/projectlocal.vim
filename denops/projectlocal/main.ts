@@ -281,6 +281,11 @@ async function sourceFile(denops: Denops, config: UserConfig): Promise<void> {
   } catch (e) {
     if (typeof e === "string") {
       await showError(denops, e);
+    } else {
+      await showError(
+        denops,
+        "Failed to source the file, please check if your file have any syntactical errors using :ProjectLocalConfig",
+      );
     }
   }
 }
