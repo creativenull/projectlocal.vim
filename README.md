@@ -89,35 +89,7 @@ git clone https://github.com/creativenull/projectlocal.vim ~/.local/share/nvim/s
 
 ## How to use
 
-### Setup config using Vimscript
-
-Here is an example of setting up `prettier` (a tool to format code) and `volar` (a LSP server for vue files) for a
-vimscript config file in the local project directory.
-
-+ In the first instance we setup `prettier` provided by ALE plugin, and let the user accept the config file for the
-  first time
-+ The second instance involves setting up `volar` provided by nvim-lspconfig, once a change has happened projectlocal
-  will prompt the user again to accept the changes
-
-### Setup config using Lua
-
-Here is an example of setting up `prettier` (a tool to format code) and `volar` (a LSP server for vue files) for a
-lua config file in the local project directory.
-
-+ In the first instance we setup `prettier` provided by ALE plugin, and let the user accept the config file for the
-  first time
-+ The second instance involves setting up `volar` provided by nvim-lspconfig, once a change has happened projectlocal
-  will prompt the user again to accept the changes
-
-### Setup config using JSON
-
-Here is an example of setting up `prettier` (a tool to format code) and `volar` (a LSP server for vue files) for a
-JSON config file in the local project directory.
-
-+ In the first instance we setup `prettier` provided by ALE plugin, and let the user accept the config file for the
-  first time
-+ The second instance involves setting up `volar` provided by nvim-lspconfig, once a change has happened projectlocal
-  will prompt the user again to accept the changes
+[Check the How to use section in the Wiki page.](https://github.com/creativenull/projectlocal-vim/wiki#how-to-use)
 
 ## Motivation
 
