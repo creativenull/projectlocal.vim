@@ -50,7 +50,7 @@ Plug 'vim-denops/denops.vim'
 Plug 'creativenull/projectlocal.vim'
 
 " Or use with tag (optional)
-" Plug 'creativenull/projectlocal.vim', { 'tag': 'v0.5.0' }
+" Plug 'creativenull/projectlocal.vim', { 'tag': 'v1.*' }
 ```
 
 ### packer.nvim
@@ -58,7 +58,7 @@ Plug 'creativenull/projectlocal.vim'
 ```lua
 use {
     'creativenull/projectlocal.vim',
-    tag = 'v0.5.0', -- optional
+    tag = 'v1.*', -- optional
     requires = { 'vim-denops/denops.vim' },
 }
 ```
@@ -68,7 +68,7 @@ use {
 ```lua
 {
     'creativenull/projectlocal.vim',
-    version = 'v0.5.x', -- optional
+    version = 'v1.x.x', -- optional
     dependencies = { 'vim-denops/denops.vim' }
 }
 ```
@@ -78,13 +78,13 @@ use {
 #### Vim
 
 ```sh
-git clone https://github.com/creativenull/projectlocal.vim ~/.vim/pack/creativenull/start/projectlocal.vim
+git clone --depth 1 --branch v1.0.0 https://github.com/creativenull/projectlocal.vim ~/.vim/pack/creativenull/start/projectlocal.vim
 ```
 
 #### Neovim
 
 ```sh
-git clone https://github.com/creativenull/projectlocal.vim ~/.local/share/nvim/site/pack/creativenull/start/projectlocal.vim
+git clone --depth 1 --branch v1.0.0 https://github.com/creativenull/projectlocal.vim ~/.local/share/nvim/site/pack/creativenull/start/projectlocal.vim
 ```
 
 ## How to use
