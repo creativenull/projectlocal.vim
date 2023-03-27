@@ -93,7 +93,7 @@ git clone --depth 1 --branch v1.0.0 https://github.com/creativenull/projectlocal
 
 ## Motivation
 
-Read why I created this plugin over at [MOTIVATION.md](./MOTIVATION.md)
+[Read why I created this plugin in the Motivation wiki page.](https://github.com/creativenull/projectlocal-vim/wiki/Motivation)
 
 ## Documentation
 
