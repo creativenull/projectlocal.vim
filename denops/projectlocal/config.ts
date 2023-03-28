@@ -72,7 +72,7 @@ export async function registerBufNewFileEvents(denops: Denops): Promise<void> {
 async function getPluginDir(denops: Denops): Promise<string> {
   const rawRtp = await opt.runtimepath.get(denops);
   const rtp = rawRtp.split(",");
-  const dir = rtp.find((item: string) => item.includes("projectlocal-vim"));
+  const dir = rtp.find((item: string) => item.includes("projectlocal.vim"));
 
   return dir ?? "";
 }

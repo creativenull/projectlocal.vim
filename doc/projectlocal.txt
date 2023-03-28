@@ -1,4 +1,4 @@
-INTRODUCTION                                 *projectlocal-vim* *projectlocal*
+INTRODUCTION                                 *projectlocal.vim* *projectlocal*
 
 Load your project configurations safely, for vim and neovim. Write your
 project configurations in vimscript, lua or json - and have it loaded safely
@@ -126,8 +126,8 @@ server.
 + Add the following to the lua file:
 
 >
-    -- Powered by projectlocal-vim
-    -- https://github.com/creativenull/projectlocal-vim
+    -- Powered by projectlocal.vim
+    -- https://github.com/creativenull/projectlocal.vim
 
     local lspconfig = require('lspconfig')
     local projectlocal = require('projectlocal.lsp')
