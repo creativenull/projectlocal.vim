@@ -89,11 +89,11 @@ git clone --depth 1 --branch v1.0.0 https://github.com/creativenull/projectlocal
 
 ## How to use
 
-[Check the How to use section in the Wiki page.](https://github.com/creativenull/projectlocal-vim/wiki#how-to-use)
+[Check the How to use section in the Wiki page.](https://github.com/creativenull/projectlocal.vim/wiki#how-to-use)
 
 ## Motivation
 
-[Read why I created this plugin in the Motivation wiki page.](https://github.com/creativenull/projectlocal-vim/wiki/Motivation)
+[Read why I created this plugin in the Motivation wiki page.](https://github.com/creativenull/projectlocal.vim/wiki/Motivation)
 
 ## Documentation
 
