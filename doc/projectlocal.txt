@@ -6,6 +6,18 @@ without the use of |exrc| and |secure|.
 
 Written with <3 in TypeScript and Deno (|denops.vim|).
 
+TABLE OF CONTENTS
+
+INTRODUCTION				|projectlocal|
+CONFIGURATION				|projectlocal-config|
+    Config - enableMessages  		|projectlocal-config-enableMessages|
+    Config - defaultRootFile 		|projectlocal-config-defaultRootFile|
+    Config - rootFiles       		|projectlocal-config-rootFiles|
+    Config - debugMode       		|projectlocal-configs-debugMode|
+GETTING STARTED              		|projectlocal-getting-started|
+JSON CONFIGURATION           		|projectlocal-json-config|
+COMMANDS                     		|projectlocal-commands|
+
 CONFIGURATION                                            *projectlocal-config*
 
 By default, you don't need to specify any configuration to setup for this
@@ -17,88 +29,137 @@ the plugin automatically:
 Vimscript
 >
     let g:projectlocal = {
-        \ 'showMessage': v:true,
-        \ 'file': '',
-        \ 'debug': v:false,
+        \ 'enableMessages': v:true,
+        \ 'defaultRootFile': 'json',
+	\ 'rootFiles': {
+	    \ 'json': '.vimrc.json',
+	    \ 'lua': '.vimrc.lua',
+	    \ 'vim': '.vimrc',
+	\ },
+        \ 'debugMode': v:false,
         \ }
 <
 
 Lua
 >
     vim.g.projectlocal = {
-        showMessage = true,
-        file = '',
-        debug = false,
+        enableMessages = true,
+        defaultRootFile = 'json',
+	rootFiles = {
+	    json = '.vimrc.json',
+	    lua = '.vimrc.lua',
+	    vim = '.vimrc',
+	},
+        debugMode = false,
     }
 <
 
-                                             *projectlocal-config-showMessage*
-"showMessage" (default: true) is used to enable/disable messages that are
+                                          *projectlocal-config-enableMessages*
+"enableMessages" (default: true) is used to enable/disable messages that are
 printed on the commandline to show the progress of the plugin.
 
-                                                    *projectlocal-config-file*
-"file" (default: '') specifies the filepath (relative to your project root
-directory) to be used for loading your project configurations, if this is
-empty or not specified, it will look for the following files in the project
-root directory in order, and loads the first one it finds:
+                                         *projectlocal-config-defaultRootFile*
+"defaultRootFile" (default: "json") is the default root file that will be
+used when you create a new project config file with |:ProjectLocalConfig|
+without any arguments. This value here is mapped to `rootFiles` keys.
 
-1. .vimrc  (vimscript file)
-2. .nvimrc (vimscript file)
-3. .vimrc.lua
-4. .nvimrc.lua
-5. .vimrc.json
-6. .nvimrc.json
+                                               *projectlocal-config-rootFiles*
+"rootFiles" are the list of files that will be used by |:ProjectLocalConfig|
+to be created as a project config file. The keys are used in `defaultRootFile`
+to specify a default file if not provided in |:ProjectLocalConfig|.
 
-                                                  *projectlocal-configs-debug*
-"debug" (default: false) is used to be able to output a log for debugging
-issues found in the plugin. (Currently not implemented)
-
-GETTING STARTED - FIRST TIME                          *projectlocal-firsttime*
-
-Create the local config in your project root. The simplest way is to call
-`:PLConfig` which will create a `.vimrc` file located in your project root. To
-create a lua or a json config file use `:PLConfig lua` or `:PLConfig json`,
-respectively. You can also manually create this file, but make sure the file
-you create if provided by `g:projectlocal.file` or one of the files provided
-by |projectlocal-config-file|.
-
-Assuming you created a `.vimrc` file, you can start writing your configuration
-in vimscript, a lua equivalent would be `.vimrc.lua` or `.nvimrc.lua` (For a
-json config check |projectlocal-json-config|). Here is an example on setting
-up ALE linters on a javascript file that will be sourced by projectlocal:
-
+Defaults
 >
-    " Powered by projectlocal-vim
-    " https://github.com/creativenull/projectlocal-vim
-    augroup pl_events
-        au!
-        au FileType javascript let b:ale_linters = ['eslint']
-    augroup END
+    vimscript
+    { 'json': '.vimrc.json', 'lua': '.vimrc.lua', 'vim': '.vimrc' }
 <
 
-When re-opening vim for the first time after creating the config file, you
-will be prompted to accept the file, hit `y` to accept. Once accepted, the
-config file will be sourced and ready for use without re-opening again.
+>
+    lua
+    {
+	json = '.vimrc.json',
+	lua = '.vimrc.lua',
+	vim = '.vimrc',
+    }
+<
 
-Hitting `o` on the prompt, and you will be directed to the config file located
-on the project directory. This will not source the config file.
+Note, when running |:ProjectLocalConfig| it will use the first file defined
+in the list, so by default a `.vimrc.json` file is created by default from
+the list.
 
-Hitting `n` on the prompt, and you will not be prompted to source the config
-file ever again. This will not source the config file and to enable the
-prompt to source the config file use `:PLLoad` to explicitly source the file.
+                                              *projectlocal-configs-debugMode*
+"debugMode" (default: false) is used to be able to output a log for debugging
+issues found in the plugin. (Currently not implemented)
 
-Hitting `c` on the prompt, and it will not source the config file. But on the
-next session it will prompt again to accept the config file.
+GETTING STARTED                                 *projectlocal-getting-started*
 
-GETTING STARTED - MAKING CHANGES                        *projectlocal-changes*
+This example will go through setting up a simple config file in the project
+directory and set a global variable.
 
-When you plan to make changes to the config file, you will need to re-open vim
-for projectlocal to check the changes and prompt you again to accept the
-changes and source the file. Once you hit `y` to accept, the config file be
-sourced and ready for use without re-opening again.
++ Navigate to a project directory and open vim.
++ Then run the command |:ProjectLocalConfig| to create an empty json file.
++ Add the following to the json file:
 
-Hitting `n` on this prompt, and it will not source the config file. But on the
-next session it will prompt again to accept the modified config file.
+>
+    {
+	"projectlocal": {
+	    "globalVars": {
+		"greet": "Hello World"
+	    }
+	}
+    }
+<
+
++ Re-open vim, and you will get a prompt to accept the file to be executed.
++ Once you accept you can then check if the variable have be set by running
+  `:echom g:greet`
+
+Check |projectlocal-json-config| from more options.
+
+---
+
+Here is another example, creating a lua config file and setting up a language
+server.
+
++ Navigate to a project directory and open vim.
++ Then run the command |:ProjectLocalConfig lua| to create an empty json file.
++ Add the following to the lua file:
+
+>
+    -- Powered by projectlocal-vim
+    -- https://github.com/creativenull/projectlocal-vim
+
+    local lspconfig = require('lspconfig')
+    local projectlocal = require('projectlocal.lsp')
+
+    lspconfig.tsserver.setup(projectlocal.get_config())
+<
+
++ Re-open vim, and you will get a prompt to accept the file to be executed.
++ Once you accept, you can then check if the LSP was register by running
+  `:LspInfo` and checking the entry for tsserver.
+
+Couple things to note here, you will see we require'd the `projectlocal.lsp`
+module to use the `get_config()` function and that is because nvim-lsp has a
+couple things that needs setup (for example, the `on_attach` function to
+register LSP-related keymaps).
+
+So for those purposes, we have `get_config()` so that it can be provided to
+you. To set them up for LSPs, you will need the following in your personal
+config (not the config file that will be in the project directory):
+
+>
+    require('projectlocal.lsp').setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+<
+
+Where, `on_attach` and `capabilities` are the variables that you would use
+to setup for `nvim-lspconfig` plugin.
+
+Once you've defined them in the `setup()` function, they will then be
+available in `get_config()` within the project config lua file.
 
 JSON CONFIGURATION                                  *projectlocal-json-config*
 
@@ -107,37 +168,33 @@ project, you can use a .json file instead. But there is limited
 support on what you can do with it, since it's aim is to simplify setup when
 needed especially when configuring lsp clients (like the builtin nvim-lsp).
 
-Currently, there is support for global variables `g:` and the builtin nvim-lsp
-setup.
-
 GETTING STARTED WITH A JSON CONFIGURATION FILE
 
-To get started, first create a json config file with `:PLConfig json`. This
-will create a project local file with a .json extension with a templated
+To get started, first create a json config file with `:ProjectLocalConfig json`.
+This will create a project local file with a .json extension with a templated
 json structure, which would look like the following:
 
 >
     {
-        "projectlocal": {}
-    }
-<
-
-"projectlocal" takes two for now: "nvim-lsp" and "globalVars" and looks like
-the following:
-
->
-    {
         "projectlocal": {
-            "nvim-lsp": {},
-            "globalVars": {}
-        }
+
+	}
     }
 <
 
-NVIM-LSP - SETUP
+Supported built-in options and plugins:
+
++ nvim-lsp
++ globalVars
++ ale
++ efmls-configs-nvim
++ diagnosticls-configs-nvim
++ null-ls.nvim
+
+NVIM-LSP
 
 "nvim-lsp" is for setting up builtin nvim-lsp. Note, this will only work for
-nvim 0.5 and up and not for vim8. It takes an object structure of LSP servers
+nvim >= 0.6 and not for vim 8. It takes an object structure of LSP servers
 that are supported with nvim-lspconfig. Here is an example to setup
 `tsserver` with a root_dir set to the tsconfig.json and `pyright` with
 defaults:
@@ -145,12 +202,13 @@ defaults:
 >
     {
         "projectlocal": {
-            "nvim-lsp": {
-                "tsserver": {
-                    "root_dir": ["tsconfig.json"]
-                },
-                "pyright": true
-            }
+            "nvim-lsp": [
+		"pyright",
+		{
+		    "name": "tsserver",
+		    "config": { "root_dir": ["tsconfig.json"] }
+		}
+	    ]
         }
     }
 <
@@ -162,7 +220,7 @@ function to the LSP server of your choice. In order to add the function, you
 can use the provided lua code to provide projectlocal with your `on_attach`
 and even your `capabilities`, which will then in turn add them to the LSP
 server setup with your .json file (for init.vim files you can wrap this in
-|:lua-heredoc|):
+|lua-heredoc|):
 
 >
     local function on_attach()
@@ -186,12 +244,7 @@ example setting up ALE linters and fixers for a javascript project:
     {
         "projectlocal": {
             "globalVars": {
-                "ale_linters": {
-                    "javascript": ["eslint"]
-                },
-                "ale_fixers": {
-                    "javascript": ["prettier"]
-                }
+                "greet": "Hello World"
             }
         }
     }
@@ -200,47 +253,157 @@ example setting up ALE linters and fixers for a javascript project:
 This will convert and set to the vimscript equivalent:
 
 >
-    let g:ale_linters = { 'javascript': ['eslint'] }
-    let g:ale_fixers = { 'javascript': ['prettier'] }
+    let g:greet = 'Hello World'
+<
+
+ALE - SETUP
+
+"ale" if for setting up ALE linters and fixers. The ALE plugin is required
+before you can set this up. Here is an example below:
+
+>
+    {
+        "projectlocal": {
+            "ale": {
+                "fixers": {
+		    "javascript": ["prettier"]
+		},
+		"linters": {
+		    "javascript": ["eslint"]
+		}
+            }
+        }
+    }
+<
+
+EFMLS-CONFIGS - SETUP
+
+"efmls" is for setting up efm language server with the help of efmls-config-nvim
+plugin. The efm language server and the efmls-config-nvim plugin is required
+to be installed. Follow the links below for instructions:
+
++ Language server: https://github.com/mattn/efm-langserver
++ Plugin: https://github.com/creativenull/efmls-configs-nvim
+
+Here is an example of setting up efmls for a javascript file:
+
+>
+    {
+        "projectlocal": {
+            "efmls": {
+                "javascript": {
+		    "formatter": ["prettier"],
+		    "linter": ["eslint"]
+		},
+            }
+        }
+    }
+<
+
+DIAGNOSTICLS-CONFIGS - SETUP
+
+"diagnosticls" is for setting up diagnostic language server with the help of
+diagnosticls-config-nvim plugin. The diagnostic language server and the
+diagnosticls-config-nvim plugin is required to be installed. Follow the links
+below for instructions:
+
++ Language server: https://github.com/iamcco/diagnostic-languageserver
++ Plugin: https://github.com/creativenull/diagnosticls-configs-nvim
+
+Here is an example of setting up efmls for a javascript file:
+
+>
+    {
+        "projectlocal": {
+            "diagnosticls": {
+                "javascript": {
+		    "formatter": ["prettier"],
+		    "linter": ["eslint"]
+		},
+            }
+        }
+    }
+<
+
+NULL-LS - SETUP
+
+"null-ls" is for setting up null-ls language server with the help of the
+null-ls.nvim plugin. null-ls.nvim plugin is required. Follow the links below
+for installation instructions of the plugin:
+
++ Plugin: https://github.com/jose-elias-alvarez/null-ls.nvim
+
+Next, add the projectlocal LSP setup in your personal config. This is needed
+so you can pass your custom `on_attach` function that you created for your
+LSPs into null-ls.
+
+>
+    -- init.lua
+    require('projectlocal.lsp').setup({
+      on_attach = on_attach,
+      capabilities = capabilities,
+    })
+<
+
+Finally, add the sources you need in the project config file:
+
+>
+    {
+        "projectlocal": {
+            "null-ls": ["diagnostics.eslint_d", "formatting.prettier"]
+        }
+    }
+<
+
+Note, the way that this is written, only the last two accessors is needed for
+us to load null-ls builtin sources. This will work for all builtins provided
+by null-ls, like `code_actions.*`, `hover.*`, etc. The above example will
+translate into the following:
+
+>
+    local null_ls = require('null-ls')
+    null_ls.setup({
+	sources = {
+	    null_ls.builtins.diagnostics.eslint_d,
+	    null_ls.builtins.formatting.prettier,
+	},
+    })
 <
 
 COMMANDS	                                       *projectlocal-commands*
 
-                                *:PLConfig*
-PLConfig                        Open the project config file, if it exists. If
-                                not, then create a new file specified by
-                                `g:projectlocal.file`. If provided `file` is
-                                empty or not provided, use the first file
-                                provided in |projectlocal-config-file|.
+ProjectLocalConfig                                       *:ProjectLocalConfig*
+	Create/open a project config file in the current directory. If you
+	provide an argument, it will match against `g:projectlocal.rootFiles`
+	keys and create the project config file.
 
-                                When creating a new file, you can provided the
-                                filetype of the config file to be generated.
-                                Accepts the following types: "json", "lua",
-                                "vim".
+	Without an argument, it will create a default config file from the
+	value specified in `g:projectlocal.defaultRootFile`.
 
-                                This example creates a .vimrc.json file if
-                                there are no files that exists in the project:
+	Examples:
+>
+	    :ProjectLocalConfig
+	    :ProjectLocalConfig lua
+<
 
-                                    `:PLConfig json`
+ProjectLocalConfigAutoloadEnable           *:ProjectLocalConfigAutoloadEnable*
+	Enable autoloading of a project config file in the current diretory.
+	This means that when you open vim in the current directory and there
+	is a project config file detected then it file will be automatically
+	loaded (once permitted by the user).
 
-                                *:PLAutoloadEnable*
-PLAutoloadEnable                Enable auto sourcing, if it was disabled.
-                                This means on the next time you open vim
-                                and the local project config has changed
-                                then it will ask the user to allow sourcing
-                                the file. If there were no changes on the
-                                local project config file then source it
-                                automatically.
+	By default, autoloading is enabled when creating a project config
+	file with |:ProjectLocalConfig|.
 
-                                *:PLAutoloadDisable*
-PLAutoloadDisable               Disable auto sourcing, if it was enabled.
-                                This means the next time you open vim then
-                                it will not automatically source the local
-                                project config file, but can manually load
-                                the file via |:PLLoad|.
+ProjectLocalAutoloadDisable                     *:ProjectLocalAutoloadDisable*
+	Disable autoloading of a project config file in the current diretory.
+	This means that when you open vim in the current directory and there
+	is a project config file detected then it will not load the file
+	(even when the user has permitted it).
 
-                                *:PLLoad*
-PLLoad                          Manually source the local project config
-                                file if autoload is disabled.
+ProjectLocalLoad                                           *:ProjectLocalLoad*
+	Manually load the project config file in the current directory.
+	Note, the file will only be loaded when autoload has been disabled
+	by running |:ProjectLocalAutoloadDisable|.
 
  vim:tw=78:ts=8:noet:ft=help:norl:

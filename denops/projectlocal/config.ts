@@ -1,150 +1,118 @@
-import { Denops, fn, nvimFn } from "./deps/denops_std.ts";
-import { ProjectLocalFileSystem } from "./fs.ts";
+import { Denops, fn, helpers, opt, vars } from "./deps/denops_std.ts";
+import { fileExists } from "./fs.ts";
 
-export interface UserConfig {
-  showMessage: boolean;
-  file: string;
-  debug: boolean;
-}
-
-export interface PartialUserConfig {
-  showMessage?: boolean;
-  file?: string;
-  debug?: boolean;
-}
-
-const defaultConfig: UserConfig = {
-  showMessage: true,
-  file: "",
-  debug: false,
+export type UserConfig = {
+  enableMessages: boolean;
+  defaultRootFile: string;
+  rootFiles: {
+    [ft: string]: string;
+  };
+  debugMode: boolean;
 };
 
-export const possibleVimConfigFiles = [".vimrc", ".nvimrc"]
-export const possibleLuaConfigFiles = [".vimrc.lua", ".nvimrc.lua"]
-export const possibleJsonConfigFiles = [".vimrc.json", ".nvimrc.json"]
+const pluginProp = "projectlocal";
 
-async function getDefaultCacheDirectory(denops: Denops): Promise<string> {
-  let cachepath: unknown;
-  if (await fn.has(denops, "nvim")) {
-    cachepath = await nvimFn.stdpath(denops, "cache");
-    return `${cachepath}/projectlocal`;
+const defaultConfig: UserConfig = {
+  enableMessages: true,
+  defaultRootFile: "json",
+  rootFiles: {
+    json: ".vimrc.json",
+    lua: ".vimrc.lua",
+    vim: ".vimrc",
+  },
+  debugMode: false,
+};
+
+export const isVimscript = (filepath: string) =>
+  filepath.endsWith(".vim") || filepath.endsWith(".vimrc");
+export const isLua = (filepath: string) => filepath.endsWith(".lua");
+export const isJson = (filepath: string) => filepath.endsWith(".json");
+
+/**
+ * Get the config, else use defaults.
+ *
+ * @async
+ * @param {Denops} denops
+ * @returns {Promise<UserConfig>}
+ */
+export async function getConfig(denops: Denops): Promise<UserConfig> {
+  const config = await vars.g.get(denops, pluginProp, defaultConfig);
+  return { ...defaultConfig, ...config };
+}
+
+/**
+ * Register file skeletons to generate templates for config files
+ *
+ * @async
+ * @param {Denops} denops
+ * @returns {Promise<void>}
+ */
+export async function registerBufNewFileEvents(denops: Denops): Promise<void> {
+  const config = await getConfig(denops);
+
+  for (const [_, filename] of Object.entries(config.rootFiles)) {
+    const pluginDir = await getPluginDir(denops);
+
+    if (pluginDir !== "") {
+      let skeleton = `${pluginDir}/templates/skeleton.vim`;
+      if (isLua(filename)) {
+        skeleton = `${pluginDir}/templates/skeleton.lua`;
+      } else if (isJson(filename)) {
+        skeleton = `${pluginDir}/templates/skeleton.json`;
+      }
+
+      await helpers.execute(
+        denops,
+        `autocmd ProjectLocalEvents BufNewFile ${filename} 0r ${skeleton}`,
+      );
+    }
+  }
+}
+
+async function getPluginDir(denops: Denops): Promise<string> {
+  const rawRtp = await opt.runtimepath.get(denops);
+  const rtp = rawRtp.split(",");
+  const dir = rtp.find((item: string) => item.includes("projectlocal-vim"));
+
+  return dir ?? "";
+}
+
+/**
+ * Get the current project directory.
+ *
+ * @async
+ * @param {Denops} denops
+ * @returns {Promise<string>}
+ */
+export async function getProjectRoot(denops: Denops): Promise<string> {
+  if (Deno.build.os === "windows") {
+    const cwd = await fn.getcwd(denops) as string;
+    return await fn.escape(denops, cwd, " \\") as string;
   } else {
-    if (Deno.build.os === "darwin") {
-      cachepath = "$HOME/Library/Caches/vim/projectlocal";
-      return (await fn.expand(denops, cachepath)) as string;
-    } else if (Deno.build.os === "windows") {
-      cachepath = "$HOME\\AppData\\Temp\\vim\\projectlocal";
-      return (await fn.expand(denops, cachepath)) as string;
-    } else {
-      cachepath = "$HOME/.cache/vim/projectlocal";
-      return (await fn.expand(denops, cachepath)) as string;
-    }
+    return (await fn.getcwd(denops)) as string;
   }
 }
 
-export class Config {
-  private allowlistName = "allowlist";
-  private cacheDirectory = "";
-
-  constructor(private denops: Denops, private config: UserConfig) {}
-
-  static isLua(configFile: string): boolean {
-    return configFile.endsWith(".lua");
-  }
-
-  static isVim(configFile: string): boolean {
-    return configFile.endsWith(".vimrc") ||
-      configFile.endsWith(".nvimrc") ||
-      configFile.endsWith(".vim");
-  }
-
-  static isJson(configFile: string): boolean {
-    return configFile.endsWith(".json");
-  }
-
-  setCacheDirectory(value: string): void {
-    this.cacheDirectory = value;
-  }
-
-  getCacheDirectory(): string {
-    return this.cacheDirectory;
-  }
-
-  getAllowlistPath(): string {
-    return `${this.cacheDirectory}/${this.allowlistName}.json`;
-  }
-
-  async getProjectRoot(): Promise<string> {
-    if (Deno.build.os === "windows") {
-      const cwd = await fn.getcwd(this.denops, undefined) as string;
-      return await fn.escape(this.denops, cwd, " \\") as string;
-    } else {
-      return (await fn.getcwd(this.denops, undefined)) as string;
-    }
-  }
-
-  async getProjectConfigFilepath(): Promise<string | null> {
-    const projectRoot = await this.getProjectRoot();
-
-    if (this.config.file !== "") {
-      const filepath = `${projectRoot}/${this.config.file}`;
-      if (await ProjectLocalFileSystem.fileExists(filepath)) {
-        return filepath;
-      }
-    }
-
-    // Check for list of possible config files
-    // if g:projectlocal.file not provided
-    for (const configFile of possibleVimConfigFiles) {
-      const filepath = `${projectRoot}/${configFile}`;
-      if (await ProjectLocalFileSystem.fileExists(filepath)) {
-        this.config.file = filepath;
-        return filepath;
-      }
-    }
-
-    for (const configFile of possibleLuaConfigFiles) {
-      const filepath = `${projectRoot}/${configFile}`;
-      if (await ProjectLocalFileSystem.fileExists(filepath)) {
-        this.config.file = filepath;
-        return filepath;
-      }
-    }
-
-    for (const configFile of possibleJsonConfigFiles) {
-      const filepath = `${projectRoot}/${configFile}`;
-      if (await ProjectLocalFileSystem.fileExists(filepath)) {
-        this.config.file = filepath;
-        return filepath;
-      }
-    }
-
-    return null;
-  }
-
-  canSendMessage(): boolean {
-    return this.config.showMessage;
-  }
-
-  isDebugMode(): boolean {
-    return this.config.debug;
-  }
-}
-
-// Factory function to create a new Config class instance
-export async function makeConfig(
+/**
+ * Get the project config filepath.
+ *
+ * @async
+ * @param {Denops} denops
+ * @returns {Promise<string | null>}
+ */
+export async function getProjectConfigFilepath(
   denops: Denops,
-  config: PartialUserConfig,
-): Promise<Config> {
-  const userConfig: UserConfig = {
-    ...defaultConfig,
-    ...(config as UserConfig),
-  };
+): Promise<string | null> {
+  const config = await getConfig(denops);
+  const projectRoot = await getProjectRoot(denops);
 
-  const pluginConfig = new Config(denops, userConfig);
-  pluginConfig.setCacheDirectory(
-    (await getDefaultCacheDirectory(denops)) as string,
-  );
+  for (const [_, filename] of Object.entries(config.rootFiles)) {
+    const filepath = `${projectRoot}/${filename}`;
 
-  return pluginConfig;
+    if (fileExists(filepath)) {
+      return filepath;
+    }
+  }
+
+  return null;
 }
