@@ -42,7 +42,7 @@ function M.register(raw_list, raw_config)
 		end
 
 		if type(lang_config.formatter) == "string" then
-			okcall, formattermod = pcall(require, linters_path .. lang_config.formatter)
+			okcall, formattermod = pcall(require, formatters_path .. lang_config.formatter)
 
 			if not okcall then
 				utils.err("Failed to load formatter for diagnosticls: " .. lang_config.formatter)
@@ -53,7 +53,7 @@ function M.register(raw_list, raw_config)
 			setup_list.formatter = {}
 
 			for _, value in pairs(lang_config.formatter) do
-				okcall, formattermod = pcall(require, linters_path .. value)
+				okcall, formattermod = pcall(require, formatters_path .. value)
 
 				if not okcall then
 					utils.err("Failed to load formatter for diagnosticls: " .. value)
