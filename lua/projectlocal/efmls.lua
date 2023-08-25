@@ -1,73 +1,74 @@
-local utils = require('projectlocal._utils')
+local utils = require("projectlocal._utils")
+local efmls_modpath = "efmls-configs"
 local M = {}
 
+local function get_valid_config(name)
+  local linter_ok, linter =
+    pcall(require, string.format("%s.linters.%s", efmls_modpath, name))
+  local formatter_ok, formatter =
+    pcall(require, string.format("%s.formatters.%s", efmls_modpath, name))
+
+  if linter_ok then
+    return linter
+  end
+
+  if formatter_ok then
+    return formatter
+  end
+
+  utils.err("Not valid configuration found for: " .. name)
+
+  return nil
+end
+
 function M.register(raw_list, raw_config)
-  local linters_path = 'efmls-configs.linters.'
-  local formatters_path = 'efmls-configs.formatters.'
-	local okcall, efmls, lintermod, formattermod
+  -- Plugin requirement checks
+  local lspconfig_ok, _ = pcall(require, "lspconfig")
+  if not lspconfig_ok then
+    utils.err("neovim/nvim-lspconfig is required to use `efmls` option.")
+    return
+  end
 
-	local list = vim.fn.json_decode(raw_list)
-	local config = vim.fn.json_decode(raw_config)
-	local efmls_setup = {}
+  local efmls_ok, _ = pcall(require, efmls_modpath)
+  if not efmls_ok then
+    utils.err(
+      "creativenull/efmls-configs-nvim is required to use `efmls` option."
+    )
+    return
+  end
 
-	okcall, efmls = pcall(require, "efmls-configs")
-	if not okcall then
-		utils.err("efmls-configs-nvim is required to use this feature")
-		return
-	end
+  -- Start parsing list
+  local list = vim.fn.json_decode(raw_list)
+  local languages = {}
 
-	for lang, lang_config in pairs(list) do
-		local setup_list = { linter = nil, formatter = nil }
+  for lang, tools in pairs(list) do
+    languages[lang] = {}
 
-		if type(lang_config.linter) == "string" then
-			okcall, lintermod = pcall(require, linters_path .. lang_config.linter)
+    for _, tool in pairs(tools) do
+      local valid_config = get_valid_config(tool)
 
-			if not okcall then
-        utils.err("Failed to load linter for efmls: " .. lang_config.linter)
-      else
-				setup_list.linter = lintermod
-			end
-		elseif type(lang_config.linter) == "table" then
-			setup_list.linter = {}
+      if valid_config ~= nil then
+        table.insert(languages[lang], valid_config)
+      end
+    end
+  end
 
-			for _, value in pairs(lang_config.linter) do
-				okcall, lintermod = pcall(require, linters_path .. value)
+  local efmls_config = {
+    init_options = {
+      documentFormatting = true,
+      documentRangeFormatting = true,
+    },
+    filetypes = vim.tbl_keys(languages),
+    settings = {
+      rootMarkers = { ".git/" },
+      languages = languages,
+    },
+  }
 
-				if not okcall then
-          utils.err("Failed to load linter for efmls: " .. value)
-        else
-					table.insert(setup_list.linter, lintermod)
-				end
-			end
-		end
-
-		if type(lang_config.formatter) == "string" then
-			okcall, formattermod = pcall(require, formatters_path .. lang_config.formatter)
-
-			if not okcall then
-        utils.err("Failed to load formatter for efmls: " .. lang_config.formatter)
-      else
-				setup_list.formatter = formattermod
-			end
-		elseif type(lang_config.formatter) == "table" then
-			setup_list.formatter = {}
-
-			for _, value in pairs(lang_config.formatter) do
-				okcall, formattermod = pcall(require, formatters_path .. value)
-
-				if not okcall then
-          utils.err("Failed to load formatter for efmls: " .. value)
-        else
-					table.insert(setup_list.formatter, formattermod)
-				end
-			end
-		end
-
-		efmls_setup[lang] = setup_list
-	end
-
-  -- Safely call setup
-	pcall(efmls.setup, efmls_setup)
+  -- Setup efm by merging it with user provided config
+  require("lspconfig").efm.setup(
+    require("projectlocal.lsp").get_config(efmls_config)
+  )
 end
 
 return M
