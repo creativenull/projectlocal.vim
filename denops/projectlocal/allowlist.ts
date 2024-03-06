@@ -1,4 +1,4 @@
-import { fs } from "./deps/std.ts";
+import { ensureFile } from "jsr:@std/fs@0.218.2";
 import { Denops } from "./deps/denops_std.ts";
 import { fileExists, getDefaultCacheDirectory } from "./fs.ts";
 
@@ -24,7 +24,7 @@ export async function getAllowlist(denops: Denops): Promise<Allowlist> {
   const allowlistFilepath = `${cacheDir}/${filename}`;
 
   if (!fileExists(allowlistFilepath)) {
-    await fs.ensureFile(allowlistFilepath);
+    await ensureFile(allowlistFilepath);
     await Deno.writeTextFile(allowlistFilepath, "[]");
   }
 
