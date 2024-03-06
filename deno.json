@@ -1,12 +1,5 @@
 {
-  "lint": {
-    "files": {
-      "include": ["denops/"]
-    }
-  },
   "fmt": {
-    "files": {
-      "include": ["denops/"]
-    }
+    "include": ["denops/"]
   }
 }
