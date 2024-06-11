@@ -29,28 +29,28 @@ the plugin automatically:
 Vimscript
 >
     let g:projectlocal = {
-        \ 'enableMessages': v:true,
-        \ 'defaultRootFile': 'json',
-	\ 'rootFiles': {
-	    \ 'json': '.vimrc.json',
-	    \ 'lua': '.vimrc.lua',
-	    \ 'vim': '.vimrc',
-	\ },
-        \ 'debugMode': v:false,
-        \ }
+      \ 'enableMessages': v:true,
+      \ 'defaultRootFile': 'json',
+      \ 'rootFiles': {
+        \ 'json': '.vimrc.json',
+        \ 'lua': '.vimrc.lua',
+        \ 'vim': '.vimrc',
+      \ },
+      \ 'debugMode': v:false,
+      \ }
 <
 
 Lua
 >
     vim.g.projectlocal = {
-        enableMessages = true,
-        defaultRootFile = 'json',
-	rootFiles = {
-	    json = '.vimrc.json',
-	    lua = '.vimrc.lua',
-	    vim = '.vimrc',
-	},
-        debugMode = false,
+      enableMessages = true,
+      defaultRootFile = 'json',
+      rootFiles = {
+        json = '.vimrc.json',
+        lua = '.vimrc.lua',
+        vim = '.vimrc',
+      },
+      debugMode = false,
     }
 <
 
@@ -77,9 +77,9 @@ Defaults
 >
     lua
     {
-	json = '.vimrc.json',
-	lua = '.vimrc.lua',
-	vim = '.vimrc',
+      json = '.vimrc.json',
+      lua = '.vimrc.lua',
+      vim = '.vimrc',
     }
 <
 
@@ -102,11 +102,11 @@ directory and set a global variable.
 
 >
     {
-	"projectlocal": {
-	    "globalVars": {
-		"greet": "Hello World"
-	    }
-	}
+      "projectlocal": {
+        "globalVars": {
+          "greet": "Hello World"
+        }
+      }
     }
 <
 
@@ -176,9 +176,7 @@ json structure, which would look like the following:
 
 >
     {
-        "projectlocal": {
-
-	}
+      "projectlocal": { }
     }
 <
 
@@ -201,15 +199,15 @@ defaults:
 
 >
     {
-        "projectlocal": {
-            "nvim-lsp": [
-		"pyright",
-		{
-		    "name": "tsserver",
-		    "config": { "root_dir": ["tsconfig.json"] }
-		}
-	    ]
-        }
+      "projectlocal": {
+        "nvim-lsp": [
+          "pyright",
+          {
+            "name": "tsserver",
+            "config": { "root_dir": ["tsconfig.json"] }
+          }
+        ]
+      }
     }
 <
 
@@ -224,12 +222,12 @@ server setup with your .json file (for init.vim files you can wrap this in
 
 >
     local function on_attach()
-        print('attached')
+      print('attached')
     end
 
     require('projectlocal.lsp').setup({
-        -- your custom on_attach
-        on_attach = on_attach 
+      -- your custom on_attach
+      on_attach = on_attach 
     })
 <
 
@@ -242,11 +240,11 @@ example setting up ALE linters and fixers for a javascript project:
 
 >
     {
-        "projectlocal": {
-            "globalVars": {
-                "greet": "Hello World"
-            }
+      "projectlocal": {
+        "globalVars": {
+          "greet": "Hello World"
         }
+      }
     }
 <
 
@@ -263,16 +261,12 @@ before you can set this up. Here is an example below:
 
 >
     {
-        "projectlocal": {
-            "ale": {
-                "fixers": {
-		    "javascript": ["prettier"]
-		},
-		"linters": {
-		    "javascript": ["eslint"]
-		}
-            }
+      "projectlocal": {
+        "ale": {
+          "fixers": { "javascript": ["prettier"] },
+          "linters": { "javascript": ["eslint"] }
         }
+      }
     }
 <
 
@@ -289,14 +283,11 @@ Here is an example of setting up efmls for a javascript file:
 
 >
     {
-        "projectlocal": {
-            "efmls": {
-                "javascript": {
-		    "formatter": ["prettier"],
-		    "linter": ["eslint"]
-		},
-            }
+      "projectlocal": {
+        "efmls": {
+          "javascript": { ["prettier", "eslint"] },
         }
+      }
     }
 <
 
@@ -314,14 +305,14 @@ Here is an example of setting up efmls for a javascript file:
 
 >
     {
-        "projectlocal": {
-            "diagnosticls": {
-                "javascript": {
-		    "formatter": ["prettier"],
-		    "linter": ["eslint"]
-		},
-            }
+      "projectlocal": {
+        "diagnosticls": {
+          "javascript": {
+            "formatter": ["prettier"],
+            "linter": ["eslint"]
+          }
         }
+      }
     }
 <
 
@@ -349,9 +340,9 @@ Finally, add the sources you need in the project config file:
 
 >
     {
-        "projectlocal": {
-            "null-ls": ["diagnostics.eslint_d", "formatting.prettier"]
-        }
+      "projectlocal": {
+        "null-ls": ["diagnostics.eslint_d", "formatting.prettier"]
+      }
     }
 <
 
@@ -363,10 +354,10 @@ translate into the following:
 >
     local null_ls = require('null-ls')
     null_ls.setup({
-	sources = {
-	    null_ls.builtins.diagnostics.eslint_d,
-	    null_ls.builtins.formatting.prettier,
-	},
+      sources = {
+        null_ls.builtins.diagnostics.eslint_d,
+        null_ls.builtins.formatting.prettier,
+      },
     })
 <
 
@@ -382,8 +373,8 @@ ProjectLocalConfig                                       *:ProjectLocalConfig*
 
 	Examples:
 >
-	    :ProjectLocalConfig
-	    :ProjectLocalConfig lua
+    :ProjectLocalConfig
+    :ProjectLocalConfig lua
 <
 
 ProjectLocalConfigAutoloadEnable           *:ProjectLocalConfigAutoloadEnable*
