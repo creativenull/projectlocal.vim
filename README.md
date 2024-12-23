@@ -1,8 +1,8 @@
 # projectlocal.vim
 
-[![Deno 1.28 or above](https://img.shields.io/badge/Deno-Support%201.28-purple.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.28)
-[![Vim 9.0.0472 or above](https://img.shields.io/badge/Vim-Support%209.0.0472-purple.svg?logo=vim)](https://github.com/vim/vim/tree/v9.0.0472)
-[![Neovim 0.8.0 or above](https://img.shields.io/badge/Neovim-Support%200.8.0-purple.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.8.0)
+[![Deno 1.45 or above](https://img.shields.io/badge/Deno-Support%201.45-blue.svg?logo=deno)](https://github.com/denoland/deno/tree/v1.45)
+[![Vim 9.1.0448 or above](https://img.shields.io/badge/Vim-Support%209.1.0448-blue.svg?logo=vim)](https://github.com/vim/vim/tree/v9.1.0448)
+[![Neovim 0.10.0 or above](https://img.shields.io/badge/Neovim-Support%200.10.0-blue.svg?logo=neovim&logoColor=white)](https://github.com/neovim/neovim/tree/v0.10.0)
 
 Load your vim project local configurations safely, for vim and neovim. Written with ♥ in TypeScript and Deno
 ([denops.vim][denops]).
@@ -15,12 +15,12 @@ plugins to support both vim and neovim.
 
 + JSON file
     + [X] Add JSON schema
-    + [ ] Add [ALE][ale] support
-    + [ ] Add efmls and diagnosticls support via [efmls-configs][efmls-configs] and [diagnosticls-configs][diagnosticls-configs]
+    + [X] Add [ALE][ale] support
+    + [X] Add efmls and diagnosticls support via [efmls-configs][efmls-configs] and [diagnosticls-configs][diagnosticls-configs]
     + [ ] Add [neoformat][neoformat] support
     + [ ] Add [neomake][neomake] support
     + [ ] Add [nvim-lint][nvim-lint] support
-    + [ ] Add [null-ls][null-ls] support
+    + [X] Add [null-ls][null-ls] support
 -->
 
 ## Features
@@ -32,10 +32,10 @@ plugins to support both vim and neovim.
 
 ## Requirements
 
-+ [deno v1.28 and up](https://deno.land)
-+ [denops.vim v4 and up][denops]
-+ Vim 9.0.0472 and up (`:version`)
-+ Neovim 0.8.0 and up (`:version`)
++ [deno >= v1.45](https://deno.land)
++ [denops.vim][denops]
++ Vim >= 9.1.0448
++ Neovim >= 0.10.0
 
 ## Installation
 

@@ -1,4 +1,7 @@
-import { Denops, fn, helpers } from "./deps/denops_std.ts";
+// import { Denops, fn, helpers } from "./deps/denops_std.ts";
+import type { Denops } from "jsr:@denops/std@^7.0.0";
+import * as fn from "jsr:@denops/std@^7.0.0/function";
+import * as helpers from "jsr:@denops/std@^7.0.0/helper";
 
 export const pluginName = "projectlocal.vim";
 

@@ -1,4 +1,9 @@
-import { Denops, fn, helpers, opt, vars } from "./deps/denops_std.ts";
+// import { Denops, fn, helpers, opt, vars } from "./deps/denops_std.ts";
+import type { Denops } from "jsr:@denops/std@^7.0.0";
+import * as fn from "jsr:@denops/std@^7.0.0/function";
+import * as helpers from "jsr:@denops/std@^7.0.0/helper";
+import * as opt from "jsr:@denops/std@^7.0.0/option";
+import * as vars from "jsr:@denops/std@^7.0.0/variable";
 import { fileExists } from "./fs.ts";
 
 export type UserConfig = {

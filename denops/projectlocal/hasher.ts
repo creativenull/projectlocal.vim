@@ -1,4 +1,5 @@
-import { crypto } from "https://deno.land/std@0.218.2/crypto/mod.ts";
+// import { crypto } from "https://deno.land/std@0.218.2/crypto/mod.ts";
+import { crypto } from "jsr:@std/crypto@^1.0.0";
 
 /**
  * Generate a hash of the string contents.

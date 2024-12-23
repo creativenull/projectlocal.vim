@@ -1,4 +1,7 @@
-import { Denops, fn, nvimFn } from "./deps/denops_std.ts";
+// import { Denops, fn, nvimFn } from "./deps/denops_std.ts";
+import type { Denops } from "jsr:@denops/std@^7.0.0";
+import * as fn from "jsr:@denops/std@^7.0.0/function";
+import * as nvimFn from "jsr:@denops/std@^7.0.0/function/nvim";
 
 /**
  * Check if file exists in the filepath.

@@ -1,4 +1,7 @@
-import { Denops, fn, helpers } from "./deps/denops_std.ts";
+// import { Denops, fn, helpers } from "./deps/denops_std.ts";
+import type { Denops, Entrypoint } from "jsr:@denops/std@^7.0.0";
+import * as fn from "jsr:@denops/std@^7.0.0/function";
+import * as helpers from "jsr:@denops/std@^7.0.0/helper";
 import {
   getConfig,
   getProjectConfigFilepath,
@@ -24,7 +27,7 @@ import {
 } from "./message.ts";
 import { sourceJson } from "./loaders/json/main.ts";
 
-export async function main(denops: Denops) {
+export const main: Entrypoint = async (denops) => {
   denops.dispatcher = {
     /**
      * Detect if a config file is present in the project root directory
@@ -150,7 +153,7 @@ export async function main(denops: Denops) {
 
   // Register events for template generation
   await registerBufNewFileEvents(denops);
-}
+};
 
 /**
  * Handle if config file is newly added.

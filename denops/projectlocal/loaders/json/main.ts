@@ -1,5 +1,8 @@
-import type { Denops } from "../../deps/denops_std.ts";
-import { fn, vars } from "../../deps/denops_std.ts";
+// import type { Denops } from "../../deps/denops_std.ts";
+// import { fn, vars } from "../../deps/denops_std.ts";
+import type { Denops } from "jsr:@denops/std@^7.0.0";
+import * as fn from "jsr:@denops/std@^7.0.0/function";
+import * as vars from "jsr:@denops/std@^7.0.0/variable";
 import type { UserConfig } from "../../config.ts";
 import { handle as nvimLspHandler } from "./nvim-lsp.ts";
 import type { NvimLspConfig } from "./nvim-lsp.ts";
@@ -13,7 +16,7 @@ import { handle as nullLsHandler } from "./null-ls.ts";
 import type { NullLsConfig } from "./null-ls.ts";
 import { showWarning } from "../../message.ts";
 
-const isNvim06 = async (denops: Denops) => await fn.has(denops, "nvim-0.6");
+const isNvim10 = async (denops: Denops) => await fn.has(denops, "nvim-0.10");
 
 /**
  * Parse the json file and run different providers setup.
@@ -91,7 +94,7 @@ async function handleProp<T>(
   projectlocal: ProjectLocalConfig,
   prop: keyof ProjectLocalConfig,
 ): Promise<void> {
-  if (await isNvim06(denops)) {
+  if (await isNvim10(denops)) {
     await handler(
       denops,
       config,

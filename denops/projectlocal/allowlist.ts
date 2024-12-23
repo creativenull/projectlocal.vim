@@ -1,5 +1,7 @@
-import { ensureFile } from "https://deno.land/std@0.218.2/fs/mod.ts";
-import { Denops } from "./deps/denops_std.ts";
+// import { Denops } from "./deps/denops_std.ts";
+// import { ensureFile } from "https://deno.land/std@0.218.2/fs/mod.ts";
+import type { Denops } from "jsr:@denops/std@^7.0.0";
+import { ensureFile } from "jsr:@std/fs@^1.0.0";
 import { fileExists, getDefaultCacheDirectory } from "./fs.ts";
 
 export type AllowedItem = {
