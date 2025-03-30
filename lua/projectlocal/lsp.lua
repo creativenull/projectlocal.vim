@@ -9,8 +9,15 @@ local global_lsp_opts = {
 ---@param opts table
 ---@return nil
 local function validate_default_opts(opts)
-  vim.validate("on_attach", opts.on_attach, "function")
-  vim.validate("capabilities", opts.capabilities, "table")
+  if vim.fn.has("nvim-0.11") == 1 then
+    vim.validate("on_attach", opts.on_attach, "function")
+    vim.validate("capabilities", opts.capabilities, "table")
+  else
+    vim.validate({
+      on_attach = { opts.on_attach, "function" },
+      capabilities = { opts.capabilities, "table" },
+    })
+  end
 end
 
 ---Validate server config from projectlocal JSON file
@@ -25,11 +32,21 @@ local function validate_server_config(config)
     return type(var) ~= "boolean" or type(var) ~= "nil"
   end
 
-  vim.validate("init_options", config.init_options, is_table_or_nil)
-  vim.validate("root_dir", config.root_dir, is_table_or_nil)
-  vim.validate("settings", config.settings, is_table_or_nil)
-  vim.validate("single_file_support", config.flags, is_bool_or_nil)
-  vim.validate("filetypes", config.filetypes, is_table_or_nil)
+  if vim.fn.has("nvim-0.11") == 1 then
+    vim.validate("init_options", config.init_options, is_table_or_nil)
+    vim.validate("root_dir", config.root_dir, is_table_or_nil)
+    vim.validate("settings", config.settings, is_table_or_nil)
+    vim.validate("single_file_support", config.flags, is_bool_or_nil)
+    vim.validate("filetypes", config.filetypes, is_table_or_nil)
+  else
+    vim.validate({
+      init_options = { config.init_options, is_table_or_nil },
+      root_dir = { config.root_dir, is_table_or_nil },
+      settings = { config.settings, is_table_or_nil },
+      single_file_support = { config.flags, is_bool_or_nil },
+      filetypes = { config.filetypes, is_table_or_nil },
+    })
+  end
 
   return config
 end
