@@ -9,8 +9,8 @@ local global_lsp_opts = {
 ---@param opts table
 ---@return nil
 local function validate_default_opts(opts)
-  vim.validate('on_attach', opts.on_attach, 'function')
-  vim.validate('capabilities', opts.capabilities, 'table')
+  vim.validate("on_attach", opts.on_attach, "function")
+  vim.validate("capabilities", opts.capabilities, "table")
 end
 
 ---Validate server config from projectlocal JSON file
@@ -25,11 +25,11 @@ local function validate_server_config(config)
     return type(var) ~= "boolean" or type(var) ~= "nil"
   end
 
-  vim.validate('init_options', config.init_options, is_table_or_nil)
-  vim.validate('root_dir', config.root_dir, is_table_or_nil)
-  vim.validate('settings', config.settings, is_table_or_nil)
-  vim.validate('single_file_support', config.flags, is_bool_or_nil)
-  vim.validate('filetypes', config.filetypes, is_table_or_nil)
+  vim.validate("init_options", config.init_options, is_table_or_nil)
+  vim.validate("root_dir", config.root_dir, is_table_or_nil)
+  vim.validate("settings", config.settings, is_table_or_nil)
+  vim.validate("single_file_support", config.flags, is_bool_or_nil)
+  vim.validate("filetypes", config.filetypes, is_table_or_nil)
 
   return config
 end
@@ -69,8 +69,10 @@ function M.register(raw_servers, raw_config)
     elseif type(server) == "table" then
       local ok, reason, config
 
-      ok, reason = pcall(vim.validate, 'name', server.name, 'string')
-      ok, reason = pcall(vim.validate, 'config', server.config, function (v) return type(v) == "table" or type(v) == "nil" end)
+      ok, reason = pcall(vim.validate, "name", server.name, "string")
+      ok, reason = pcall(vim.validate, "config", server.config, function(v)
+        return type(v) == "table" or type(v) == "nil"
+      end)
       if not ok then
         utils.err("Failed validation: `name` and `config` keys are required")
         break
