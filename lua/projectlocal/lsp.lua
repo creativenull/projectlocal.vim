@@ -69,10 +69,23 @@ function M.register(raw_servers, raw_config)
     elseif type(server) == "table" then
       local ok, reason, config
 
-      ok, reason = pcall(vim.validate, "name", server.name, "string")
-      ok, reason = pcall(vim.validate, "config", server.config, function(v)
-        return type(v) == "table" or type(v) == "nil"
-      end)
+      if vim.fn.has("nvim-0.11") == 1 then
+        ok, reason = pcall(vim.validate, "name", server.name, "string")
+        ok, reason = pcall(vim.validate, "config", server.config, function(v)
+          return type(v) == "table" or type(v) == "nil"
+        end)
+      else
+        ok, reason = pcall(vim.validate, {
+          name = { server.name, "string" },
+          config = {
+            server.config,
+            function(v)
+              return type(v) == "table" or type(v) == "nil"
+            end,
+          },
+        })
+      end
+
       if not ok then
         utils.err("Failed validation: `name` and `config` keys are required")
         break
