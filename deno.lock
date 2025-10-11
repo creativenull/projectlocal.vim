@@ -1,15 +1,17 @@
 {
-  "version": "4",
+  "version": "5",
   "specifiers": {
     "jsr:@core/unknownutil@^4.3.0": "4.3.0",
     "jsr:@denops/core@7": "7.0.1",
     "jsr:@denops/std@7": "7.3.2",
     "jsr:@std/assert@~0.218.2": "0.218.2",
     "jsr:@std/crypto@0.218.2": "0.218.2",
+    "jsr:@std/crypto@1": "1.0.5",
     "jsr:@std/encoding@~0.218.2": "0.218.2",
     "jsr:@std/fs@0.218.2": "0.218.2",
     "jsr:@std/fs@1": "1.0.5",
     "jsr:@std/path@^1.0.2": "1.0.8",
+    "jsr:@std/path@^1.0.7": "1.0.8",
     "jsr:@std/path@~0.218.2": "0.218.2",
     "jsr:@std/semver@1": "1.0.3",
     "jsr:@std/ulid@1": "1.0.0"
@@ -42,6 +44,9 @@
         "jsr:@std/encoding"
       ]
     },
+    "@std/crypto@1.0.5": {
+      "integrity": "0dcfbb319fe0bba1bd3af904ceb4f948cde1b92979ec1614528380ed308a3b40"
+    },
     "@std/encoding@0.218.2": {
       "integrity": "da55a763c29bf0dbf06fd286430b358266eb99c28789d89fe9a3e28edecb8d8e"
     },
@@ -53,7 +58,10 @@
       ]
     },
     "@std/fs@1.0.5": {
-      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e"
+      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e",
+      "dependencies": [
+        "jsr:@std/path@^1.0.7"
+      ]
     },
     "@std/path@0.218.2": {
       "integrity": "b568fd923d9e53ad76d17c513e7310bda8e755a3e825e6289a0ce536404e2662"
