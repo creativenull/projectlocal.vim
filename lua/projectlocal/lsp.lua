@@ -75,7 +75,8 @@ function M.register(raw_servers, raw_config)
   local servers = vim.fn.json_decode(raw_servers)
 
   local lspok, nvimlsp = pcall(require, "lspconfig")
-  if not lspok then
+  if vim.fn.has("nvim-0.11") == 0 and not lspok then
+    -- For nvim 0.10 and below, nvim-lspconfig plugin is required
     utils.err("`nvim-lspconfig` plugin not installed")
     return
   end
@@ -84,6 +85,7 @@ function M.register(raw_servers, raw_config)
     if type(server) == "string" then
       if vim.fn.has('nvim-0.11') == 1 then
         vim.lsp.config(server, global_lsp_opts)
+        vim.lsp.enable(server)
       else
         nvimlsp[server].setup(global_lsp_opts)
       end
@@ -128,7 +130,9 @@ function M.register(raw_servers, raw_config)
       end
 
       if vim.fn.has('nvim-0.11') == 1 then
-        vim.lsp.config(server.name, vim.tbl_extend("force", config, global_lsp_opts))
+        local server_config = vim.tbl_extend("force", config, global_lsp_opts)
+        vim.lsp.config(server.name, server_config)
+        vim.lsp.enable(server.name)
       else
         -- Safely register LSPs, let lspconfig complain if needed
         pcall(

@@ -61,8 +61,9 @@ function M.register(raw_list, raw_config)
   -- Setup efm by merging it with user provided config
   if vim.fn.has("nvim-0.11") == 1 then
     -- Use vim.lsp.config() for nvim 0.11 and up
-    vim.lsp.config("efm", require("projectlocal.lsp").get_config(efmls_config))
-    vim.lsp.enable("efmls")
+    local efmls_config = require("projectlocal.lsp").get_config(efmls_config)
+    vim.lsp.config("efm", efmls_config)
+    vim.lsp.enable("efm")
   else
     -- Check if lspconfig is installed before proceeding
     local lspconfig_ok, _ = pcall(require, "lspconfig")
