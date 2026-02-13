@@ -22,13 +22,6 @@ local function get_valid_config(name)
 end
 
 function M.register(raw_list, raw_config)
-  -- Plugin requirement checks
-  local lspconfig_ok, _ = pcall(require, "lspconfig")
-  if not lspconfig_ok then
-    utils.err("neovim/nvim-lspconfig is required to use `efmls` option.")
-    return
-  end
-
   local efmls_ok, _ = pcall(require, efmls_modpath)
   if not efmls_ok then
     utils.err(
@@ -66,9 +59,21 @@ function M.register(raw_list, raw_config)
   }
 
   -- Setup efm by merging it with user provided config
-  require("lspconfig").efm.setup(
-    require("projectlocal.lsp").get_config(efmls_config)
-  )
+  if vim.fn.has("nvim-0.11") == 1 then
+    -- Use vim.lsp.config() for nvim 0.11 and up
+    vim.lsp.config("efm", require("projectlocal.lsp").get_config(efmls_config))
+  else
+    -- Check if lspconfig is installed before proceeding
+    local lspconfig_ok, _ = pcall(require, "lspconfig")
+    if not lspconfig_ok then
+      utils.err("neovim/nvim-lspconfig is required to use `efmls` option.")
+      return
+    end
+
+    require("lspconfig").efm.setup(
+      require("projectlocal.lsp").get_config(efmls_config)
+    )
+  end
 end
 
 return M
