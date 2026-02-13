@@ -82,7 +82,11 @@ function M.register(raw_servers, raw_config)
 
   for _, server in pairs(servers) do
     if type(server) == "string" then
-      nvimlsp[server].setup(global_lsp_opts)
+      if vim.fn.has('nvim-0.11') == 1 then
+        vim.lsp.config(global_lsp_opts)
+      else
+        nvimlsp[server].setup(global_lsp_opts)
+      end
     elseif type(server) == "table" then
       local ok, reason, config
 
@@ -123,11 +127,15 @@ function M.register(raw_servers, raw_config)
         config.root_dir = nvimlsp.util.root_pattern(unpack(config.root_dir))
       end
 
-      -- Safely register LSPs, let lspconfig complain if needed
-      pcall(
-        nvimlsp[server.name].setup,
-        vim.tbl_extend("force", config, global_lsp_opts)
-      )
+      if vim.fn.has('nvim-0.11') == 1 then
+        vim.lsp.config(global_lsp_opts)
+      else
+        -- Safely register LSPs, let lspconfig complain if needed
+        pcall(
+          nvimlsp[server.name].setup,
+          vim.tbl_extend("force", config, global_lsp_opts)
+        )
+      end
     end
   end
 end
